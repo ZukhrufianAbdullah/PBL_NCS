@@ -1,0 +1,197 @@
+/* 1. Warna Utama & Variabel */
+:root {
+    --midnight-blue: #060771;
+    --accent-yellow: #FCD917; 
+    --primary-color: var(--midnight-blue);
+    --white: #ffffff;
+    --light-gray: #f4f4f4;
+    --hover-blue: #1a1a8e; /* Hover color */
+    --success-green: #28a745;
+}
+
+/* Base Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-gray);
+    margin: 0;
+    padding: 0;
+}
+
+/* --- SIDEBAR NAVIGASI --- */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    overflow-x: hidden;
+    padding-top: 20px;
+    color: var(--white);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Styling Dropdown Header (MANAJEMEN KONTEN) */
+.sidebar .menu-header {
+    color: var(--accent-yellow);
+    padding: 12px 15px 5px 15px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: block;
+}
+
+/* Styling Tautan */
+.sidebar a {
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 16px;
+    color: var(--white);
+    display: block;
+    transition: background-color 0.2s, border-left 0.2s;
+}
+
+/* Hover dan Tautan Aktif */
+.sidebar a:hover, .sidebar a.active {
+    background-color: var(--hover-blue);
+    border-left: 5px solid var(--accent-yellow);
+    padding-left: 10px; /* Kompensasi border */
+}
+
+/* --- Dropdown/Submenu Styling --- */
+.sidebar .dropdown-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar .submenu-wrapper {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.sidebar .submenu-wrapper.active {
+    max-height: 500px; /* Nilai besar agar konten terlihat saat dibuka */
+}
+
+.sidebar .submenu-wrapper a {
+    padding-left: 35px; /* Indentasi sub-menu */
+    font-size: 15px;
+    background-color: #1a1a8e; /* Latar belakang sub-menu */
+}
+
+.sidebar .dropdown-icon {
+    transition: transform 0.3s;
+    font-size: 0.9em;
+}
+
+.sidebar .dropdown-icon.active {
+    transform: rotate(90deg);
+}
+
+/* --- KONTEN UTAMA --- */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.admin-header {
+    background-color: var(--white);
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    border-left: 5px solid var(--accent-yellow);
+    border-radius: 4px;
+}
+
+/* --- Form Styling --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"], input[type="number"], textarea, select, input[type="file"], input[type="date"], input[type="email"], input[type="url"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, textarea:focus, input[type="file"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* --- Tabel Styling --- */
+.dosen-table, .pesan-table, .sarana-table, .berita-list-table, .menu-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 20px;
+}
+
+.dosen-table th, .pesan-table th, .sarana-table th, .berita-list-table th, .menu-table th,
+.dosen-table td, .pesan-table td, .sarana-table td, .berita-list-table td, .menu-table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+.dosen-table thead tr, .pesan-table thead tr, .sarana-table thead tr, .berita-list-table thead tr, .menu-table thead tr {
+    background-color: #eee;
+} 
+
+/* --- Tombol dan Utilitas --- */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-blue);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: var(--success-green);
+    border: 1px solid #c3e6cb;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
