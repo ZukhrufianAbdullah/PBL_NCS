@@ -1,415 +1,206 @@
 <?php 
 // File: admin/profil/edit_struktur.php
 session_start();
+include '../../config/koneksi.php';
 
-$page_title = "Manajemen Struktur Organisasi";
+$page_title = "Edit Struktur Organisasi";
 $current_page = "edit_struktur";
-$base_url = '../../';
+$base_url = '../'; 
+$assetUrl = '../../assets/admin';
 
-// Dummy data header
-$header_data = [
-    'judul' => 'Struktur Organisasi',
-    'deskripsi' => 'Meet the dedicated researchers and students of our laboratory.',
-];
+// Ambil semua anggota (join anggota_lab -> dosen)
+$sql = "SELECT a.id_anggota, a.jabatan, d.id_dosen, d.nama_dosen, d.media_path
+        FROM anggota_lab a
+        JOIN dosen d ON a.id_dosen = d.id_dosen
+        ORDER BY d.nama_dosen ASC";
+$res = pg_query($conn, $sql);
+$members = [];
+if ($res && pg_num_rows($res) > 0) {
+    while ($r = pg_fetch_assoc($res)) $members[] = $r;
+}
 
-// Dummy data anggota
-$struktur = [
-    [
-        'id_anggota' => 1,
-        'nama' => 'Ben Carter',
-        'jabatan' => 'Postdoctoral Researcher',
-        'focus' => 'Malware Analysis',
-        'foto' => 'asset/img/dosen1.jpg', 
-        'urutan' => 1
-    ],
-    [
-        'id_anggota' => 2,
-        'nama' => 'Aisha Khan',
-        'jabatan' => 'PhD Candidate',
-        'focus' => 'Intrusion Detection',
-        'foto' => 'asset/img/dosen2.jpg',
-        'urutan' => 2
-    ],
-    [
-        'id_anggota' => 3,
-        'nama' => 'Carlos Gomez',
-        'jabatan' => 'PhD Candidate',
-        'focus' => 'Network Traffic Analysis',
-        'foto' => 'asset/img/dosen3.jpg',
-        'urutan' => 3
-    ],
-    [
-        'id_anggota' => 4,
-        'nama' => 'Maria Rodriguez',
-        'jabatan' => 'Research Assistant',
-        'focus' => 'Data Recovery',
-        'foto' => 'asset/img/dosen4.jpg',
-        'urutan' => 4
-    ]
-];
+// Ambil page content (judul & deskripsi) untuk page profil_struktur
+$pageRes = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1 LIMIT 1", ['profil_struktur']);
+$id_page = null;
+$judul_page = '';
+$deskripsi_page = '';
+if ($pageRes && pg_num_rows($pageRes) > 0) {
+    $pageRow = pg_fetch_assoc($pageRes);
+    $id_page = $pageRow['id_page'];
 
-usort($struktur, function($a, $b) {
-    return $a['urutan'] <=> $b['urutan'];
-});
-
-// Alert messages
-$alert_message = '';
-$alert_type = '';
-
-if (isset($_GET['success'])) {
-    $alert_type = 'alert-success';
-    if ($_GET['success'] == 'add') {
-        $alert_message = '✓ Anggota tim berhasil ditambahkan!';
-    } elseif ($_GET['success'] == 'update') {
-        $alert_message = '✓ Data anggota berhasil diperbarui!';
-    } elseif ($_GET['success'] == 'delete') {
-        $alert_message = '✓ Anggota tim berhasil dihapus!';
-    } elseif ($_GET['success'] == 'header') {
-        $alert_message = '✓ Judul dan deskripsi berhasil diperbarui!';
+    $pcRes = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", [$id_page]);
+    if ($pcRes && pg_num_rows($pcRes) > 0) {
+        while ($row = pg_fetch_assoc($pcRes)) {
+            if ($row['content_key'] === 'judul') $judul_page = $row['content_value'];
+            if ($row['content_key'] === 'deskripsi') $deskripsi_page = $row['content_value'];
+        }
     }
-} elseif (isset($_GET['error'])) {
-    $alert_type = 'alert-error';
-    $alert_message = '❌ ' . htmlspecialchars($_GET['error']);
 }
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?> - Admin NCS Lab</title>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>asset/css/style_admin.css">
+    <title><?php echo $page_title; ?></title>
+    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
+    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
+    <style>
+        .dosen-table { width: 100%; border-collapse: collapse; background-color: white; margin-top: 20px; }
+        .dosen-table th, .dosen-table td { padding: 10px; border: 1px solid #ccc; text-align: left; vertical-align: middle; }
+        .dosen-table thead tr { background-color: #eee; } 
+        .thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; }
+        .action-form { display:inline-block; margin:0 4px; }
+    </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        
-        <a href="index.php">Dashboard</a>
-
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="/admin/include/edit_header.php">Edit Header</a>
-        <a href="/admin/include/edit_footer.php">Edit Footer</a>
-        <a href="/admin/admin/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="/admin/admin/beranda/edit_banner.php">Edit Banner</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
+        <a href="../index.php">Dashboard</a>
         <div class="dropdown-item">
             <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
+                MANAJEMEN KONTEN
                 <span class="dropdown-icon" id="icon-manajemenKonten">></span>
             </a>
             <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="/admin/admin/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="/admin/admin/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="/admin/admin/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="/admin/admin/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="/admin/admin/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="/admin/admin/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="/admin/admin/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="/admin/admin/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="/admin/admin/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="/admin/admin/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="/admin/admin/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="/admin/admin/layanan/lihat_pesan.php">Pesan Konsultatif</a>
+                <div class="dropdown-item">
+                    <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('subMenuProfile')">
+                        Profile
+                        <span class="dropdown-icon" id="icon-subMenuProfile">></span>
+                    </a>
+                    <div class="submenu-wrapper" id="subMenuProfile">
+                        <a href="edit_visi_misi.php">Visi & Misi</a>
+                        <a href="edit_logo.php">Logo</a>
+                        <a href="edit_struktur.php" class="<?php echo $current_page == 'edit_struktur' ? 'active' : ''; ?>">Struktur Organisasi</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- CONTENT -->
     <div class="content">
-        <!-- Header -->
         <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
+            <h1><?php echo $page_title; ?> (Tabel: dosen & anggota_lab)</h1>
         </div>
-        
-        <!-- Alert -->
-        <?php if (!empty($alert_message)): ?>
-        <div class="<?php echo $alert_type; ?> admin-alert">
-            <?php echo $alert_message; ?>
-        </div>
-        <?php endif; ?>
 
-        <!-- SECTION 1: Edit Header -->
-        <div class="card">
-            <div class="card-header">
-                <h3>Pengaturan Header Section</h3>
-            </div>
-            <form action="<?php echo $base_url; ?>profil/proses/proses_struktur.php" method="POST">
-                <input type="hidden" name="action" value="update_header">
-                
+        <p>Gunakan halaman ini untuk menambah anggota baru, serta melihat dan mengelola detail semua dosen/staf yang ada (nama, jabatan, foto, dll.).</p>
+
+        <!-- Form: Edit page content (judul & deskripsi) -->
+        <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: 30px;">
+            <legend>Konten Halaman Struktur Organisasi</legend>
+            <form method="post" action="../proses/proses_struktur.php">
+                <input type="hidden" name="edit_page_content" value="1">
                 <div class="form-group">
-                    <label for="judul_struktur">
-                        Sub Judul <span class="required">*</span>
-                    </label>
-                    <span class="form-subtitle">Judul section (contoh: "Struktur Organisasi")</span>
-                    <input type="text" id="judul_struktur" name="judul_struktur" 
-                           value="<?php echo htmlspecialchars($header_data['judul']); ?>" required>
+                    <label for="judul_page">Judul Halaman</label>
+                    <input type="text" id="judul_page" name="judul_page" value="<?php echo htmlspecialchars($judul_page); ?>">
                 </div>
-                
                 <div class="form-group">
-                    <label for="deskripsi_struktur">
-                        Deskripsi Sub Judul <span class="required">*</span>
-                    </label>
-                    <span class="form-subtitle">Deskripsi singkat di bawah judul</span>
-                    <textarea id="deskripsi_struktur" name="deskripsi_struktur" rows="2" required><?php echo htmlspecialchars($header_data['deskripsi']); ?></textarea>
+                    <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
+                    <textarea id="deskripsi_page" name="deskripsi_page" rows="4"><?php echo htmlspecialchars($deskripsi_page); ?></textarea>
                 </div>
-                
-                <div class="form-group">
-                    <button type="submit" class="btn-primary" name="submit_header">💾 Simpan Header</button>
+                <div class="form-group" style="margin-top: 10px;">
+                    <input type="submit" name="submit" class="btn-primary" value="Simpan Konten Halaman">
                 </div>
             </form>
-        </div>
-        
-        
-        <!-- SECTION 3: Kelola Data Anggota -->
-        <div class="card">
-            <div class="card-header">
-                <h3>Kelola Data Anggota</h3>
-            </div>
-            
-            <div class="table-actions">
-                <button class="btn-primary" onclick="openModal('addModal')">
-                    + Tambah Anggota Baru
-                </button>
-                <a href="<?php echo $base_url; ?>index.php" class="btn-secondary">
-                    ← Kembali
-                </a>
-            </div>
-            
-            <?php if(empty($struktur)): ?>
-                <div class="alert-info">
-                    Belum ada data anggota tim.
+        </fieldset>
+
+        <!-- Form: Tambah anggota -->
+        <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: 30px;">
+            <legend>Tambah Anggota Tim Baru</legend>
+            <form method="post" action="../proses/proses_struktur.php" enctype="multipart/form-data">
+                <input type="hidden" name="tambah" value="1">
+                <div class="form-group">
+                    <label for="nama_dosen_new">Nama Lengkap & Gelar (Kolom: nama_dosen)</label>
+                    <input type="text" id="nama_dosen_new" name="nama_dosen" required>
                 </div>
-            <?php else: ?>
-            
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th class="col-no">No</th>
-                        <th class="col-foto">Foto</th>
-                        <th>Nama</th>
-                        <th class="col-jabatan">Jabatan</th>
-                        <th class="col-focus">Focus</th>
-                        <th class="col-urutan">Urutan</th>
-                        <th class="col-aksi">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $no = 1;
-                    foreach($struktur as $anggota): 
-                    ?>
-                    <tr>
-                        <td class="text-center"><?php echo $no++; ?></td>
-                        <td>
-                            <img src="<?php echo $base_url . $anggota['foto']; ?>" 
-                                 alt="<?php echo htmlspecialchars($anggota['nama']); ?>"
-                                 class="table-img">
-                        </td>
-                        <td><strong><?php echo htmlspecialchars($anggota['nama']); ?></strong></td>
-                        <td><?php echo htmlspecialchars($anggota['jabatan']); ?></td>
-                        <td><?php echo htmlspecialchars($anggota['focus']); ?></td>
-                        <td class="text-center"><?php echo htmlspecialchars($anggota['urutan']); ?></td>
-                        <td class="action-cell">
-                            <button class="btn-warning btn-small btn-action" 
-                                    onclick='openEditModal(<?php echo json_encode($anggota); ?>)'> Edit
-                            </button>
-                            <a href="<?php echo $base_url; ?>profil/proses/proses_struktur.php?action=delete&id=<?php echo $anggota['id_anggota']; ?>" 
-                               class="btn-danger btn-small" 
-                               onclick="return confirmDelete('<?php echo htmlspecialchars($anggota['nama']); ?>')">
-                                Hapus
-                            </a>
-                        </td>
-                    </tr>
+                <div class="form-group">
+                    <label for="jabatan_new">Jabatan / Role (Kolom: jabatan)</label>
+                    <input type="text" id="jabatan_new" name="jabatan" required>
+                </div>
+                <div class="form-group">
+                    <label for="media_path_dosen_new">Foto Profil (Kolom: media_path)</label>
+                    <input type="file" id="media_path_dosen_new" name="foto" accept="image/*">
+                </div>
+                <input type="submit" class="btn-primary" value="Tambahkan Anggota Baru">
+            </form>
+        </fieldset>
+
+        <h2>Daftar Semua Dosen/Staf Aktif</h2>
+        <table class="dosen-table">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Jabatan</th>
+                    <th>Foto</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($members)): ?>
+                    <tr><td colspan="4" class="text-muted">Belum ada anggota.</td></tr>
+                <?php else: ?>
+                    <?php foreach ($members as $m): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($m['nama_dosen']); ?></td>
+                            <td><?php echo htmlspecialchars($m['jabatan']); ?></td>
+                            <td>
+                                <?php $img = !empty($m['media_path']) ? '../../uploads/dosen/' . $m['media_path'] : '../../uploads/dosen/default.png'; ?>
+                                <img src="<?php echo $img; ?>" alt="" class="thumb">
+                            </td>
+                            <td>
+                                <!-- EDIT: tampilkan form inline / modal link — di sini gunakan form sederhana -->
+                                <form class="action-form" method="post" action="../proses/proses_struktur.php" enctype="multipart/form-data">
+                                    <input type="hidden" name="edit" value="1">
+                                    <input type="hidden" name="id_anggota" value="<?php echo $m['id_anggota']; ?>">
+                                    <input type="hidden" name="id_dosen" value="<?php echo $m['id_dosen']; ?>">
+                                    <input type="hidden" name="nama_dosen" value="<?php echo htmlspecialchars($m['nama_dosen']); ?>">
+                                    <input type="hidden" name="jabatan" value="<?php echo htmlspecialchars($m['jabatan']); ?>">
+                                    <button type="button" onclick="openEdit(<?php echo $m['id_anggota']; ?>)" class="btn-primary" style="background-color: orange;">Edit</button>
+                                </form>
+
+                                <!-- HAPUS -->
+                                <form class="action-form" method="post" action="../proses/proses_struktur.php" onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
+                                    <input type="hidden" name="hapus" value="1">
+                                    <input type="hidden" name="id_anggota" value="<?php echo $m['id_anggota']; ?>">
+                                    <button type="submit" class="btn-primary" style="background-color: #e74c3c;">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <?php endif; ?>
-        </div>
-        
-        <!-- Info Card -->
-        <div class="card card-info">
-            <div class="card-header">
-                <h3>💡 Petunjuk</h3>
-            </div>
-            <ul class="guideline-list">
-                <li>Klik "Tambah Anggota Baru" untuk menambah anggota tim</li>
-                <li>Foto akan ditampilkan dalam bentuk bulat di website</li>
-                <li>Urutan menentukan posisi tampilan di website (1 = paling kiri)</li>
-                <li>Focus penelitian bersifat opsional</li>
-                <li>Gunakan foto dengan resolusi minimal 300x300 px</li>
-            </ul>
-        </div>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+        <!-- Dialog / UI sederhana untuk edit (bisa diganti modal). 
+             Untuk kesederhanaan: kita buka jendela pop-up prompt untuk edit nama & jabatan;
+             atau Anda bisa implement modal JS sesuai admin-dashboard.js -->
     </div>
 
-    <!-- MODAL ADD -->
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('addModal')">&times;</span>
-            <h3>Tambah Anggota Tim Baru</h3>
-            <form action="<?php echo $base_url; ?>profil/proses/proses_struktur.php" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="add">
-                
-                <div class="form-group">
-                    <label for="add_nama">
-                        Nama Lengkap <span class="required">*</span>
-                    </label>
-                    <input type="text" id="add_nama" name="nama" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="add_jabatan">
-                        Jabatan <span class="required">*</span>
-                    </label>
-                    <input type="text" id="add_jabatan" name="jabatan" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="add_focus">Focus Penelitian (Opsional)</label>
-                    <input type="text" id="add_focus" name="focus">
-                </div>
-                
-                <div class="form-group">
-                    <label for="add_urutan">
-                        Urutan Tampil <span class="required">*</span>
-                    </label>
-                    <input type="number" id="add_urutan" name="urutan" min="1" value="<?php echo count($struktur) + 1; ?>" required>
-                </div>
+<script>
+function openEdit(id) {
+    // ambil current row values (dari DOM) dan buka prompt sederhana
+    const row = document.querySelector('input[name="id_anggota"][value="'+id+'"]').closest('tr');
+    const currentName = row.querySelector('input[name="nama_dosen"]').value;
+    const currentJabatan = row.querySelector('input[name="jabatan"]').value;
+    const newName = prompt('Ubah nama:', currentName);
+    if (newName === null) return;
+    const newJabatan = prompt('Ubah jabatan:', currentJabatan);
+    if (newJabatan === null) return;
 
-                <div class="form-group">
-                    <label for="add_foto">
-                        Foto Anggota <span class="required">*</span>
-                    </label>
-                    <input type="file" id="add_foto" name="foto_anggota" 
-                           accept="image/png, image/jpeg, image/jpg"
-                           required
-                           onchange="previewImage(this, 'add_preview')">
-                    <small class="form-help-text">Format: PNG/JPG, Max 2MB, Resolusi minimal 300x300px</small>
-                </div>
-                
-                <div class="form-group">
-                    <label>Preview Foto</label>
-                    <img id="add_preview" class="preview-img" style="display: none;">
-                </div>
+    // buat form dynamic untuk submit edit (tanpa upload foto)
+    const f = document.createElement('form');
+    f.method = 'post';
+    f.action = '../proses/proses_struktur.php';
 
-                <div class="form-group">
-                    <button type="submit" class="btn-primary" name="submit">💾 Simpan Anggota</button>
-                    <button type="button" class="btn-secondary" onclick="closeModal('addModal')">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- MODAL EDIT -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
-            <h3 id="editModalTitle">Edit Anggota</h3>
-            <form action="<?php echo $base_url; ?>profil/proses/proses_struktur.php" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="update">
-                <input type="hidden" name="id_anggota" id="edit_id">
-                <input type="hidden" name="old_foto_path" id="edit_old_foto_path">
-                
-                <div class="form-group">
-                    <label for="edit_nama">
-                        Nama Lengkap <span class="required">*</span>
-                    </label>
-                    <input type="text" id="edit_nama" name="nama" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_jabatan">
-                        Jabatan <span class="required">*</span>
-                    </label>
-                    <input type="text" id="edit_jabatan" name="jabatan" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_focus">Focus Penelitian (Opsional)</label>
-                    <input type="text" id="edit_focus" name="focus">
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_urutan">
-                        Urutan Tampil <span class="required">*</span>
-                    </label>
-                    <input type="number" id="edit_urutan" name="urutan" min="1" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_foto">Foto Anggota Baru (Opsional)</label>
-                    <input type="file" id="edit_foto" name="foto_anggota" 
-                           accept="image/png, image/jpeg, image/jpg"
-                           onchange="previewImage(this, 'edit_preview')">
-                    <small class="form-help-text">*Kosongkan jika tidak ingin mengganti foto</small>
-                </div>
-                
-                <div class="form-group">
-                    <label>Preview Foto Saat Ini</label>
-                    <img id="edit_preview" class="preview-img">
-                </div>
+    const hiddenEdit = document.createElement('input'); hiddenEdit.type='hidden'; hiddenEdit.name='edit'; hiddenEdit.value='1'; f.appendChild(hiddenEdit);
+    const hidIdAng = document.createElement('input'); hidIdAng.type='hidden'; hidIdAng.name='id_anggota'; hidIdAng.value = id; f.appendChild(hidIdAng);
+    const hidIdDosen = document.createElement('input'); hidIdDosen.type='hidden'; hidIdDosen.name='id_dosen'; hidIdDosen.value = row.querySelector('input[name="id_dosen"]').value; f.appendChild(hidIdDosen);
+    const hidNama = document.createElement('input'); hidNama.type='hidden'; hidNama.name='nama_dosen'; hidNama.value = newName; f.appendChild(hidNama);
+    const hidJabatan = document.createElement('input'); hidJabatan.type='hidden'; hidJabatan.name='jabatan'; hidJabatan.value = newJabatan; f.appendChild(hidJabatan);
 
-                <div class="form-group">
-                    <button type="submit" class="btn-primary" name="submit">💾 Simpan Perubahan</button>
-                    <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    document.body.appendChild(f);
+    f.submit();
+}
+</script>
 
-    <script>
-        function openEditModal(anggota) {
-            const pathPrefix = "<?php echo $base_url; ?>";
-            
-            document.getElementById('edit_id').value = anggota.id_anggota;
-            document.getElementById('edit_nama').value = anggota.nama;
-            document.getElementById('edit_jabatan').value = anggota.jabatan;
-            document.getElementById('edit_focus').value = anggota.focus;
-            document.getElementById('edit_urutan').value = anggota.urutan;
-            document.getElementById('edit_old_foto_path').value = anggota.foto;
-            document.getElementById('edit_preview').src = pathPrefix + anggota.foto;
-            document.getElementById('edit_preview').style.display = 'block';
-            document.getElementById('edit_foto').value = '';
-            document.getElementById('editModalTitle').innerText = 'Edit Anggota: ' + anggota.nama;
-            
-            openModal('editModal');
-        }
-    </script>
-    <script src="/admin/asset/js/script_admin.js"></script>
 </body>
 </html>
