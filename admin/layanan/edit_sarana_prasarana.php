@@ -1,99 +1,57 @@
 <?php 
+// File: admin/layanan/edit_sarana_prasarana.php
 session_start();
-$page_title = "Nama Halaman";
-$base_url = './'; // Sesuaikan level folder
+require_once '../../config/koneksi.php';
+$page_title = "Manajemen Sarana & Prasarana";
+$current_page = "edit_sarana";
+$base_url = '../../'; // Path relatif naik dua tingkat ke folder admin/
+$assetUrl = '../../assets/admin';
+$saranaList = [];
+$result = pg_query($conn, "SELECT id_sarana, nama_sarana, media_path FROM sarana ORDER BY id_sarana DESC");
+if ($result) {
+    $saranaList = pg_fetch_all($result) ?: [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $page_title; ?> - Admin NCS Lab</title>
-    <link rel="stylesheet" href="/admin/asset/css/style_admin.css">
+    <title><?php echo $page_title; ?></title>
+    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
+    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
+    <style>
+        .sarana-table th, .sarana-table td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        .sarana-table thead tr { background-color: #eee; }
+    </style>
 </head>
 <body>
-    
+
     <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
+        <a href="../index.php">Dashboard</a>
+        <a href="../beranda/edit_beranda.php">Edit Beranda</a>
+        <a href="../edit_header.php">Edit Header Title</a> 
+        <a href="../profil/edit_logo.php">Edit Logo</a> 
+        <a href="../edit_footer.php">Edit Footer Details</a> 
+        <a href="../dosen/edit_dosen.php">Profil Dosen/Staf</a>
         
-        <a href="index.php">Dashboard</a>
-        
-        <a href="/admin/admin/beranda/edit_beranda.php">Edit Beranda</a>
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="/admin/include/edit_header.php">Edit Header</a>
-        <a href="/admin/include/edit_footer.php">Edit Footer</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="/admin/admin/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="/admin/admin/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="/admin/admin/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="/admin/admin/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="/admin/admin/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="/admin/admin/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="/admin/admin/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="/admin/admin/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="/admin/admin/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="/admin/admin/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="/admin/admin/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="/admin/admin/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
+        <h3>MANAJEMEN KONTEN</h3>
+        <a href="edit_sarana_prasarana.php" class="<?php echo $current_page == 'edit_sarana' ? 'active' : ''; ?>">Sarana & Prasarana</a>
+        <a href="lihat_pesan.php">Pesan Konsultatif</a>
+        <a href="../logout.php">Logout</a>
     </div>
+
     <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
-        </div>
-        
-        <!-- Form -->
-        <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?> (Tabel: sarana)</h1>
         </div>
 
         <p>Gunakan form ini untuk menambah sarana/prasarana atau layanan baru yang ditampilkan di halaman Services/sarana-prasarana.</p>
 
-        <form method="post" action="../../proses/proses_layanan.php" enctype="multipart/form-data">
+        <form method="post" action="../proses/proses_sarana_prasarana.php" enctype="multipart/form-data">
+            <input type="hidden" name="tambah_sarana" value="1">
             
-            <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: auto;">
+            <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: 30px;">
                 <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Tambah Sarana/Layanan Baru</legend>
                 
                 <div class="form-group">
@@ -101,12 +59,8 @@ $base_url = './'; // Sesuaikan level folder
                     <input type="text" id="nama_sarana" name="nama_sarana" placeholder="Contoh: Dedicated Server Room" required>
                 </div>
                 <div class="form-group">
-                    <label for="deskripsi">Deskripsi (Kolom: deskripsi)</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="5" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="media_path">Foto Sarana (Kolom: media_path)</label>
-                    <input type="file" id="media_path" name="media_path" accept="image/*" required>
+                    <label for="media">Foto Sarana (Kolom: media_path)</label>
+                    <input type="file" id="media" name="media" accept="image/*" required>
                 </div>
                 
                 <input type="submit" class="btn-primary" value="Tambahkan Sarana">
@@ -123,21 +77,30 @@ $base_url = './'; // Sesuaikan level folder
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Dedicated Server Room</td>
-                        <td>Infrastruktur berdaya tinggi untuk hosting...</td>
-                        <td><button type="button" class="btn-primary" style="background-color: orange;">Edit</button></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Network Forensics Tools</td>
-                        <td>Perangkat lunak untuk analisis jaringan...</td>
-                        <td><button type="button" class="btn-primary" style="background-color: orange;">Edit</button></td>
-                    </tr>
+                    <?php if (empty($saranaList)): ?>
+                        <tr>
+                            <td colspan="4" style="text-align:center;">Belum ada data sarana.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($saranaList as $sarana): ?>
+                            <tr>
+                                <td><?php echo $sarana['id_sarana']; ?></td>
+                                <td><?php echo htmlspecialchars($sarana['nama_sarana']); ?></td>
+                                <td>
+                                    <?php if (!empty($sarana['media_path'])): ?>
+                                        <img src="<?php echo $base_url . '/uploads/sarana/' . htmlspecialchars($sarana['media_path']); ?>" alt="<?php echo htmlspecialchars($sarana['nama_sarana']); ?>" style="height:60px;">
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <a href="../proses/proses_sarana_prasarana.php?hapus=<?php echo $sarana['id_sarana']; ?>" onclick="return confirm('Hapus sarana ini?')" class="btn-primary" style="background-color:#dc3545;">Hapus</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </form>
-    <script src="/admin/asset/js/script_admin.js"></script>
+
+    </div>
 </body>
 </html>

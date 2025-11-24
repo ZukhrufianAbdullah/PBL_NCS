@@ -1,234 +1,71 @@
 <?php 
 // File: admin/layanan/lihat_pesan.php
 session_start();
-
-$page_title = "Pesan Konsultatif";
+$page_title = "Pesan Masuk Konsultatif";
 $current_page = "lihat_pesan";
-$base_url = '../';
+$base_url = '../../'; // Path relatif naik dua tingkat ke folder admin/
+$assetUrl = '../../assets/admin';
 
-// Dummy data pesan (nanti diambil dari database)
-$data_pesan = [
-    [
-        'id_konsultatif' => 1,
-        'nama_pengirim' => 'Ahmad Fauzi',
-        'isi_pesan' => 'Saya ingin berkonsultasi tentang keamanan network di perusahaan saya...',
-        'tanggal_kirim' => '2024-11-20 10:30:00',
-        'status' => 'belum_dibaca'
-    ],
-    [
-        'id_konsultatif' => 2,
-        'nama_pengirim' => 'Siti Nurhaliza',
-        'isi_pesan' => 'Mohon informasi mengenai layanan penetration testing...',
-        'tanggal_kirim' => '2024-11-19 14:15:00',
-        'status' => 'sudah_dibaca'
-    ],
-    [
-        'id_konsultatif' => 3,
-        'nama_pengirim' => 'Budi Santoso',
-        'isi_pesan' => 'Bagaimana cara mengamankan sistem dari serangan DDoS?',
-        'tanggal_kirim' => '2024-11-18 09:00:00',
-        'status' => 'sudah_dibaca'
-    ]
+// Data dummy untuk pesan konsultatif (Tabel: konsultatif)
+$dummy_pesan = [
+    ['id' => 1, 'nama_pengirim' => 'Esatovin', 'isi_pesan' => 'Saya tertarik konsultasi tentang kriptografi kuantum.', 'tanggal_kirim' => '2025-11-15 10:30'],
+    ['id' => 2, 'nama_pengirim' => 'Muhammad Nuril', 'isi_pesan' => 'Perlu bantuan setting VPN untuk kantor.', 'tanggal_kirim' => '2025-11-14 14:00'],
 ];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="/admin/asset/css/style_admin.css">
+    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
+    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
+    <style>
+        .pesan-table th, .pesan-table td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        .pesan-table thead tr { background-color: #f7f7f7; }
+    </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
-        
-        <a href="index.php">Dashboard</a>
-        
-        <a href="/admin/admin/beranda/edit_beranda.php">Edit Beranda</a>
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="/admin/include/edit_header.php">Edit Header</a>
-        <a href="/admin/include/edit_footer.php">Edit Footer</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="/admin/admin/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="/admin/admin/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="/admin/admin/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="/admin/admin/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="/admin/admin/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="/admin/admin/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="/admin/admin/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="/admin/admin/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="/admin/admin/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="/admin/admin/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="/admin/admin/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="/admin/admin/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
+        <a href="../index.php">Dashboard</a>
+        <a href="edit_sarana_prasarana.php">Sarana & Prasarana</a>
+        <a href="lihat_pesan.php" class="<?php echo $current_page == 'lihat_pesan' ? 'active' : ''; ?>">Pesan Konsultatif</a>
+        <a href="../logout.php">Logout</a>
     </div>
 
     <div class="content">
         <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
+            <h1><?php echo $page_title; ?> (Tabel: konsultatif)</h1>
         </div>
-        
-        <?php if(isset($_GET['success'])): ?>
-        <div class="alert-success">
-            Pesan berhasil dihapus!
-        </div>
-        <?php endif; ?>
-        
-        <!-- Statistik Pesan -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-            <div class="card" style="border-left: 4px solid #060771;">
-                <h4 style="margin: 0 0 5px 0; color: #666;">Total Pesan</h4>
-                <p style="font-size: 2em; font-weight: bold; margin: 0; color: #060771;">
-                    <?php echo count($data_pesan); ?>
-                </p>
-            </div>
-            <div class="card" style="border-left: 4px solid #FCD917;">
-                <h4 style="margin: 0 0 5px 0; color: #666;">Belum Dibaca</h4>
-                <p style="font-size: 2em; font-weight: bold; margin: 0; color: #FCD917;">
-                    <?php 
-                    $belum_dibaca = array_filter($data_pesan, function($p) { 
-                        return $p['status'] == 'belum_dibaca'; 
-                    });
-                    echo count($belum_dibaca);
-                    ?>
-                </p>
-            </div>
-            <div class="card" style="border-left: 4px solid #28a745;">
-                <h4 style="margin: 0 0 5px 0; color: #666;">Sudah Dibaca</h4>
-                <p style="font-size: 2em; font-weight: bold; margin: 0; color: #28a745;">
-                    <?php 
-                    $sudah_dibaca = array_filter($data_pesan, function($p) { 
-                        return $p['status'] == 'sudah_dibaca'; 
-                    });
-                    echo count($sudah_dibaca);
-                    ?>
-                </p>
-            </div>
-        </div>
-        
-        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            
-            <div class="search-box" style="margin-bottom: 20px;">
-                <input type="text" id="searchInput" placeholder="Cari pesan..." 
-                       onkeyup="searchTable('searchInput', 'pesanTable')">
-            </div>
-            
-            <?php if(empty($data_pesan)): ?>
-                <div class="alert-info">
-                    Belum ada pesan masuk.
-                </div>
-            <?php else: ?>
-            
-            <table id="pesanTable">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Nama Pengirim</th>
-                        <th>Isi Pesan</th>
-                        <th style="width: 150px;">Tanggal</th> 
-                        <th style="width: 150px; text-align: center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $no = 1;
-                    foreach($data_pesan as $pesan): 
-                    ?>
-                    <tr style="<?php echo $pesan['status'] == 'belum_dibaca' ? 'background-color: #fff9e6;' : ''; ?>">
-                        <td><?php echo $no++; ?></td>
-                        <td>
-                            <strong><?php echo $pesan['nama_pengirim']; ?></strong>
-                        </td>
-                        <td>
-                            <?php echo substr($pesan['isi_pesan'], 0, 80) . '...'; ?>
-                        </td>
-                        <td>
-                            <small>
-                                <?php echo date('d/m/Y H:i', strtotime($pesan['tanggal_kirim'])); ?>
-                            </small>
-                        </td>
-                        <td style="text-align: center;">
-                            <button onclick="lihatPesan(<?php echo $pesan['id_konsultatif']; ?>)" 
-                                    class="btn-success" style="margin-right: 5px;">
-                                Detail
-                            </button>
-                            <button onclick="return confirmDelete('pesan dari <?php echo $pesan['nama_pengirim']; ?>')" 
-                                    class="btn-danger">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <?php endif; ?>
-        </div>
-        
-        <div class="card" style="margin-top: 20px;">
-            <div class="card-header">
-                <h3>Informasi</h3>
-            </div>
-            <ul style="line-height: 1.8; color: #555; padding-left: 20px;">
-                <li>Pesan dengan latar kuning adalah pesan yang belum dibaca</li>
-                <li>Klik tombol "Detail" untuk melihat isi pesan lengkap</li>
-                <li>Pesan yang telah dihapus tidak dapat dikembalikan</li>
-                <li>Gunakan fitur pencarian untuk mencari pesan tertentu</li>
-            </ul>
-        </div>
-    </div>
 
-    <script src="/admin/asset/js/script_admin.js"></script>
-    <script>
-        function lihatPesan(id) {
-            // Redirect ke halaman detail atau buka modal
-            window.location.href = 'detail_pesan.php?id=' + id;
-        }
-    </script>
+        <p>Daftar pesan masuk dari pengunjung yang ingin berkonsultasi (Services/konsultatif).</p>
+
+        <table class="pesan-table">
+            <thead>
+                <tr>
+                    <th>Waktu Kirim</th>
+                    <th>Nama Pengirim</th>
+                    <th>Isi Pesan Singkat</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($dummy_pesan as $pesan): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($pesan['tanggal_kirim']); ?></td>
+                    <td><?php echo htmlspecialchars($pesan['nama_pengirim']); ?></td>
+                    <td><?php echo htmlspecialchars(substr($pesan['isi_pesan'], 0, 50)) . '...'; ?></td>
+                    <td>
+                        <button class="btn-primary" style="background-color: orange; padding: 5px 10px;">Lihat Detail</button>
+                        <a href="hapus_pesan.php?id=<?php echo $pesan['id']; ?>" onclick="return confirm('Yakin hapus pesan ini?')" class="btn-primary" style="background-color: red; padding: 5px 10px; text-decoration: none;">Hapus</a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        
+        <p style="margin-top: 20px;">*Untuk melihat pesan lengkap, klik tombol "Lihat Detail".</p>
+    </div>
 </body>
 </html>
