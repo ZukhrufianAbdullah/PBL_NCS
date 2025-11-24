@@ -2,17 +2,17 @@
 // Konfigurasi koneksi database PostgreSQL
 $host       = "localhost";             
 $port       = "5432";                  
-$dbname     = "lab_network_security";  
+$dbname     = "pbl2";  
 $user       = "postgres";              
-$password   = "123456";                
+$password   = "555111";                
 
-try {
-    // Membuat koneksi ke database PostgreSQL menggunakan PDO
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
+// Gunakan koneksi pgsql prosedural agar kompatibel dengan module legacy
+$conn_string = "host={$host} port={$port} dbname={$dbname} user={$user} password={$password}";
+$conn = pg_connect($conn_string);
 
-    // Mengatur mode error agar melempar exception saat ada error
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Koneksi ke database PostgreSQL gagal: " . $e->getMessage());
+if (!$conn) {
+    die("Koneksi ke database PostgreSQL gagal: " . pg_last_error());
 }
+
+pg_set_client_encoding($conn, "UTF8");
 ?>
