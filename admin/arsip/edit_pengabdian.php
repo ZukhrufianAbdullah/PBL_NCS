@@ -1,17 +1,48 @@
 <?php 
+// File: admin/arsip/edit_pengabdian.php
 session_start();
-$page_title = "Nama Halaman";
-$base_url = './'; // Sesuaikan level folder
+
+$page_title = "Kelola Pengabdian Masyarakat";
+$current_page = "edit_pengabdian";
+$current_menu_group = "arsipMenu"; // Tambahan untuk membuka grup menu aktif
+$base_url = '../'; // Revisi path: Dari arsip/ ke root / adalah dua tingkat ke atas
+
+// Dummy data
+$data_pengabdian = [
+    [
+        'id_pengabdian' => 1,
+        'judul_pengabdian' => 'Pelatihan Keamanan Siber untuk UMKM',
+        'skema' => 'PKM',
+        'tahun' => 2024,
+        'ketua' => 'Dr. Ahmad Fauzi, M.Kom'
+    ],
+    [
+        'id_pengabdian' => 2,
+        'judul_pengabdian' => 'Sosialisasi Keamanan Jaringan di Era Industri 4.0',
+        'skema' => 'PPM',
+        'tahun' => 2023,
+        'ketua' => 'Budi Santoso, S.T., M.Cs.'
+    ],
+    [
+        'id_pengabdian' => 3,
+        'judul_pengabdian' => 'Pengembangan Aplikasi Sistem Informasi Desa',
+        'skema' => 'HIB',
+        'tahun' => 2024,
+        'ketua' => 'Siti Aisyah, M.Kom.'
+    ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $page_title; ?> - Admin NCS Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $page_title; ?></title>
     <link rel="stylesheet" href="/admin/asset/css/style_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;507;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+
     <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
         
@@ -28,7 +59,7 @@ $base_url = './'; // Sesuaikan level folder
         <div class="dropdown-item">
             <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
                 PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
+                <span class="dropdown-icon" id="icon-manajemenKonten"></span>
             </a>
             <div class="submenu-wrapper" id="manajemenKonten">
                 <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
@@ -78,66 +109,66 @@ $base_url = './'; // Sesuaikan level folder
             </div>
         </div>
     </div>
+
     <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?></h1>
         </div>
         
-        <!-- Form -->
-        <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?> (Tabel: sarana)</h1>
-        </div>
-
-        <p>Gunakan form ini untuk menambah sarana/prasarana atau layanan baru yang ditampilkan di halaman Services/sarana-prasarana.</p>
-
-        <form method="post" action="../../proses/proses_layanan.php" enctype="multipart/form-data">
+        <div class="card content-box">
             
-            <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: auto;">
-                <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Tambah Sarana/Layanan Baru</legend>
-                
-                <div class="form-group">
-                    <label for="nama_sarana">Nama Sarana/Layanan (Kolom: nama_sarana)</label>
-                    <input type="text" id="nama_sarana" name="nama_sarana" placeholder="Contoh: Dedicated Server Room" required>
+            <div class="toolbar-top">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari Judul, Ketua, atau Skema..." 
+                           onkeyup="searchTable('searchInput', 'pengabdianTable')">
                 </div>
-                <div class="form-group">
-                    <label for="deskripsi">Deskripsi (Kolom: deskripsi)</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="5" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="media_path">Foto Sarana (Kolom: media_path)</label>
-                    <input type="file" id="media_path" name="media_path" accept="image/*" required>
-                </div>
-                
-                <input type="submit" class="btn-primary" value="Tambahkan Sarana">
-            </fieldset>
-
-            <h3 style="margin-top: 30px; color: var(--primary-color);">Daftar Sarana Aktif Saat Ini</h3>
-            <table class="sarana-table">
+                <a href="tambah_pengabdian.php" class="btn-primary">
+                    + Tambah Pengabdian Baru
+                </a>
+            </div>
+            
+            <table id="pengabdianTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nama Sarana</th>
-                        <th>Deskripsi Singkat</th>
-                        <th>Aksi</th>
+                        <th style="width: 50px;">No</th>
+                        <th>Judul Pengabdian</th>
+                        <th style="width: 200px;">Ketua Tim</th>
+                        <th style="width: 100px;">Skema</th>
+                        <th style="width: 80px;">Tahun</th>
+                        <th style="width: 150px; text-align: center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php 
+                    $no = 1;
+                    foreach($data_pengabdian as $pengabdian): 
+                    ?>
                     <tr>
-                        <td>1</td>
-                        <td>Dedicated Server Room</td>
-                        <td>Infrastruktur berdaya tinggi untuk hosting...</td>
-                        <td><button type="button" class="btn-primary" style="background-color: orange;">Edit</button></td>
+                        <td><?php echo $no++; ?></td>
+                        <td><?php echo $pengabdian['judul_pengabdian']; ?></td>
+                        <td><?php echo $pengabdian['ketua']; ?></td>
+                        <td><span class="badge badge-info"><?php echo $pengabdian['skema']; ?></span></td>
+                        <td><?php echo $pengabdian['tahun']; ?></td>
+                        <td class="action-column">
+                            <a href="edit_pengabdian_form.php?id=<?php echo $pengabdian['id_pengabdian']; ?>" 
+                               class="btn-warning btn-action">
+                                Edit
+                            </a>
+                            <button onclick="return confirmDelete('<?php echo $pengabdian['judul_pengabdian']; ?>')" 
+                                    class="btn-danger btn-action">
+                                Hapus
+                            </button>
+                        </td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Network Forensics Tools</td>
-                        <td>Perangkat lunak untuk analisis jaringan...</td>
-                        <td><button type="button" class="btn-primary" style="background-color: orange;">Edit</button></td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
-        </form>
+        </div>
+    </div>
+
+    <script>
+        const CURRENT_MENU_GROUP = '<?php echo $current_menu_group; ?>';
+    </script>
     <script src="/admin/asset/js/script_admin.js"></script>
 </body>
 </html>

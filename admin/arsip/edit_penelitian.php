@@ -1,21 +1,43 @@
 <?php 
+// File: admin/arsip/edit_penelitian.php
 session_start();
-$page_title = "Nama Halaman";
-$base_url = './'; // Sesuaikan level folder
+
+$page_title = "Kelola Penelitian";
+$current_page = "edit_penelitian";
+$base_url = '../';
+
+// Dummy data
+$data_penelitian = [
+    [
+        'id_penelitian' => 1,
+        'judul_penelitian' => 'Analisis Keamanan Jaringan Menggunakan Machine Learning',
+        'tahun' => 2024,
+        'author' => 'Dr. Ahmad Fauzi, M.Kom',
+        'status' => 'Selesai'
+    ],
+    [
+        'id_penelitian' => 2,
+        'judul_penelitian' => 'Implementasi Blockchain untuk Keamanan Data',
+        'tahun' => 2024,
+        'author' => 'Siti Nurhaliza, M.T',
+        'status' => 'Berjalan'
+    ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $page_title; ?> - Admin NCS Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $page_title; ?></title>
     <link rel="stylesheet" href="/admin/asset/css/style_admin.css">
 </head>
 <body>
-    
+
     <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
         
-        <a href="index.php">Dashboard</a>
+        <a href="admin/index.php">Dashboard</a>
         
         <a href="/admin/admin/beranda/edit_beranda.php">Edit Beranda</a>
         
@@ -78,66 +100,73 @@ $base_url = './'; // Sesuaikan level folder
             </div>
         </div>
     </div>
+
     <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?></h1>
         </div>
         
-        <!-- Form -->
-        <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?> (Tabel: sarana)</h1>
+        <?php if(isset($_GET['success'])): ?>
+        <div class="alert-success">
+            Penelitian berhasil <?php echo $_GET['success'] == 'delete' ? 'dihapus' : 'diperbarui'; ?>!
         </div>
-
-        <p>Gunakan form ini untuk menambah sarana/prasarana atau layanan baru yang ditampilkan di halaman Services/sarana-prasarana.</p>
-
-        <form method="post" action="../../proses/proses_layanan.php" enctype="multipart/form-data">
+        <?php endif; ?>
+        
+        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             
-            <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: auto;">
-                <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Tambah Sarana/Layanan Baru</legend>
-                
-                <div class="form-group">
-                    <label for="nama_sarana">Nama Sarana/Layanan (Kolom: nama_sarana)</label>
-                    <input type="text" id="nama_sarana" name="nama_sarana" placeholder="Contoh: Dedicated Server Room" required>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari penelitian..." 
+                           onkeyup="searchTable('searchInput', 'penelitianTable')">
                 </div>
-                <div class="form-group">
-                    <label for="deskripsi">Deskripsi (Kolom: deskripsi)</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="5" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="media_path">Foto Sarana (Kolom: media_path)</label>
-                    <input type="file" id="media_path" name="media_path" accept="image/*" required>
-                </div>
-                
-                <input type="submit" class="btn-primary" value="Tambahkan Sarana">
-            </fieldset>
-
-            <h3 style="margin-top: 30px; color: var(--primary-color);">Daftar Sarana Aktif Saat Ini</h3>
-            <table class="sarana-table">
+                <a href="tambah_penelitian.php" class="btn-primary">
+                    + Tambah Penelitian Baru
+                </a>
+            </div>
+            
+            <table id="penelitianTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nama Sarana</th>
-                        <th>Deskripsi Singkat</th>
-                        <th>Aksi</th>
+                        <th style="width: 50px;">No</th>
+                        <th>Judul Penelitian</th>
+                        <th style="width: 200px;">Peneliti</th>
+                        <th style="width: 80px;">Tahun</th>
+                        <th style="width: 100px;">Status</th>
+                        <th style="width: 150px; text-align: center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php 
+                    $no = 1;
+                    foreach($data_penelitian as $penelitian): 
+                    ?>
                     <tr>
-                        <td>1</td>
-                        <td>Dedicated Server Room</td>
-                        <td>Infrastruktur berdaya tinggi untuk hosting...</td>
-                        <td><button type="button" class="btn-primary" style="background-color: orange;">Edit</button></td>
+                        <td><?php echo $no++; ?></td>
+                        <td><strong><?php echo $penelitian['judul_penelitian']; ?></strong></td>
+                        <td><?php echo $penelitian['author']; ?></td>
+                        <td><?php echo $penelitian['tahun']; ?></td>
+                        <td>
+                            <span class="badge badge-<?php echo $penelitian['status'] == 'Selesai' ? 'success' : 'warning'; ?>">
+                                <?php echo $penelitian['status']; ?>
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="edit_penelitian_form.php?id=<?php echo $penelitian['id_penelitian']; ?>" 
+                               class="btn-warning" style="margin-right: 5px;">
+                                Edit
+                            </a>
+                            <button onclick="return confirmDelete('<?php echo $penelitian['judul_penelitian']; ?>')" 
+                                    class="btn-danger">
+                                Hapus
+                            </button>
+                        </td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Network Forensics Tools</td>
-                        <td>Perangkat lunak untuk analisis jaringan...</td>
-                        <td><button type="button" class="btn-primary" style="background-color: orange;">Edit</button></td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
-        </form>
+        </div>
+    </div>
+
     <script src="/admin/asset/js/script_admin.js"></script>
 </body>
 </html>

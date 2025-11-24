@@ -1,33 +1,36 @@
 <?php 
-// File: admin/layanan/lihat_pesan.php
+// File: admin/galeri/edit_agenda.php
 session_start();
 
-$page_title = "Pesan Konsultatif";
-$current_page = "lihat_pesan";
-$base_url = '../';
+$page_title = "Kelola Agenda";
+$current_page = "edit_agenda";
+$base_url = '../../';
 
-// Dummy data pesan (nanti diambil dari database)
-$data_pesan = [
+// Dummy data (nanti dari database: tabel agenda)
+$data_agenda = [
     [
-        'id_konsultatif' => 1,
-        'nama_pengirim' => 'Ahmad Fauzi',
-        'isi_pesan' => 'Saya ingin berkonsultasi tentang keamanan network di perusahaan saya...',
-        'tanggal_kirim' => '2024-11-20 10:30:00',
-        'status' => 'belum_dibaca'
+        'id_agenda' => 1,
+        'judul_agenda' => 'Workshop Cyber Security 2024',
+        'deskripsi' => 'Workshop tentang keamanan siber dan penetration testing',
+        'tanggal_agenda' => '2024-12-15',
+        'status' => 1,
+        'kategori' => 'Workshop'
     ],
     [
-        'id_konsultatif' => 2,
-        'nama_pengirim' => 'Siti Nurhaliza',
-        'isi_pesan' => 'Mohon informasi mengenai layanan penetration testing...',
-        'tanggal_kirim' => '2024-11-19 14:15:00',
-        'status' => 'sudah_dibaca'
+        'id_agenda' => 2,
+        'judul_agenda' => 'Seminar Network Security',
+        'deskripsi' => 'Seminar nasional tentang keamanan jaringan komputer',
+        'tanggal_agenda' => '2024-12-20',
+        'status' => 1,
+        'kategori' => 'Seminar'
     ],
     [
-        'id_konsultatif' => 3,
-        'nama_pengirim' => 'Budi Santoso',
-        'isi_pesan' => 'Bagaimana cara mengamankan sistem dari serangan DDoS?',
-        'tanggal_kirim' => '2024-11-18 09:00:00',
-        'status' => 'sudah_dibaca'
+        'id_agenda' => 3,
+        'judul_agenda' => 'Pelatihan Ethical Hacking',
+        'deskripsi' => 'Pelatihan dasar ethical hacking untuk mahasiswa',
+        'tanggal_agenda' => '2024-11-10',
+        'status' => 0,
+        'kategori' => 'Pelatihan'
     ]
 ];
 ?>
@@ -41,7 +44,7 @@ $data_pesan = [
 </head>
 <body>
 
-    <div class="sidebar">
+        <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
         
         <a href="index.php">Dashboard</a>
@@ -57,7 +60,7 @@ $data_pesan = [
         <div class="dropdown-item">
             <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
                 PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
+                <span class="dropdown-icon" id="icon-manajemenKonten"></span>
             </a>
             <div class="submenu-wrapper" id="manajemenKonten">
                 <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
@@ -115,89 +118,84 @@ $data_pesan = [
         
         <?php if(isset($_GET['success'])): ?>
         <div class="alert-success">
-            Pesan berhasil dihapus!
+            <?php 
+            if($_GET['success'] == 'delete') {
+                echo 'Agenda berhasil dihapus!';
+            } else {
+                echo 'Data berhasil diperbarui!';
+            }
+            ?>
         </div>
         <?php endif; ?>
         
-        <!-- Statistik Pesan -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-            <div class="card" style="border-left: 4px solid #060771;">
-                <h4 style="margin: 0 0 5px 0; color: #666;">Total Pesan</h4>
-                <p style="font-size: 2em; font-weight: bold; margin: 0; color: #060771;">
-                    <?php echo count($data_pesan); ?>
-                </p>
-            </div>
-            <div class="card" style="border-left: 4px solid #FCD917;">
-                <h4 style="margin: 0 0 5px 0; color: #666;">Belum Dibaca</h4>
-                <p style="font-size: 2em; font-weight: bold; margin: 0; color: #FCD917;">
-                    <?php 
-                    $belum_dibaca = array_filter($data_pesan, function($p) { 
-                        return $p['status'] == 'belum_dibaca'; 
-                    });
-                    echo count($belum_dibaca);
-                    ?>
-                </p>
-            </div>
-            <div class="card" style="border-left: 4px solid #28a745;">
-                <h4 style="margin: 0 0 5px 0; color: #666;">Sudah Dibaca</h4>
-                <p style="font-size: 2em; font-weight: bold; margin: 0; color: #28a745;">
-                    <?php 
-                    $sudah_dibaca = array_filter($data_pesan, function($p) { 
-                        return $p['status'] == 'sudah_dibaca'; 
-                    });
-                    echo count($sudah_dibaca);
-                    ?>
-                </p>
-            </div>
-        </div>
-        
-        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
             
-            <div class="search-box" style="margin-bottom: 20px;">
-                <input type="text" id="searchInput" placeholder="Cari pesan..." 
-                       onkeyup="searchTable('searchInput', 'pesanTable')">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari agenda..." 
+                           onkeyup="searchTable('searchInput', 'agendaTable')"
+                           style="max-width: 300px;">
+                </div>
+                <a href="tambah_agenda.php" class="btn-primary">
+                    + Tambah Agenda Baru
+                </a>
             </div>
             
-            <?php if(empty($data_pesan)): ?>
+            <?php if(empty($data_agenda)): ?>
                 <div class="alert-info">
-                    Belum ada pesan masuk.
+                    Belum ada data agenda. Silakan tambah data baru.
                 </div>
             <?php else: ?>
             
-            <table id="pesanTable">
+            <table id="agendaTable">
                 <thead>
                     <tr>
                         <th style="width: 50px;">No</th>
-                        <th>Nama Pengirim</th>
-                        <th>Isi Pesan</th>
-                        <th style="width: 150px;">Tanggal</th> 
+                        <th>Judul Agenda</th>
+                        <th>Deskripsi</th>
+                        <th style="width: 120px;">Tanggal</th>
+                        <th style="width: 100px;">Kategori</th>
+                        <th style="width: 80px;">Status</th>
                         <th style="width: 150px; text-align: center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
                     $no = 1;
-                    foreach($data_pesan as $pesan): 
+                    foreach($data_agenda as $agenda): 
+                        // Cek apakah agenda sudah lewat
+                        $tanggal = strtotime($agenda['tanggal_agenda']);
+                        $sekarang = time();
+                        $sudah_lewat = $tanggal < $sekarang;
                     ?>
-                    <tr style="<?php echo $pesan['status'] == 'belum_dibaca' ? 'background-color: #fff9e6;' : ''; ?>">
+                    <tr style="<?php echo $sudah_lewat ? 'opacity: 0.6;' : ''; ?>">
                         <td><?php echo $no++; ?></td>
                         <td>
-                            <strong><?php echo $pesan['nama_pengirim']; ?></strong>
+                            <strong><?php echo $agenda['judul_agenda']; ?></strong>
+                            <?php if($sudah_lewat): ?>
+                                <br><small style="color: #dc3545;">Sudah Berlalu</small>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo substr($agenda['deskripsi'], 0, 60) . '...'; ?></td>
+                        <td><?php echo date('d/m/Y', strtotime($agenda['tanggal_agenda'])); ?></td>
+                        <td>
+                            <span class="badge badge-info">
+                                <?php echo $agenda['kategori']; ?>
+                            </span>
                         </td>
                         <td>
-                            <?php echo substr($pesan['isi_pesan'], 0, 80) . '...'; ?>
-                        </td>
-                        <td>
-                            <small>
-                                <?php echo date('d/m/Y H:i', strtotime($pesan['tanggal_kirim'])); ?>
-                            </small>
+                            <?php if($agenda['status'] == 1): ?>
+                                <span class="badge badge-success">Aktif</span>
+                            <?php else: ?>
+                                <span class="badge badge-danger">Tidak Aktif</span>
+                            <?php endif; ?>
                         </td>
                         <td style="text-align: center;">
-                            <button onclick="lihatPesan(<?php echo $pesan['id_konsultatif']; ?>)" 
-                                    class="btn-success" style="margin-right: 5px;">
-                                Detail
-                            </button>
-                            <button onclick="return confirmDelete('pesan dari <?php echo $pesan['nama_pengirim']; ?>')" 
+                            <a href="edit_agenda_form.php?id=<?php echo $agenda['id_agenda']; ?>" 
+                               class="btn-warning" style="margin-right: 5px;">
+                                Edit
+                            </a>
+                            <button onclick="return confirmDelete('<?php echo $agenda['judul_agenda']; ?>')" 
                                     class="btn-danger">
                                 Hapus
                             </button>
@@ -210,25 +208,20 @@ $data_pesan = [
             <?php endif; ?>
         </div>
         
-        <div class="card" style="margin-top: 20px;">
+        <div class="card">
             <div class="card-header">
                 <h3>Informasi</h3>
             </div>
             <ul style="line-height: 1.8; color: #555; padding-left: 20px;">
-                <li>Pesan dengan latar kuning adalah pesan yang belum dibaca</li>
-                <li>Klik tombol "Detail" untuk melihat isi pesan lengkap</li>
-                <li>Pesan yang telah dihapus tidak dapat dikembalikan</li>
-                <li>Gunakan fitur pencarian untuk mencari pesan tertentu</li>
+                <li>Agenda dengan status <strong>Aktif</strong> akan ditampilkan di website</li>
+                <li>Agenda yang sudah lewat tanggalnya akan ditandai dengan warna redup</li>
+                <li>Gunakan tombol "Edit" untuk mengubah data agenda</li>
+                <li>Gunakan tombol "Hapus" untuk menghapus agenda</li>
+                <li>Agenda ditampilkan berurutan dari tanggal terdekat</li>
             </ul>
         </div>
     </div>
 
     <script src="/admin/asset/js/script_admin.js"></script>
-    <script>
-        function lihatPesan(id) {
-            // Redirect ke halaman detail atau buka modal
-            window.location.href = 'detail_pesan.php?id=' + id;
-        }
-    </script>
 </body>
 </html>

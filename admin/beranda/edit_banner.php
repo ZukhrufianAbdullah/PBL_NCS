@@ -1,27 +1,87 @@
 <?php 
 // File: admin/beranda/edit_banner.php
 session_start();
-$page_title = "Edit Banner Halaman Utama";
+
+$page_title = "Edit Banner Utama";
 $current_page = "edit_banner";
-$base_url = '../../'; // Path relatif naik dua tingkat ke folder admin/
+$base_url = '../';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>style_admin.css">
-    <script src="<?php echo $base_url; ?>script_admin.js"></script>
+    <link rel="stylesheet" href="/admin/asset/css/style_admin.css">
 </head>
 <body>
 
     <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
         
-        <a href="../index.php" class="<?php echo $current_page == 'dashboard' ? 'active' : ''; ?>">Dashboard</a>
-        <a href="edit_beranda.php">Edit Beranda</a>
-        <a href="edit_banner.php" class="<?php echo $current_page == 'edit_banner' ? 'active' : ''; ?>">Edit Banner</a> <a href="../profil/edit_header.php">Edit Header Title</a> 
+        <a href="index.php">Dashboard</a>
+        
+        <div class="menu-header">PENGATURAN TAMPILAN</div>
+        <a href="/admin/include/edit_header.php">Edit Header</a>
+        <a href="/admin/include/edit_footer.php">Edit Footer</a>
+        <a href="/admin/admin/beranda/edit_beranda.php">Edit Beranda</a>
+        <a href="/admin/admin/beranda/edit_banner.php">Edit Banner</a>
+
+        <div class="menu-header">MANAJEMEN KONTEN</div>
+        
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
+                PROFIL
+                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
+            </a>
+            <div class="submenu-wrapper" id="manajemenKonten">
+                <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
+                <a href="/admin/admin/profil/edit_struktur.php">Struktur Organisasi</a>
+                <a href="/admin/admin/profil/edit_logo.php">Edit Logo</a>
+            </div>
         </div>
+        
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
+                GALERI
+                <span class="dropdown-icon" id="icon-galeriMenu">></span>
+            </a>
+            <div class="submenu-wrapper" id="galeriMenu">
+                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
+                <a href="/admin/admin/galeri/tambah_galeri.php">Tambah Galeri</a>
+                <a href="/admin/admin/galeri/edit_galeri.php">Kelola Galeri</a>
+                <div class="menu-subheader">AGENDA</div>
+                <a href="/admin/admin/galeri/tambah_agenda.php">Tambah Agenda</a>
+                <a href="/admin/admin/galeri/edit_agenda.php">Kelola Agenda</a>
+            </div>
+        </div>
+        
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
+                ARSIP
+                <span class="dropdown-icon" id="icon-arsipMenu">></span>
+            </a>
+            <div class="submenu-wrapper" id="arsipMenu">
+                <div class="menu-subheader">PENELITIAN</div>
+                <a href="/admin/admin/arsip/tambah_penelitian.php">Tambah Penelitian</a>
+                <a href="/admin/admin/arsip/edit_penelitian.php">Kelola Penelitian</a>
+                <div class="menu-subheader">PENGABDIAN</div>
+                <a href="/admin/admin/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
+                <a href="/admin/admin/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
+            </div>
+        </div>
+
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
+                LAYANAN
+                <span class="dropdown-icon" id="icon-layananMenu">></span>
+            </a>
+            <div class="submenu-wrapper" id="layananMenu">
+                <a href="/admin/admin/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
+                <a href="/admin/admin/layanan/lihat_pesan.php">Pesan Konsultatif</a>
+            </div>
+        </div>
+    </div>
 
     <div class="content">
         <div class="admin-header">
@@ -67,5 +127,7 @@ $base_url = '../../'; // Path relatif naik dua tingkat ke folder admin/
         </form>
 
     </div>
+
+    <script src="/admin/asset/js/script_admin.js"></script>
 </body>
 </html>
