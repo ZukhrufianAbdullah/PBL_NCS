@@ -1,9 +1,11 @@
 <?php
+// File: admin/proses/proses_struktur.php
 session_start();
 include '../../config/koneksi.php';
 
 // Folder upload
 $upload_dir = "../../uploads/dosen/";
+if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
 // Foto default
 $default_foto = "default.png";
@@ -11,163 +13,188 @@ $default_foto = "default.png";
 // Ambil id_user
 $id_user = $_SESSION['id_user'] ?? 1;
 
-
-// =============================================================
-// 0. UPDATE PAGE CONTENT STRUKTUR ORGANISASI
-// =============================================================
-if (isset($_POST['edit_page_content'])) {
-
-    $judul_page     = $_POST['judul_page'];
-    $deskripsi_page = $_POST['deskripsi_page'];
+// -----------------------------
+// 0) Update page content (judul + deskripsi)
+// -----------------------------
+if (isset($_POST['edit_page_content']) && isset($_POST['submit'])) {
+    $judul_page     = trim($_POST['judul_page'] ?? '');
+    $deskripsi_page = trim($_POST['deskripsi_page'] ?? '');
     $page_key       = "profil_struktur";
 
-    $query = "UPDATE page_content
-              SET judul = $1, deskripsi = $2, id_user = $3
-              WHERE page_key = $4";
-
-    $result = pg_query_params($conn, $query, array(
-        $judul_page,
-        $deskripsi_page,
-        $id_user,
-        $page_key
-    ));
-
-    if ($result) {
-        echo "<script>
-                alert('Konten halaman Struktur Organisasi berhasil diperbarui!');
-                window.location.href='../profil/edit_struktur.php';
-              </script>";
-    } else {
-        echo "<script>
-                alert('Gagal memperbarui konten halaman!');
-                window.location.href='../profil/edit_struktur.php';
-              </script>";
+    // Ambil id_page
+    $pg = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1 LIMIT 1", array($page_key));
+    if (!$pg || pg_num_rows($pg) === 0) {
+        echo "<script>alert('Halaman tidak ditemukan.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
     }
+    $page = pg_fetch_assoc($pg);
+    $id_page = $page['id_page'];
+
+    // upsert judul
+    $check = pg_query_params($conn, "SELECT id_page_content FROM page_content WHERE id_page=$1 AND content_key='judul' LIMIT 1", array($id_page));
+    if (pg_num_rows($check) > 0) {
+        pg_query_params($conn, "UPDATE page_content SET content_value=$1, id_user=$2 WHERE id_page=$3 AND content_key='judul'",
+            array($judul_page, $id_user, $id_page));
+    } else {
+        pg_query_params($conn, "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) VALUES ($1,'judul','text',$2,$3)",
+            array($id_page, $judul_page, $id_user));
+    }
+
+    // upsert deskripsi
+    $check2 = pg_query_params($conn, "SELECT id_page_content FROM page_content WHERE id_page=$1 AND content_key='deskripsi' LIMIT 1", array($id_page));
+    if (pg_num_rows($check2) > 0) {
+        pg_query_params($conn, "UPDATE page_content SET content_value=$1, id_user=$2 WHERE id_page=$3 AND content_key='deskripsi'",
+            array($deskripsi_page, $id_user, $id_page));
+    } else {
+        pg_query_params($conn, "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) VALUES ($1,'deskripsi','text',$2,$3)",
+            array($id_page, $deskripsi_page, $id_user));
+    }
+
+    echo "<script>alert('Konten halaman Struktur Organisasi berhasil diperbarui!'); window.location.href='../profil/edit_struktur.php';</script>";
     exit();
 }
 
-
-
-// =============================================================
-// 1. UPDATE DATA ANGGOTA (nama, jabatan, foto opsional)
-// =============================================================
+// -----------------------------
+// 1) EDIT anggota (nama, jabatan, foto opsional)
+// -----------------------------
 if (isset($_POST['edit'])) {
+    $id_anggota = $_POST['id_anggota'] ?? null;
+    $id_dosen   = $_POST['id_dosen'] ?? null;
+    $nama       = trim($_POST['nama_dosen'] ?? '');
+    $jabatan    = trim($_POST['jabatan'] ?? '');
 
-    $id_anggota = $_POST['id_anggota'];
-    $id_dosen   = $_POST['id_dosen'];
-    $nama       = $_POST['nama_dosen'];
-    $jabatan    = $_POST['jabatan'];
-
-    // Jika ada file foto baru
-    if (!empty($_FILES['foto']['name'])) {
-
-        $file_name = $_FILES['foto']['name'];
-        $tmp_file  = $_FILES['foto']['tmp_name'];
-
-        $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-
-        if (!in_array($ext, $allowed)) {
-            echo "<script>alert('Format foto tidak valid!'); window.location.href='../profil/edit_struktur.php';</script>";
-            exit();
-        }
-
-        // Rename file
-        $new_file = "dosen_" . time() . "." . $ext;
-
-        // Upload file
-        move_uploaded_file($tmp_file, $upload_dir . $new_file);
-
-        // UPDATE dosen + foto baru
-        $q1 = "UPDATE dosen SET media_path = $1, nama_dosen = $2, id_user = $3 WHERE id_dosen = $4";
-        pg_query_params($conn, $q1, array($new_file, $nama, $id_user, $id_dosen));
-
-    } else {
-
-        // UPDATE tanpa foto
-        $q1 = "UPDATE dosen SET nama_dosen = $1, id_user = $2 WHERE id_dosen = $3";
-        pg_query_params($conn, $q1, array($nama, $id_user, $id_dosen));
+    if (!$id_anggota || !$id_dosen) {
+        echo "<script>alert('Parameter tidak lengkap.'); window.location.href='../profil/edit_struktur.php';</script>";
+        exit();
     }
 
-    // UPDATE jabatan anggota
-    $q2 = "UPDATE anggota_lab SET jabatan = $1 WHERE id_anggota = $2";
-    pg_query_params($conn, $q2, array($jabatan, $id_anggota));
+    // Jika ada file foto baru (input name="foto")
+    $new_file = null;
+    if (!empty($_FILES['foto']['name'])) {
+        $file_name = $_FILES['foto']['name'];
+        $tmp_file  = $_FILES['foto']['tmp_name'];
+        $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        $allowed = ['jpg','jpeg','png','gif','svg'];
+        if (!in_array($ext, $allowed)) {
+            echo "<script>alert('Format foto tidak valid!'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        }
+        $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
+        if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
+            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        }
 
-    echo "<script>
-            alert('Data anggota berhasil diperbarui!');
-            window.location.href='../profil/edit_struktur.php';
-          </script>";
+        // ambil foto lama untuk dihapus
+        $old = pg_fetch_assoc(pg_query_params($conn, "SELECT media_path FROM dosen WHERE id_dosen = $1", array($id_dosen)));
+        if (!empty($old['media_path']) && $old['media_path'] !== $default_foto) {
+            $oldpath = $upload_dir . $old['media_path'];
+            if (file_exists($oldpath)) @unlink($oldpath);
+        }
+
+        // update media_path pada dosen
+        pg_query_params($conn, "UPDATE dosen SET media_path = $1, nama_dosen=$2, id_user=$3 WHERE id_dosen = $4",
+            array($new_file, $nama, $id_user, $id_dosen));
+    } else {
+        // update tanpa foto
+        pg_query_params($conn, "UPDATE dosen SET nama_dosen = $1, id_user = $2 WHERE id_dosen = $3",
+            array($nama, $id_user, $id_dosen));
+    }
+
+    // update jabatan pada anggota_lab
+    pg_query_params($conn, "UPDATE anggota_lab SET jabatan = $1 WHERE id_anggota = $2",
+        array($jabatan, $id_anggota));
+
+    echo "<script>alert('Data anggota berhasil diperbarui!'); window.location.href='../profil/edit_struktur.php';</script>";
     exit();
 }
 
-
-
-// =============================================================
-// 2. TAMBAH ANGGOTA BARU
-// =============================================================
+// -----------------------------
+// 2) TAMBAH anggota baru
+// -----------------------------
 if (isset($_POST['tambah'])) {
+    $nama    = trim($_POST['nama_dosen'] ?? '');
+    $jabatan = trim($_POST['jabatan'] ?? '');
 
-    $nama    = $_POST['nama_dosen'];
-    $jabatan = $_POST['jabatan'];
+    if (empty($nama)) {
+        echo "<script>alert('Nama wajib diisi'); window.location.href='../profil/edit_struktur.php';</script>";
+        exit();
+    }
 
-    // Upload foto (opsional)
+    // upload foto (opsional)
     if (!empty($_FILES['foto']['name'])) {
-
         $file_name = $_FILES['foto']['name'];
         $tmp_file  = $_FILES['foto']['tmp_name'];
-
         $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png'];
-
+        $allowed = ['jpg','jpeg','png','gif','svg'];
         if (!in_array($ext, $allowed)) {
-            echo "<script>alert('Format foto tidak valid!'); window.location.href='../profil/edit_struktur.php';</script>";
-            exit();
+            echo "<script>alert('Format foto tidak valid!'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
         }
-
-        $new_file = "dosen_" . time() . "." . $ext;
-        move_uploaded_file($tmp_file, $upload_dir . $new_file);
-
+        $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
+        if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
+            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        }
     } else {
         $new_file = $default_foto;
     }
 
-    // INSERT dosen
-    $q1 = "INSERT INTO dosen (nama_dosen, media_path, id_user) 
-           VALUES ($1, $2, $3) RETURNING id_dosen";
-    $result = pg_query_params($conn, $q1, array($nama, $new_file, $id_user));
-
-    $row = pg_fetch_assoc($result);
+    // insert dosen
+    $ins = pg_query_params($conn, "INSERT INTO dosen (nama_dosen, media_path, id_user) VALUES ($1, $2, $3) RETURNING id_dosen",
+        array($nama, $new_file, $id_user));
+    if (!$ins) {
+        echo "<script>alert('Gagal menambahkan dosen.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+    }
+    $row = pg_fetch_assoc($ins);
     $id_dosen_baru = $row['id_dosen'];
 
-    // INSERT anggota_lab
-    $q2 = "INSERT INTO anggota_lab (id_profil, id_dosen, jabatan) VALUES (1, $1, $2)";
-    pg_query_params($conn, $q2, array($id_dosen_baru, $jabatan));
+    // insert anggota_lab -> koreksi: kolom = (id_dosen, jabatan)
+    $q2 = pg_query_params($conn, "INSERT INTO anggota_lab (id_dosen, jabatan) VALUES ($1, $2)",
+        array($id_dosen_baru, $jabatan));
+    if (!$q2) {
+        echo "<script>alert('Gagal menambahkan anggota_lab.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+    }
 
-    echo "<script>
-            alert('Anggota baru berhasil ditambahkan!');
-            window.location.href='../profil/edit_struktur.php';
-          </script>";
+    echo "<script>alert('Anggota baru berhasil ditambahkan!'); window.location.href='../profil/edit_struktur.php';</script>";
     exit();
 }
 
-
-
-// =============================================================
-// 3. HAPUS ANGGOTA
-// =============================================================
+// -----------------------------
+// 3) HAPUS anggota
+// -----------------------------
 if (isset($_POST['hapus'])) {
+    $id_anggota = $_POST['id_anggota'] ?? null;
+    if (!$id_anggota) {
+        echo "<script>alert('Parameter tidak lengkap.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+    }
 
-    $id_anggota = $_POST['id_anggota'];
+    // ambil id_dosen terkait
+    $res = pg_query_params($conn, "SELECT id_dosen FROM anggota_lab WHERE id_anggota = $1 LIMIT 1", array($id_anggota));
+    if (!$res || pg_num_rows($res) === 0) {
+        echo "<script>alert('Anggota tidak ditemukan.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+    }
+    $r = pg_fetch_assoc($res);
+    $id_dosen = $r['id_dosen'];
 
-    // HAPUS dari anggota_lab
-    $q1 = "DELETE FROM anggota_lab WHERE id_anggota = $1";
-    pg_query_params($conn, $q1, array($id_anggota));
+    // hapus entry anggota_lab
+    pg_query_params($conn, "DELETE FROM anggota_lab WHERE id_anggota = $1", array($id_anggota));
 
-    echo "<script>
-            alert('Anggota berhasil dihapus!');
-            window.location.href='../profil/edit_struktur.php';
-          </script>";
+    // optional: hapus dosen juga (jika tidak ada referensi lain) — keputusan design
+    // di sini kita hapus record dosen jika tidak ada referensi lain di anggota_lab
+    $checkRef = pg_query_params($conn, "SELECT COUNT(*) as cnt FROM anggota_lab WHERE id_dosen = $1", array($id_dosen));
+    $cnt = intval(pg_fetch_result($checkRef, 0, 'cnt'));
+    if ($cnt === 0) {
+        // ambil media_path untuk dihapus file fisik
+        $d = pg_fetch_assoc(pg_query_params($conn, "SELECT media_path FROM dosen WHERE id_dosen = $1", array($id_dosen)));
+        if (!empty($d['media_path']) && $d['media_path'] !== $default_foto) {
+            $oldpath = $upload_dir . $d['media_path'];
+            if (file_exists($oldpath)) @unlink($oldpath);
+        }
+        // hapus dosen
+        pg_query_params($conn, "DELETE FROM dosen WHERE id_dosen = $1", array($id_dosen));
+    }
+
+    echo "<script>alert('Anggota berhasil dihapus!'); window.location.href='../profil/edit_struktur.php';</script>";
     exit();
 }
 
+// Jika tidak ada action dikenali
+echo "<script>alert('Aksi tidak dikenali.'); window.location.href='../profil/edit_struktur.php';</script>";
+exit();
 ?>

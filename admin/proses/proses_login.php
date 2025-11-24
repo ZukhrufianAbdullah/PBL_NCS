@@ -1,35 +1,44 @@
 <?php
 include '../../config/koneksi.php'; // koneksi ke PostgreSQL
 
-// Ambil data dari form login
-$username = $_POST['username'];
-$password = md5($_POST['password']); 
+$email = trim($_POST['email'] ?? '');
+$password = $_POST['password'] ?? '';
 
-// Query cek data user
-$query  = "SELECT * FROM users WHERE nama_user = '$username' AND password = '$password'";
-$result = pg_query($conn, $query);
-
-// Cek apakah query berhasil
-if (!$result) {
-    die("Query gagal: " . pg_last_error($conn));
-}
-
-$cek = pg_num_rows($result);
-
-// Jika login berhasil
-if ($cek > 0) {
-    // Redirect langsung ke halaman dashboard admin
+if ($email === '' || $password === '') {
     echo "<script>
-            alert('Login berhasil! Selamat datang di halaman admin.');
-            window.location.href = '../index.php';
-          </script>";
-    exit();
-} else {
-    // Jika login gagal, kembali ke halaman login user
-    echo "<script>
-            alert('Username atau password salah! Silakan coba lagi.');
+            alert('Email dan password wajib diisi.');
             window.location.href = '../../user/login_admin.php';
           </script>";
     exit();
 }
+
+$sql = "SELECT id_user, email, password FROM users WHERE email = $1 LIMIT 1";
+$result = pg_query_params($conn, $sql, array($email));
+
+if (!$result || pg_num_rows($result) === 0) {
+    echo "<script>
+            alert('Email atau password tidak valid.');
+            window.location.href = '../../user/login_admin.php';
+          </script>";
+    exit();
+}
+
+$user = pg_fetch_assoc($result);
+
+if (!password_verify($password, $user['password'])) {
+    echo "<script>
+            alert('Email atau password tidak valid.');
+            window.location.href = '../../user/login_admin.php';
+          </script>";
+    exit();
+}
+
+$_SESSION['id_user'] = $user['id_user'];
+$_SESSION['email'] = $user['email'];
+
+echo "<script>
+        alert('Login berhasil! Selamat datang di halaman admin.');
+        window.location.href = '../index.php';
+      </script>";
+exit();
 ?>

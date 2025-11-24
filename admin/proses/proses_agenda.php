@@ -1,124 +1,110 @@
 <?php
-include '../../config/koneksi.php';
+// File: admin/proses/proses_agenda.php
 session_start();
+include '../../config/koneksi.php';
+require_once __DIR__ . '/../../app/helpers/agenda_helper.php';
 
-$id_user = $_SESSION['id_user'] ?? 1; // fallback jika tidak ada session
+$id_user = $_SESSION['id_user'] ?? 1;
 
-// Fungsi ubah status menjadi boolean PostgreSQL
-function toBoolean($value) {
-    return ($value === "1" || strtolower($value) === "true") ? 'TRUE' : 'FALSE';
+// helper convert status param -> boolean string
+function agenda_bool_param($value): string
+{
+    return ($value === "1" || strtolower($value) === "true" || $value === true) ? 'true' : 'false';
 }
 
 /* ===================================================================
-   1. TAMBAH AGENDA
+   1) TAMBAH AGENDA
+   expects: tambah, judul_agenda, deskripsi, tanggal_agenda, status
    =================================================================== */
 if (isset($_POST['tambah'])) {
 
-    $tanggal    = $_POST['tanggal'];
-    $judul      = $_POST['judul'];
-    $deskripsi  = $_POST['deskripsi'];
-    $status_raw = $_POST['status'];
-    $status     = toBoolean($status_raw);
+    $tanggal    = trim($_POST['tanggal_agenda'] ?? '');
+    $judul      = trim($_POST['judul_agenda'] ?? '');
+    $deskripsi  = trim($_POST['deskripsi'] ?? '');
+    $status_raw = $_POST['status'] ?? '1';
+    $status     = agenda_bool_param($status_raw);
 
-    $query = "
-        INSERT INTO agenda (tanggal, judul, deskripsi, status, id_user)
-        VALUES ($1, $2, $3, $status, $4)
-    ";
+    if ($judul === '' || $tanggal === '') {
+        echo "<script>alert('Judul dan tanggal wajib diisi!'); window.location.href='../galeri/tambah_agenda.php';</script>";
+        exit();
+    }
 
-    $params = array($tanggal, $judul, $deskripsi, $id_user);
-    $result = pg_query_params($conn, $query, $params);
+    $query = "INSERT INTO agenda (tanggal_agenda, judul_agenda, deskripsi, status, id_user)
+              VALUES ($1, $2, $3, $4::boolean, $5)";
+    $params = array($tanggal, $judul, $deskripsi, $status, $id_user);
+    $res = pg_query_params($conn, $query, $params);
 
-    if ($result) {
-        echo "<script>alert('Agenda berhasil ditambahkan!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
+    if ($res) {
+        echo "<script>alert('Agenda berhasil ditambahkan!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     } else {
-        echo "<script>alert('Gagal menambahkan agenda!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
+        echo "<script>alert('Gagal menambahkan agenda!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     }
     exit();
 }
 
-
 /* ===================================================================
-   2. EDIT / UPDATE AGENDA
+   2) EDIT AGENDA
+   expects: edit, id_agenda, judul_agenda, deskripsi, tanggal_agenda, status
    =================================================================== */
 if (isset($_POST['edit'])) {
+    $id_agenda  = $_POST['id_agenda'] ?? null;
+    $tanggal    = trim($_POST['tanggal_agenda'] ?? '');
+    $judul      = trim($_POST['judul_agenda'] ?? '');
+    $deskripsi  = trim($_POST['deskripsi'] ?? '');
+    $status_raw = $_POST['status'] ?? '1';
+    $status     = agenda_bool_param($status_raw);
 
-    $id_agenda  = $_POST['id_agenda'];
-    $tanggal    = $_POST['tanggal'];
-    $judul      = $_POST['judul'];
-    $deskripsi  = $_POST['deskripsi'];
-    $status_raw = $_POST['status'];
-    $status     = toBoolean($status_raw);
+    if (!$id_agenda) {
+        echo "<script>alert('Parameter id_agenda hilang!'); window.location.href='../galeri/tambah_agenda.php';</script>"; exit();
+    }
 
-    $query = "
-        UPDATE agenda
-        SET tanggal = $1, judul = $2, deskripsi = $3, status = $status, id_user = $4
-        WHERE id_agenda = $5
-    ";
+    $query = "UPDATE agenda SET tanggal_agenda = $1, judul_agenda = $2, deskripsi = $3, status = $4::boolean, id_user = $5 WHERE id_agenda = $6";
+    $params = array($tanggal, $judul, $deskripsi, $status, $id_user, $id_agenda);
+    $res = pg_query_params($conn, $query, $params);
 
-    $params = array($tanggal, $judul, $deskripsi, $id_user, $id_agenda);
-    $result = pg_query_params($conn, $query, $params);
-
-    if ($result) {
-        echo "<script>alert('Agenda berhasil diperbarui!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
+    if ($res) {
+        echo "<script>alert('Agenda berhasil diperbarui!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     } else {
-        echo "<script>alert('Gagal memperbarui agenda!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
+        echo "<script>alert('Gagal memperbarui agenda!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     }
     exit();
 }
 
-
 /* ===================================================================
-   3. HAPUS AGENDA
+   3) HAPUS AGENDA
+   expects: hapus, id_agenda
    =================================================================== */
 if (isset($_POST['hapus'])) {
+    $id_agenda = $_POST['id_agenda'] ?? null;
+    if (!$id_agenda) {
+        echo "<script>alert('Parameter id_agenda hilang!'); window.location.href='../galeri/tambah_agenda.php';</script>"; exit();
+    }
 
-    $id_agenda = $_POST['id_agenda'];
-
-    $query = "DELETE FROM agenda WHERE id_agenda = $1";
-    $result = pg_query_params($conn, $query, array($id_agenda));
-
-    if ($result) {
-        echo "<script>alert('Agenda berhasil dihapus!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
+    $res = pg_query_params($conn, "DELETE FROM agenda WHERE id_agenda = $1", array($id_agenda));
+    if ($res) {
+        echo "<script>alert('Agenda berhasil dihapus!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     } else {
-        echo "<script>alert('Gagal menghapus agenda!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
+        echo "<script>alert('Gagal menghapus agenda!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     }
     exit();
 }
-
 
 /* ===================================================================
-   4. UPDATE PAGE CONTENT (judul + deskripsi)
-      page_key = "galeri_agenda"
+   4) UPDATE PAGE CONTENT (section title + description)
+   expects: edit_page, judul_page, deskripsi_page
    =================================================================== */
 if (isset($_POST['edit_page'])) {
+    $judul_pc     = trim($_POST['judul_page'] ?? '');
+    $deskripsi_pc = trim($_POST['deskripsi_page'] ?? '');
+    $page_key     = 'galeri_agenda';
 
-    $judul_pc     = $_POST['judul_page'];
-    $deskripsi_pc = $_POST['deskripsi_page'];
-    $page_key     = "galeri_agenda";
+    $pageId = agenda_ensure_page($conn, $page_key);
+    agenda_upsert_content($conn, $pageId, 'section_title', $judul_pc, $id_user);
+    agenda_upsert_content($conn, $pageId, 'section_description', $deskripsi_pc, $id_user);
 
-    $query = "
-        UPDATE page_content
-        SET judul = $1, deskripsi = $2, id_user = $3
-        WHERE page_key = $4
-    ";
-
-    $params = array($judul_pc, $deskripsi_pc, $id_user, $page_key);
-    $result = pg_query_params($conn, $query, $params);
-
-    if ($result) {
-        echo "<script>alert('Konten halaman Agenda berhasil diperbarui!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
-    } else {
-        echo "<script>alert('Gagal memperbarui konten halaman!'); 
-              window.location.href='../galeri/edit_agenda.php';</script>";
-    }
+    echo "<script>alert('Konten halaman Agenda berhasil diperbarui!'); window.location.href='../galeri/tambah_agenda.php';</script>";
     exit();
 }
 
-?>
+echo "<script>alert('Aksi tidak dikenali.'); window.location.href='../galeri/tambah_agenda.php';</script>";
+exit();
