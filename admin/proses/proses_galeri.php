@@ -2,7 +2,7 @@
 session_start();
 include '../../config/koneksi.php';
 
-// Ambil id_user dari session
+// Ambil id_user
 $id_user = $_SESSION['id_user'] ?? 1;
 
 // Folder upload
@@ -12,6 +12,41 @@ $uploadDir = '../../uploads/galeri/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
+
+
+/* ============================================================
+   0. UPDATE PAGE CONTENT GALERI
+   ============================================================ */
+if (isset($_POST['edit_page_content'])) {
+
+    $judul_page     = $_POST['judul_page'];
+    $deskripsi_page = $_POST['deskripsi_page'];
+    $page_key       = "galeri_galeri";
+
+    $query = "UPDATE page_content
+              SET judul = $1, deskripsi = $2, id_user = $3
+              WHERE page_key = $4";
+
+    $params = array($judul_page, $deskripsi_page, $id_user, $page_key);
+
+    $result = pg_query_params($conn, $query, $params);
+
+    if ($result) {
+        echo "<script>
+                alert('Konten halaman Galeri berhasil diperbarui!');
+                window.location.href='../galeri/galeri.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Gagal memperbarui konten halaman!');
+                window.location.href='../galeri/galeri.php';
+              </script>";
+    }
+
+    exit();
+}
+
+
 
 /* ============================================================
    1. TAMBAH DATA GALERI
@@ -26,13 +61,11 @@ if (isset($_POST['tambah'])) {
     $fileName = $_FILES['foto']['name'];
     $tmpName  = $_FILES['foto']['tmp_name'];
 
-    // Buat nama acak agar tidak bentrok
+    // Buat nama file unik
     $newName = time() . "_" . $fileName;
 
-    // Pindahkan file
     move_uploaded_file($tmpName, $uploadDir . $newName);
 
-    // Query insert 
     $query = "INSERT INTO galeri (tanggal, judul, deskripsi, foto, id_user)
               VALUES ($1, $2, $3, $4, $5)";
 
@@ -49,6 +82,8 @@ if (isset($_POST['tambah'])) {
     exit();
 }
 
+
+
 /* ============================================================
    2. EDIT DATA GALERI
    ============================================================ */
@@ -64,8 +99,9 @@ if (isset($_POST['edit'])) {
     $old = pg_fetch_assoc($q);
     $oldFoto = $old['foto'];
 
-    // Cek apakah admin upload foto baru
+    // Jika admin upload foto baru
     if ($_FILES['foto']['name'] != "") {
+
         $fileName = $_FILES['foto']['name'];
         $tmpName  = $_FILES['foto']['tmp_name'];
         $newName  = time() . "_" . $fileName;
@@ -76,12 +112,11 @@ if (isset($_POST['edit'])) {
         if (file_exists($uploadDir . $oldFoto)) {
             unlink($uploadDir . $oldFoto);
         }
+
     } else {
-        // Jika tidak ganti foto
         $newName = $oldFoto;
     }
 
-    // Query update
     $query = "UPDATE galeri 
               SET tanggal = $1, judul = $2, deskripsi = $3, foto = $4, id_user = $5
               WHERE id_galeri = $6";
@@ -99,6 +134,8 @@ if (isset($_POST['edit'])) {
     exit();
 }
 
+
+
 /* ============================================================
    3. HAPUS DATA GALERI
    ============================================================ */
@@ -111,12 +148,12 @@ if (isset($_GET['hapus'])) {
     $old = pg_fetch_assoc($q);
     $oldFoto = $old['foto'];
 
-    // Hapus foto
+    // Hapus file foto
     if (file_exists($uploadDir . $oldFoto)) {
         unlink($uploadDir . $oldFoto);
     }
 
-    // Hapus data dari DB
+    // Hapus data
     $query = "DELETE FROM galeri WHERE id_galeri = $1";
     $params = array($id_galeri);
 
