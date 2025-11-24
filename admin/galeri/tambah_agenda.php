@@ -1,209 +1,200 @@
 <?php 
 // File: admin/galeri/tambah_agenda.php
 session_start();
-
-$page_title = "Tambah Agenda";
+$page_title = "Tambah Acara Agenda";
 $current_page = "tambah_agenda";
-$base_url = '/admin/admin/';
+$base_url = '../../';
+$assetUrl = '../../assets/admin';
 
+include '../../config/koneksi.php';
+require_once __DIR__ . '/../../app/helpers/agenda_helper.php';
+
+// Ambil semua agenda
+$agendaItems = get_agenda_items($conn, false);
+
+// Ambil page content (section title & description)
+$pageId = agenda_ensure_page($conn, 'galeri_agenda');
+$pcRes = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", array($pageId));
+$pc = [];
+if ($pcRes && pg_num_rows($pcRes) > 0) {
+    while ($r = pg_fetch_assoc($pcRes)) $pc[$r['content_key']] = $r['content_value'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="/admin/asset/css/style_admin.css">
+    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
+    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
+    <style>
+        .agenda-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+        .agenda-table th, .agenda-table td { padding: 10px; border: 1px solid #ccc; text-align: left; vertical-align: top; }
+        .agenda-actions { display:flex; gap:6px; }
+    </style>
 </head>
 <body>
 
-        <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        
-        <a href="index.php">Dashboard</a>
-        
-        <a href="/admin/admin/beranda/edit_beranda.php">Edit Beranda</a>
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="/admin/include/edit_header.php">Edit Header</a>
-        <a href="/admin/include/edit_footer.php">Edit Footer</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten"></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="/admin/admin/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="/admin/admin/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="/admin/admin/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="/admin/admin/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="/admin/admin/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="/admin/admin/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="/admin/admin/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="/admin/admin/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="/admin/admin/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="/admin/admin/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="/admin/admin/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="/admin/admin/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="/admin/admin/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
+    <div class="sidebar">
+        <a href="../index.php">Dashboard</a>
+        <a href="../beranda/edit_beranda.php">Edit Beranda</a>
+        <a href="tambah_galeri.php">Galeri (Tambah)</a>
+        <a href="tambah_agenda.php" class="<?php echo $current_page == 'tambah_agenda' ? 'active' : ''; ?>">Agenda (Tambah)</a>
+        <a href="../arsip/tambah_penelitian.php">Penelitian (Tambah)</a>
+        <a href="../logout.php">Logout</a>
     </div>
 
     <div class="content">
         <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
+            <h1><?php echo $page_title; ?> (Tabel: agenda)</h1>
         </div>
-        
-        <form id="formAgenda" method="POST" onsubmit="return validateForm('formAgenda')">
+
+        <p>Form ini digunakan untuk menambahkan acara atau workshop ke halaman Agenda.</p>
+
+        <!-- Form tambah agenda -->
+        <form method="post" action="../proses/proses_agenda.php">
+            <input type="hidden" name="tambah" value="1">
             
-            <fieldset>
-                <legend>Informasi Agenda</legend>
+            <fieldset style="border: 1px solid #ccc; padding: 20px;">
+                <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Detail Acara</legend>
                 
                 <div class="form-group">
-                    <label for="judul_agenda">Judul Agenda <span style="color: red;">*</span></label>
-                    <input type="text" id="judul_agenda" name="judul_agenda" required
-                           placeholder="Contoh: Workshop Keamanan Jaringan 2024">
+                    <label for="judul_agenda">Judul Acara (Kolom: judul_agenda)</label>
+                    <input type="text" id="judul_agenda" name="judul_agenda" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="deskripsi">Deskripsi <span style="color: red;">*</span></label>
-                    <textarea id="deskripsi" name="deskripsi" rows="6" required
-                              placeholder="Masukkan deskripsi lengkap agenda kegiatan..."></textarea>
+                    <label for="deskripsi">Deskripsi Singkat (Kolom: deskripsi)</label>
+                    <textarea id="deskripsi" name="deskripsi" rows="3"></textarea>
                 </div>
-                
                 <div class="form-group">
-                    <label for="tanggal_agenda">Tanggal Agenda <span style="color: red;">*</span></label>
-                    <input type="date" id="tanggal_agenda" name="tanggal_agenda" required>
+                    <label for="tanggal_agenda">Tanggal Acara (Kolom: tanggal_agenda)</label>
+                    <input type="date" id="tanggal_agenda" name="tanggal_agenda" value="<?php echo date('Y-m-d'); ?>" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="waktu_mulai">Waktu Mulai</label>
-                    <input type="time" id="waktu_mulai" name="waktu_mulai">
-                </div>
-                
-                <div class="form-group">
-                    <label for="waktu_selesai">Waktu Selesai</label>
-                    <input type="time" id="waktu_selesai" name="waktu_selesai">
-                </div>
-                
-                <div class="form-group">
-                    <label for="tempat">Tempat/Lokasi</label>
-                    <input type="text" id="tempat" name="tempat" 
-                           placeholder="Contoh: Ruang Lab NCS, Gedung TI Lantai 3">
-                </div>
-            </fieldset>
-            
-            <fieldset>
-                <legend>Status & Publikasi</legend>
-                
-                <div class="form-group">
-                    <label for="status">Status Agenda <span style="color: red;">*</span></label>
-                    <select id="status" name="status" required>
-                        <option value="">-- Pilih Status --</option>
-                        <option value="1">Aktif (Tampilkan di website)</option>
-                        <option value="0">Tidak Aktif (Sembunyikan)</option>
-                    </select>
-                    <small style="color: #666; display: block; margin-top: 5px;">
-                        Status Aktif akan menampilkan agenda di halaman utama website
-                    </small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="kategori">Kategori Agenda</label>
-                    <select id="kategori" name="kategori">
-                        <option value="workshop">Workshop</option>
-                        <option value="seminar">Seminar</option>
-                        <option value="pelatihan">Pelatihan</option>
-                        <option value="webinar">Webinar</option>
-                        <option value="penelitian">Kegiatan Penelitian</option>
-                        <option value="lainnya">Lainnya</option>
+                    <label for="status">Status (Kolom: status)</label>
+                    <select id="status" name="status">
+                        <option value="1">Aktif</option>
+                        <option value="0">Arsip</option>
                     </select>
                 </div>
-            </fieldset>
-            
-            <fieldset>
-                <legend>Informasi Tambahan (Opsional)</legend>
                 
-                <div class="form-group">
-                    <label for="narasumber">Narasumber/Pembicara</label>
-                    <input type="text" id="narasumber" name="narasumber" 
-                           placeholder="Nama narasumber (jika ada)">
-                </div>
-                
-                <div class="form-group">
-                    <label for="kapasitas">Kapasitas Peserta</label>
-                    <input type="number" id="kapasitas" name="kapasitas" 
-                           placeholder="Maksimal peserta">
-                </div>
-                
-                <div class="form-group">
-                    <label for="link_pendaftaran">Link Pendaftaran</label>
-                    <input type="url" id="link_pendaftaran" name="link_pendaftaran" 
-                           placeholder="https://...">
+                <div class="form-group" style="margin-top: 25px;">
+                    <input type="submit" name="submit_tambah" class="btn-primary" value="Tambahkan Acara Agenda">
                 </div>
             </fieldset>
-            
-            <div class="form-group" style="padding: 0 20px;">
-                <button type="submit" class="btn-primary" name="submit">
-                    Simpan Agenda
-                </button>
-                <a href="edit_agenda.php" class="btn-secondary" 
-                   style="margin-left: 10px; text-decoration: none; display: inline-block;">
-                    Batal
-                </a>
-            </div>
-            
         </form>
-        
-        <div class="card" style="margin-top: 30px;">
-            <div class="card-header">
-                <h3>Petunjuk Pengisian</h3>
-            </div>
-            <ul style="line-height: 1.8; color: #555; padding-left: 20px;">
-                <li>Field yang bertanda <span style="color: red;">*</span> wajib diisi</li>
-                <li>Judul agenda harus jelas dan deskriptif</li>
-                <li>Tanggal agenda menentukan urutan tampilan di website</li>
-                <li>Status Aktif akan menampilkan agenda di halaman utama</li>
-                <li>Agenda yang sudah lewat tanggalnya akan otomatis disembunyikan</li>
-            </ul>
-        </div>
+
+        <!-- Form: Edit page content (section title & description) -->
+        <fieldset style="border: 1px solid #ccc; padding: 20px; margin-top: 20px;">
+            <legend>Konten Halaman Agenda (Section)</legend>
+            <form method="post" action="../proses/proses_agenda.php">
+                <input type="hidden" name="edit_page" value="1">
+                <div class="form-group">
+                    <label for="judul_page">Section Title</label>
+                    <input type="text" id="judul_page" name="judul_page" value="<?php echo htmlspecialchars($pc['section_title'] ?? ''); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="deskripsi_page">Section Description</label>
+                    <textarea id="deskripsi_page" name="deskripsi_page" rows="3"><?php echo htmlspecialchars($pc['section_description'] ?? ''); ?></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit_page" class="btn-primary" value="Simpan Konten Halaman">
+                </div>
+            </form>
+        </fieldset>
+
+        <h2>Daftar Agenda</h2>
+
+        <table class="agenda-table">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Judul</th>
+                    <th>Deskripsi</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($agendaItems)): ?>
+                    <tr><td colspan="5" class="text-muted">Belum ada agenda.</td></tr>
+                <?php else: ?>
+                    <?php foreach ($agendaItems as $it): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($it['tanggal_agenda']); ?></td>
+                            <td><?php echo htmlspecialchars($it['judul_agenda']); ?></td>
+                            <td><?php echo nl2br(htmlspecialchars($it['deskripsi'] ?? '')); ?></td>
+                            <td><?php echo $it['status'] ? 'Aktif' : 'Arsip'; ?></td>
+                            <td class="agenda-actions">
+                                <!-- Edit form (buka small edit modal or redirect to edit page) -->
+                                <form method="post" action="../proses/proses_agenda.php" style="display:inline-block;">
+                                    <input type="hidden" name="edit" value="1">
+                                    <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
+                                    <input type="hidden" name="judul_agenda" value="<?php echo htmlspecialchars($it['judul_agenda']); ?>">
+                                    <input type="hidden" name="tanggal_agenda" value="<?php echo htmlspecialchars($it['tanggal_agenda']); ?>">
+                                    <input type="hidden" name="deskripsi" value="<?php echo htmlspecialchars($it['deskripsi'] ?? ''); ?>">
+                                    <input type="hidden" name="status" value="<?php echo $it['status'] ? '1' : '0'; ?>">
+                                    <button type="button" class="btn-primary" style="background:orange" onclick="openEditAgenda(<?php echo $it['id_agenda']; ?>)">Edit</button>
+                                </form>
+
+                                <form method="post" action="../proses/proses_agenda.php" onsubmit="return confirm('Hapus agenda ini?');">
+                                    <input type="hidden" name="hapus" value="1">
+                                    <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
+                                    <button type="submit" class="btn-primary" style="background:#e74c3c">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
     </div>
 
-   <script src="/admin/asset/js/script_admin.js"></script>
+<script>
+function openEditAgenda(id) {
+    // find the hidden inputs with id_agenda matching
+    const rowInputs = document.querySelectorAll('input[name="id_agenda"]');
+    for (const inp of rowInputs) {
+        if (parseInt(inp.value) === parseInt(id)) {
+            // find parent tr
+            const tr = inp.closest('tr');
+            // extract values from that row's hidden inputs in the edit form
+            const parentForm = tr.querySelector('form');
+            // fallback: ask prompts (simple)
+            const currentTitle = tr.querySelector('input[name="judul_agenda"]')?.value || tr.children[1].textContent.trim();
+            const currentDate = tr.querySelector('input[name="tanggal_agenda"]')?.value || tr.children[0].textContent.trim();
+            const currentDesc = tr.querySelector('input[name="deskripsi"]')?.value || tr.children[2].textContent.trim();
+            const currentStatus = tr.querySelector('input[name="status"]')?.value || (tr.children[3].textContent.trim() === 'Aktif' ? '1' : '0');
+
+            const newTitle = prompt('Ubah judul:', currentTitle);
+            if (newTitle === null) return;
+            const newDate = prompt('Ubah tanggal (YYYY-MM-DD):', currentDate);
+            if (newDate === null) return;
+            const newDesc = prompt('Ubah deskripsi:', currentDesc);
+            if (newDesc === null) return;
+            const newStatus = prompt('Status (1=Aktif, 0=Arsip):', currentStatus);
+            if (newStatus === null) return;
+
+            // create form to submit
+            const f = document.createElement('form');
+            f.method = 'post';
+            f.action = '../proses/proses_agenda.php';
+
+            const hEdit = document.createElement('input'); hEdit.type='hidden'; hEdit.name='edit'; hEdit.value='1'; f.appendChild(hEdit);
+            const hId = document.createElement('input'); hId.type='hidden'; hId.name='id_agenda'; hId.value = id; f.appendChild(hId);
+            const hTitle = document.createElement('input'); hTitle.type='hidden'; hTitle.name='judul_agenda'; hTitle.value = newTitle; f.appendChild(hTitle);
+            const hDate = document.createElement('input'); hDate.type='hidden'; hDate.name='tanggal_agenda'; hDate.value = newDate; f.appendChild(hDate);
+            const hDesc = document.createElement('input'); hDesc.type='hidden'; hDesc.name='deskripsi'; hDesc.value = newDesc; f.appendChild(hDesc);
+            const hStatus = document.createElement('input'); hStatus.type='hidden'; hStatus.name='status'; hStatus.value = newStatus; f.appendChild(hStatus);
+
+            document.body.appendChild(f);
+            f.submit();
+            break;
+        }
+    }
+}
+</script>
+
 </body>
 </html>
