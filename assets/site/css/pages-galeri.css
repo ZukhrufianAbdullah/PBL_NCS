@@ -1,0 +1,86 @@
+.article-card {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.article-card img {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.article-card .card-body {
+    padding: 1.5rem;
+}
+
+.article-card .card-body span {
+    display: block;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.agenda-card {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.agenda-card .date-pill {
+    background: #eff3ff;
+    color: var(--blue-mid);
+    font-weight: 600;
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+}
+
+.pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-pagination {
+    padding: 8px 14px;
+    border: 1px solid var(--blue-mid);
+    color: var(--blue-mid);
+    font-weight: 600;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    width: 38px;                  
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;                   /* reset padding agar bulat sempurna */
+}
+
+.btn-pagination:hover {
+    background: var(--blue-mid);
+    color: white;
+}
+
+.btn-pagination.active {
+    background: var(--blue-mid);
+    color: white !important;      /* <-- memastikan angkanya terlihat */
+    border-color: var(--blue-mid);
+    border-radius: 50%;           /* <-- jadi lingkaran */
+    width: 38px;                  
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;                   /* reset padding agar bulat sempurna */
+}
+

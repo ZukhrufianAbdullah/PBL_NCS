@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="jtigrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#aee572"/>
+      <stop offset="100%" stop-color="#4b8d3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="24" fill="url(#jtigrad)"/>
+  <path d="M50 140h100M70 60h60M70 60v80M100 60v80M130 60v80" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+  <text x="100" y="170" fill="#fff" font-size="20" font-family="Poppins" font-weight="600" text-anchor="middle">JTI</text>
+</svg>
+

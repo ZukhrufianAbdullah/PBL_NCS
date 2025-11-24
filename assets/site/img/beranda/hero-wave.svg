@@ -1,0 +1,11 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0c5ab7" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#4ea0f0" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 600 Q 300 520 600 600 T 1200 600 L 1200 800 0 800 Z" fill="url(#wave)" opacity="0.7"/>
+  <path d="M0 540 Q 300 460 600 540 T 1200 540 L 1200 800 0 800 Z" fill="url(#wave)" opacity="0.45"/>
+</svg>
+

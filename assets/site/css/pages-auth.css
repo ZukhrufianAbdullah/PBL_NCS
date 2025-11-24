@@ -1,0 +1,231 @@
+/* =======================================================
+   Redesain Login Page - Premium Modern UI
+   by ChatGPT
+======================================================= */
+
+:root {
+    --blue-dark: #0a244d;
+    --blue-mid: #164b92;
+    --blue-light: #2f6ee9;
+    --white: #ffffff;
+    --gray-bg: #eef3f9;
+    --text-dark: #1a1f36;
+    --text-muted: #6b7285;
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 18px 50px rgba(10, 38, 102, 0.18);
+}
+
+/* ========= Base ========== */
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #dce9ff 0%, #ffffff 95%);
+    margin: 0;
+    padding: 0;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* ========= Container ========== */
+
+.login-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-strong);
+    overflow: hidden;
+    max-width: 1150px;
+    margin: auto;
+    min-height: 600px;
+    animation: fadeInUp 0.7s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========= Left Branding ========== */
+
+.login-branding {
+    background: linear-gradient(145deg, var(--blue-dark), var(--blue-mid));
+    padding: 3.5rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-branding h1 {
+    font-weight: 700;
+    font-size: 2.6rem;
+    margin-bottom: 1.7rem;
+}
+
+.password-box {
+    background: rgba(255,255,255,0.12);
+    padding: 1.2rem 1.4rem;
+    width: fit-content;
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(8px);
+    border-left: 3px solid rgba(255,255,255,0.4);
+    font-size: 1.2rem;
+    letter-spacing: 0.27rem;
+}
+
+.security-icons {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.icon-padlock, .icon-shield {
+    color: #fff;
+    opacity: 0.88;
+    transition: transform 0.3s ease;
+}
+
+.security-icons svg:hover {
+    transform: scale(1.1);
+}
+
+/* ========= Right Login Form ========== */
+
+.login-form-section {
+    padding: 3rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form-section h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-dark);
+}
+
+.form-group {
+    margin-bottom: 1.3rem;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    display: block;
+    color: var(--text-dark);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #d9deea;
+    border-radius: var(--radius-sm);
+    background: #fdfdff;
+    transition: 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--blue-light);
+    box-shadow: 0 0 0 4px rgba(47, 110, 233, 0.17);
+}
+
+/* Password toggle */
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    border: none;
+    background: none;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+
+.password-toggle:hover {
+    color: var(--blue-light);
+}
+
+/* Forgot link */
+
+.forgot-password {
+    margin-top: 0.45rem;
+    font-weight: 500;
+    color: var(--blue-mid);
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+    color: var(--blue-light);
+}
+
+/* Login button */
+
+.btn-login {
+    width: 100%;
+    border: none;
+    margin-top: 1.8rem;
+    padding: 0.95rem;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transition: 0.3s ease;
+}
+
+.btn-login:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-strong);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+/* ========= Responsive ========== */
+
+@media (max-width: 991px) {
+    .login-container {
+        grid-template-columns: 1fr;
+    }
+
+    .login-branding {
+        text-align: center;
+        align-items: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-form-section {
+        padding: 2rem;
+    }
+
+    .login-branding {
+        padding: 2rem;
+    }
+
+    .login-branding h1 {
+        font-size: 1.9rem;
+    }
+}

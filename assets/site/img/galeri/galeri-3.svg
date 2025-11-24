@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280">
+  <defs>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#083a7a"/>
+      <stop offset="1" stop-color="#4ea0f0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="280" rx="24" fill="url(#g3)"/>
+  <g fill="#fff" opacity="0.85">
+    <circle cx="130" cy="160" r="36"/>
+    <circle cx="200" cy="140" r="48"/>
+    <circle cx="270" cy="160" r="36"/>
+  </g>
+  <text x="40" y="70" fill="#fff" font-size="28" font-family="Poppins" font-weight="600">Tim Penelitian</text>
+</svg>
+

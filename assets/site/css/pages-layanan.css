@@ -1,0 +1,17 @@
+.facility-card img {
+    border-radius: var(--radius-sm);
+    height: 170px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+.contact-form .form-control {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    padding: 0.85rem 1rem;
+}
+
+.contact-form textarea {
+    min-height: 150px;
+}
+

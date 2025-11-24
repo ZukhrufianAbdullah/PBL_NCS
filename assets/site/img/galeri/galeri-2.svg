@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280">
+  <defs>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#041f4a"/>
+      <stop offset="1" stop-color="#0c5ab7"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="280" rx="24" fill="url(#g2)"/>
+  <rect x="70" y="90" width="260" height="110" rx="16" stroke="#4ea0f0" stroke-width="8" fill="none"/>
+  <rect x="100" y="120" width="60" height="50" rx="8" fill="#4ea0f0" opacity="0.8"/>
+  <rect x="180" y="120" width="60" height="50" rx="8" fill="#4ea0f0" opacity="0.6"/>
+  <rect x="260" y="120" width="40" height="50" rx="8" fill="#4ea0f0" opacity="0.4"/>
+  <text x="40" y="70" fill="#fff" font-size="28" font-family="Poppins" font-weight="600">Ruang Server</text>
+</svg>
+

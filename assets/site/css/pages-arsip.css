@@ -1,0 +1,40 @@
+.research-card {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.research-card .year {
+    float: right;
+    font-weight: 700;
+    color: var(--blue-mid);
+}
+
+.lab-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.lab-table th,
+.lab-table td {
+    padding: 1.1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.lab-table th {
+    background: #f7f8fc;
+    font-weight: 600;
+}
+
+.lab-table tr:last-child td {
+    border-bottom: none;
+}
+
