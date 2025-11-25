@@ -88,6 +88,9 @@ $total_pesan = 0;
                 <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
             </div>
         </div>
+
+       <a href="/PBL_NCS/index.php">Logout</a>
+
     </div>
 
     <div class="content">
