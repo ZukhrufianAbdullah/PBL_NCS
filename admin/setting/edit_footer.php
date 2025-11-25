@@ -87,9 +87,9 @@ $assetUrl = '/PBL_NCS/assets/admin';
     <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?> (Tabel: footer, credit tim, sosial media)</h1>
+            <p>Kelola detail Footer: Developer (credit tim), Sosial Media, dan Hak Cipta.</p>
         </div>
 
-        <p>Kelola detail Footer: Developer (credit tim), Sosial Media, dan Hak Cipta.</p>
 
         <form method="post" action="proses/proses_footer.php" enctype="multipart/form-data">
             

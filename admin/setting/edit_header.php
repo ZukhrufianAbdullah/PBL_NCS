@@ -88,9 +88,9 @@ $assetUrl = '/PBL_NCS/assets/admin';
     <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?> (Tabel: header & logo)</h1>
+            <p>Gunakan form ini untuk mengubah Judul Utama Header website dan Logo utama.</p>
         </div>
 
-        <p>Gunakan form ini untuk mengubah Judul Utama Header website dan Logo utama.</p>
 
         <form method="post" action="proses/proses_header_logo.php" enctype="multipart/form-data">
             

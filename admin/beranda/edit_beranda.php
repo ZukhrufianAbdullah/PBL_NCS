@@ -88,9 +88,9 @@ $assetUrl = '/PBL_NCS/assets/admin';
     <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?> (Tabel: home)</h1>
-        </div>
+            <p>Gunakan form ini untuk mengubah judul dan deskripsi yang tampil di halaman utama website.</p>
+    </div>
 
-        <p>Gunakan form ini untuk mengubah judul dan deskripsi yang tampil di halaman utama website.</p>
 
         <form method="post" action="../proses/proses_beranda.php">
             

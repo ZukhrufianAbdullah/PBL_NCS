@@ -88,9 +88,8 @@ $assetUrl = '/PBL_NCS/assets/admin';
     <div class="content">
         <div class="admin-header">
             <h1><?php echo $page_title; ?> (Tabel: banner)</h1>
-        </div>
-
-        <p>Gunakan form ini untuk mengubah teks dan latar belakang visual di bagian paling atas halaman utama (hero section).</p>
+                <p>Gunakan form ini untuk mengubah teks dan latar belakang visual di bagian paling atas halaman utama (hero section).</p>
+    </div>
 
         <form method="post" action="../../proses/proses_banner.php" enctype="multipart/form-data">
             
