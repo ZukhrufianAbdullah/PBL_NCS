@@ -73,8 +73,8 @@ $stylesToLoad = array_merge($globalStyles, $pageSpecificStyles);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-1ycn6Ica999/5b0Z6bQBFpR5H4p6G5XvYl6FzG1MNn0GZq7O+nN7t2Fne5+5ZT2J/NzNw2x6JqqPiR+jYwIvyg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <!-- Custom CSS -->
     <?php foreach ($stylesToLoad as $stylePath): ?>
         <link rel="stylesheet" href="<?php echo lab_build_asset_href($assetBaseUrl, $assetBasePath, $stylePath); ?>">
