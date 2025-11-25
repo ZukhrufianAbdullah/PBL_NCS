@@ -1,17 +1,47 @@
+/* ===========================
+   Animasi Fade In Up
+=========================== */
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* ===========================
+   Research Card
+=========================== */
 .research-card {
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     padding: 1.75rem;
     background: var(--surface);
     box-shadow: var(--shadow);
+
+    opacity: 0; /* mulai tersembunyi */
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
+/* Stagger effect untuk multiple research cards */
+.research-card:nth-child(1) { animation-delay: 0.1s; }
+.research-card:nth-child(2) { animation-delay: 0.2s; }
+.research-card:nth-child(3) { animation-delay: 0.3s; }
+.research-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Year di card */
 .research-card .year {
     float: right;
     font-weight: 700;
     color: var(--blue-mid);
 }
 
+/* ===========================
+   Lab Table
+=========================== */
 .lab-table {
     width: 100%;
     border-collapse: collapse;
@@ -20,6 +50,10 @@
     overflow: hidden;
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
+
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-out forwards;
+    animation-delay: 0.15s; /* sedikit delay supaya muncul setelah card */
 }
 
 .lab-table th,
@@ -37,4 +71,3 @@
 .lab-table tr:last-child td {
     border-bottom: none;
 }
-
