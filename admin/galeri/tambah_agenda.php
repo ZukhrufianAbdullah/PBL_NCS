@@ -1,8 +1,9 @@
 <?php 
 // File: admin/galeri/tambah_agenda.php
 session_start();
-$page_title = "Tambah Acara Agenda";
-$current_page = "tambah_agenda";
+$pageTitle = 'Tambah Acara Agenda';
+$currentPage = 'tambah_agenda';
+$adminPageStyles = ['forms', 'tables'];
 
 $base_Url = '..'; 
 //$base_Url = '../admin'; 
@@ -21,97 +22,15 @@ $pc = [];
 if ($pcRes && pg_num_rows($pcRes) > 0) {
     while ($r = pg_fetch_assoc($pcRes)) $pc[$r['content_key']] = $r['content_value'];
 }
+
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
-    
-    <style>
-        .agenda-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
-        .agenda-table th, .agenda-table td { padding: 10px; border: 1px solid #ccc; text-align: left; vertical-align: top; }
-        .agenda-actions { display:flex; gap:6px; }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?> (Tabel: agenda)</h1>
-        </div>
-
-        <p>Form ini digunakan untuk menambahkan acara atau workshop ke halaman Agenda.</p>
+<div class="admin-header">
+    <h1><?php echo $pageTitle; ?> (Tabel: agenda)</h1>
+    <p>Form ini digunakan untuk menambahkan acara atau workshop ke halaman Agenda.</p>
 
         <!-- Form tambah agenda -->
-        <form method="post" action="../proses/proses_agenda.php">
+        <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php">
             <input type="hidden" name="tambah" value="1">
             
             <fieldset style="border: 1px solid #ccc; padding: 20px;">
@@ -146,7 +65,7 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
         <!-- Form: Edit page content (section title & description) -->
         <fieldset style="border: 1px solid #ccc; padding: 20px; margin-top: 20px;">
             <legend>Konten Halaman Agenda (Section)</legend>
-            <form method="post" action="../proses/proses_agenda.php">
+            <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php">
                 <input type="hidden" name="edit_page" value="1">
                 <div class="form-group">
                     <label for="judul_page">Section Title</label>
@@ -164,7 +83,7 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
 
         <h2>Daftar Agenda</h2>
 
-        <table class="agenda-table">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>Tanggal</th>
@@ -186,7 +105,7 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
                             <td><?php echo $it['status'] ? 'Aktif' : 'Arsip'; ?></td>
                             <td class="agenda-actions">
                                 <!-- Edit form (buka small edit modal or redirect to edit page) -->
-                                <form method="post" action="../proses/proses_agenda.php" style="display:inline-block;">
+                                <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php" style="display:inline-block;">
                                     <input type="hidden" name="edit" value="1">
                                     <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
                                     <input type="hidden" name="judul_agenda" value="<?php echo htmlspecialchars($it['judul_agenda']); ?>">
@@ -196,7 +115,7 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
                                     <button type="button" class="btn-primary" style="background:orange" onclick="openEditAgenda(<?php echo $it['id_agenda']; ?>)">Edit</button>
                                 </form>
 
-                                <form method="post" action="../proses/proses_agenda.php" onsubmit="return confirm('Hapus agenda ini?');">
+                                <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php" onsubmit="return confirm('Hapus agenda ini?');">
                                     <input type="hidden" name="hapus" value="1">
                                     <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
                                     <button type="submit" class="btn-primary" style="background:#e74c3c">Hapus</button>
@@ -236,9 +155,9 @@ function openEditAgenda(id) {
             if (newStatus === null) return;
 
             // create form to submit
-            const f = document.createElement('form');
-            f.method = 'post';
-            f.action = '../proses/proses_agenda.php';
+    const f = document.createElement('form');
+    f.method = 'post';
+    f.action = '<?php echo $adminBasePath; ?>proses/proses_agenda.php';
 
             const hEdit = document.createElement('input'); hEdit.type='hidden'; hEdit.name='edit'; hEdit.value='1'; f.appendChild(hEdit);
             const hId = document.createElement('input'); hId.type='hidden'; hId.name='id_agenda'; hId.value = id; f.appendChild(hId);
@@ -254,6 +173,4 @@ function openEditAgenda(id) {
     }
 }
 </script>
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

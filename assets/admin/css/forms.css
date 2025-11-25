@@ -1,0 +1,122 @@
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.required {
+    color: var(--danger-red);
+    font-weight: bold;
+}
+
+.form-subtitle,
+.form-help-text {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    margin-top: 6px;
+    font-style: italic;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border-gray);
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background-color: var(--white);
+    color: var(--text-dark);
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed var(--border-gray);
+    border-radius: 6px;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+input[type="file"]:hover {
+    border-color: var(--primary-color);
+    background-color: #f0f0f0;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(6, 7, 113, 0.1);
+}
+
+fieldset {
+    border: none;
+    background-color: var(--white);
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+legend {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--accent-yellow);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.preview-img {
+    max-width: 400px;
+    max-height: 280px;
+    border: 2px solid var(--border-gray);
+    border-radius: 8px;
+    padding: 10px;
+    background: var(--white);
+    display: block;
+    margin-top: 12px;
+    object-fit: contain;
+}
+
+.misi-group {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent-yellow);
+}
+
+.misi-group legend {
+    font-size: 1rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-yellow);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+

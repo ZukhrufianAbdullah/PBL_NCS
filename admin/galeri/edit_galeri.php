@@ -2,14 +2,12 @@
 // File: admin/galeri/edit_galeri.php
 session_start();
 
-$page_title = "Kelola Galeri Foto/Video";
-$current_page = "edit_galeri";
+$pageTitle = 'Kelola Galeri Foto/Video';
+$currentPage = 'edit_galeri';
+$adminPageStyles = ['tables'];
 
-$base_Url = '..'; 
-//$base_Url = '../admin'; 
-$assetUrl = '/PBL_NCS/assets/admin';
-
-
+include_once '../../config/koneksi.php';
+require_once __DIR__ . '/../../app/helpers/galeri_helper.php';
 // Dummy data galeri
 $galeri_items = [
     [
@@ -58,92 +56,13 @@ if (isset($_GET['success'])) {
     $alert_type = 'alert-error';
     $alert_message = '❌ ' . htmlspecialchars($_GET['error']);
 }
+
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?> - Admin NCS Lab</title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
-
-</head>
-<body>
-
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="content">
-        <!-- Header -->
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
-        </div>
-        
+<div class="admin-header">
+    <h1><?php echo $pageTitle; ?> (Tabel: galeri)</h1>
+    <p>Kelola dan pantau seluruh postingan galeri foto/video pada halaman utama website NCS Lab.</p>
+</div>
         <!-- Alert -->
         <?php if (!empty($alert_message)): ?>
         <div class="<?php echo $alert_type; ?> admin-alert">
@@ -200,7 +119,7 @@ if (isset($_GET['success'])) {
                     <input type="text" id="searchInput" placeholder="Cari judul, deskripsi..." 
                            onkeyup="searchTable('searchInput', 'galeriTable')">
                 </div>
-                <a href="tambah_galeri.php" class="btn-primary">
+                <a href="<?php echo $adminBasePath; ?>galeri/tambah_galeri.php" class="btn-primary">
                     + Tambah Galeri Baru
                 </a>
             </div>
@@ -211,17 +130,17 @@ if (isset($_GET['success'])) {
                 </div>
             <?php else: ?>
             
-            <table id="galeriTable">
+            <table id="galeriTable" class="data-table">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">No</th>
-                        <th style="width: 150px;">Media</th>
+                        <th>No</th>
+                        <th>Media</th>
                         <th>Judul</th>
                         <th>Deskripsi</th>
-                        <th style="width: 120px;">Tanggal</th>
-                        <th style="width: 80px;">Jenis</th>
-                        <th style="width: 80px;">Status</th>
-                        <th style="width: 180px; text-align: center;">Aksi</th>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -233,7 +152,8 @@ if (isset($_GET['success'])) {
                         <td class="text-center"><?php echo $no++; ?></td>
                         <td>
                             <?php if($item['jenis_media'] == 'foto'): ?>
-                                <img src="<?php echo $base_url . $item['media_path']; ?>" 
+                                <?php $imageSrc = $projectBasePath . $item['media_path']; ?>
+                                <img src="<?php echo htmlspecialchars($imageSrc); ?>" 
                                      alt="<?php echo htmlspecialchars($item['judul']); ?>"
                                      class="table-img">
                             <?php else: ?>
@@ -258,11 +178,11 @@ if (isset($_GET['success'])) {
                             <?php endif; ?>
                         </td>
                         <td class="action-cell">
-                            <a href="edit_galeri_form.php?id=<?php echo $item['id_galeri']; ?>" 
+                            <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri_form.php?id=<?php echo $item['id_galeri']; ?>" 
                                class="btn-warning btn-small btn-action">
                                 ✏️ Edit
                             </a>
-                            <a href="<?php echo $base_url; ?>galeri/proses/proses_galeri.php?action=delete&id=<?php echo $item['id_galeri']; ?>" 
+                            <a href="<?php echo $adminBasePath; ?>proses/proses_galeri.php?action=delete&id=<?php echo $item['id_galeri']; ?>" 
                                class="btn-danger btn-small" 
                                onclick="return confirmDelete('<?php echo htmlspecialchars($item['judul']); ?>')">
                                 🗑️ Hapus
@@ -286,7 +206,8 @@ if (isset($_GET['success'])) {
                 <?php foreach ($galeri_items as $item): ?>
                 <div class="anggota-card" style="border-top: 3px solid #FCD917;">
                     <?php if($item['jenis_media'] == 'foto'): ?>
-                        <img src="<?php echo $base_url . $item['media_path']; ?>" 
+                        <?php $imageSrc = $projectBasePath . $item['media_path']; ?>
+                        <img src="<?php echo htmlspecialchars($imageSrc); ?>" 
                              alt="<?php echo htmlspecialchars($item['judul']); ?>" 
                              style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
                     <?php else: ?>
@@ -323,6 +244,4 @@ if (isset($_GET['success'])) {
         </div>
     </div>
 
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

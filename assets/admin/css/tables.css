@@ -1,0 +1,98 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+thead {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--hover-blue) 100%);
+    color: var(--white);
+}
+
+thead th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e8e8e8;
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+tbody td {
+    padding: 14px 16px;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+tbody tr:last-child {
+    border-bottom: none;
+}
+
+.col-no { width: 60px; text-align: center; }
+.col-foto { width: 110px; }
+.col-jabatan { width: 160px; }
+.col-focus { width: 220px; }
+.col-urutan { width: 80px; text-align: center; }
+.col-aksi { width: 180px; text-align: center; }
+.col-media { width: 150px; }
+.col-type { width: 90px; text-align: center; }
+.col-status { width: 100px; text-align: center; }
+.col-actions { width: 200px; text-align: center; }
+
+.action-cell,
+.action-column {
+    text-align: center !important;
+}
+
+.table-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--border-gray);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.pagination a,
+.pagination span {
+    padding: 10px 16px;
+    border: 2px solid var(--border-gray);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.pagination a:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.pagination .active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+

@@ -1,8 +1,9 @@
 <?php 
 session_start();
 
-$page_title = "Tambah Postingan Galeri";
-$current_page = "tambah_galeri";
+$pageTitle = 'Tambah Postingan Galeri';
+$currentPage = 'tambah_galeri';
+$adminPageStyles = ['forms', 'tables'];
 
 $base_Url = '..'; 
 //$base_Url = '../admin'; 
@@ -21,175 +22,77 @@ $pc = [];
 if ($pcRes && pg_num_rows($pcRes) > 0) {
     while ($r = pg_fetch_assoc($pcRes)) $pc[$r['content_key']] = $r['content_value'];
 }
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">>
+<div class="admin-header">
+    <h1><?php echo $pageTitle; ?> (Tabel: galeri)</h1>
+    <p>Tambahkan postingan galeri baru dan atur konten section halaman galeri.</p>
+</div>
 
-    <style>
-        .galeri-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: #fff;
-        }
-        .galeri-table th, .galeri-table td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-            vertical-align: top;
-        }
-        .galeri-actions { display:flex; gap:6px; }
-        .thumb {
-            width: 100px;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 4px;
-            border:1px solid #ddd;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
-
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
-    </div>
-<div class="content">
-    <div class="admin-header">
-        <h1><?php echo $page_title; ?> (Tabel: galeri)</h1>
-    </div>
-
-    <p>Form ini digunakan untuk menambahkan postingan gambar dan deskripsi ke halaman Galeri.</p>
-
-    <!-- Form Tambah Galeri -->
-    <form method="post" action="../proses/proses_galeri.php" enctype="multipart/form-data">
+<div class="card">
+    <form method="post"
+          action="<?php echo $adminBasePath; ?>proses/proses_galeri.php"
+          enctype="multipart/form-data">
         <input type="hidden" name="tambah" value="1">
-
-        <fieldset style="border: 1px solid #ccc; padding: 20px;">
-            <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">
-                Detail Postingan
-            </legend>
-
+        <fieldset>
+            <legend>Detail Postingan</legend>
             <div class="form-group">
                 <label for="judul">Judul Postingan</label>
-                <input type="text" id="judul" name="judul" required>
+                <input type="text" id="judul" name="judul" required data-autofocus="true">
             </div>
-
             <div class="form-group">
                 <label for="deskripsi">Deskripsi Postingan</label>
                 <textarea id="deskripsi" name="deskripsi" rows="4" required></textarea>
             </div>
-
             <div class="form-group">
                 <label for="tanggal_kegiatan">Tanggal Kegiatan</label>
-                <input type="date" id="tanggal_kegiatan" name="tanggal_kegiatan" value="<?php echo date('Y-m-d'); ?>" required>
+                <input type="date"
+                       id="tanggal_kegiatan"
+                       name="tanggal_kegiatan"
+                       value="<?php echo date('Y-m-d'); ?>"
+                       required>
             </div>
-
             <div class="form-group">
                 <label for="foto_path">Gambar Postingan</label>
                 <input type="file" id="foto_path" name="foto_path" accept="image/*" required>
             </div>
-            
-            <div class="form-group" style="margin-top: 25px;">
-                <input type="submit" class="btn-primary" value="Tambahkan Postingan Galeri">
-            </div>
         </fieldset>
+        <div class="form-group">
+            <button type="submit" class="btn-primary">Tambahkan Postingan Galeri</button>
+        </div>
     </form>
+</div>
 
-    <!-- Form Edit Section Page -->
-    <fieldset style="border: 1px solid #ccc; padding: 20px; margin-top: 20px;">
-        <legend>Konten Halaman Galeri (Section)</legend>
+<div class="card">
+    <div class="card-header">
+        <h3>Konten Halaman Galeri</h3>
+    </div>
+    <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_galeri.php">
+        <input type="hidden" name="edit_page" value="1">
+        <div class="form-group">
+            <label for="judul_page">Section Title</label>
+            <input type="text"
+                   id="judul_page"
+                   name="judul_page"
+                   value="<?php echo htmlspecialchars($pc['section_title'] ?? ''); ?>">
+        </div>
+        <div class="form-group">
+            <label for="deskripsi_page">Section Description</label>
+            <textarea id="deskripsi_page"
+                      name="deskripsi_page"
+                      rows="3"><?php echo htmlspecialchars($pc['section_description'] ?? ''); ?></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" name="submit_page" class="btn-primary">Simpan Konten Halaman</button>
+        </div>
+    </form>
+</div>
 
-        <form method="post" action="../proses/proses_galeri.php">
-            <input type="hidden" name="edit_page" value="1">
-
-            <div class="form-group">
-                <label for="judul_page">Section Title</label>
-                <input type="text" id="judul_page" name="judul_page" 
-                       value="<?php echo htmlspecialchars($pc['section_title'] ?? ''); ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="deskripsi_page">Section Description</label>
-                <textarea id="deskripsi_page" name="deskripsi_page" rows="3"><?php 
-                    echo htmlspecialchars($pc['section_description'] ?? ''); 
-                ?></textarea>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" name="submit_page" class="btn-primary" value="Simpan Konten Halaman">
-            </div>
-        </form>
-    </fieldset>
-
-    <h2>Daftar Galeri</h2>
-
-    <table class="galeri-table">
+<div class="card">
+    <div class="card-header">
+        <h3>Daftar Galeri</h3>
+    </div>
+    <table class="data-table">
         <thead>
             <tr>
                 <th>Gambar</th>
@@ -206,28 +109,34 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
                 <?php foreach ($galeriItems as $g): ?>
                     <tr>
                         <td>
-                            <img src="<?php echo $base_url . $g['foto_path']; ?>" class="thumb">
+                            <?php
+                            $imageSrc = $projectBasePath . ltrim($g['foto_path'], '/');
+                            ?>
+                            <img src="<?php echo htmlspecialchars($imageSrc); ?>" class="table-img" alt="<?php echo htmlspecialchars($g['judul']); ?>">
                         </td>
                         <td><?php echo htmlspecialchars($g['judul']); ?></td>
                         <td><?php echo nl2br(htmlspecialchars($g['deskripsi'])); ?></td>
                         <td><?php echo htmlspecialchars($g['tanggal_kegiatan']); ?></td>
-                        <td class="galeri-actions">
-
-                            <!-- Edit -->
-                            <form method="post" action="../proses/proses_galeri.php" style="display:inline-block;">
+                        <td>
+                            <form method="post"
+                                  action="<?php echo $adminBasePath; ?>proses/proses_galeri.php"
+                                  class="action-form">
                                 <input type="hidden" name="edit" value="1">
                                 <input type="hidden" name="id_galeri" value="<?php echo $g['id_galeri']; ?>">
-                                <button type="button" class="btn-primary" style="background:orange"
-                                    onclick="openEditGaleri(<?php echo $g['id_galeri']; ?>)">Edit</button>
+                                <button type="button"
+                                        class="btn-warning"
+                                        onclick="openEditGaleri(<?php echo $g['id_galeri']; ?>)">
+                                    Edit
+                                </button>
                             </form>
-
-                            <!-- Delete -->
-                            <form method="post" action="../proses/proses_galeri.php" onsubmit="return confirm('Hapus postingan ini?');">
+                            <form method="post"
+                                  action="<?php echo $adminBasePath; ?>proses/proses_galeri.php"
+                                  onsubmit="return confirm('Hapus postingan ini?');"
+                                  class="action-form">
                                 <input type="hidden" name="hapus" value="1">
                                 <input type="hidden" name="id_galeri" value="<?php echo $g['id_galeri']; ?>">
-                                <button type="submit" class="btn-primary" style="background:#e74c3c">Hapus</button>
+                                <button type="submit" class="btn-danger">Hapus</button>
                             </form>
-
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -240,7 +149,7 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
 function openEditGaleri(id) {
     const rows = document.querySelectorAll('input[name="id_galeri"]');
     for (const input of rows) {
-        if (parseInt(input.value) === parseInt(id)) {
+        if (parseInt(input.value, 10) === parseInt(id, 10)) {
             const tr = input.closest('tr');
             const currentTitle = tr.children[1].textContent.trim();
             const currentDesc = tr.children[2].textContent.trim();
@@ -248,17 +157,14 @@ function openEditGaleri(id) {
 
             const newTitle = prompt('Ubah judul:', currentTitle);
             if (newTitle === null) return;
-
             const newDesc = prompt('Ubah deskripsi:', currentDesc);
             if (newDesc === null) return;
-
             const newDate = prompt('Ubah tanggal (YYYY-MM-DD):', currentDate);
             if (newDate === null) return;
 
             const f = document.createElement('form');
             f.method = 'post';
-            f.action = '../proses/proses_galeri.php';
-
+            f.action = '<?php echo $adminBasePath; ?>proses/proses_galeri.php';
             f.innerHTML = `
                 <input type="hidden" name="edit" value="1">
                 <input type="hidden" name="id_galeri" value="${id}">
@@ -266,13 +172,11 @@ function openEditGaleri(id) {
                 <input type="hidden" name="deskripsi" value="${newDesc}">
                 <input type="hidden" name="tanggal_kegiatan" value="${newDate}">
             `;
-
             document.body.appendChild(f);
             f.submit();
         }
     }
 }
 </script>
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

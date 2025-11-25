@@ -1,119 +1,37 @@
-<?php 
-// File: admin/beranda/edit_beranda.php
+<?php
 session_start();
-$page_title = "Edit Halaman Beranda";
-$current_page = "edit_beranda";
+$pageTitle = 'Edit Halaman Beranda';
+$currentPage = 'edit_beranda';
+$adminPageStyles = ['forms'];
 
-$base_Url = '..'; 
-//$base_Url = '../admin'; 
-$assetUrl = '/PBL_NCS/assets/admin';
-
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
 
-</head>
-<body>
+<div class="admin-header">
+    <h1><?php echo $pageTitle; ?></h1>
+    <p>Gunakan form ini untuk mengubah judul dan deskripsi yang tampil di halaman utama website.</p>
+</div>
 
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
+<div class="card">
+    <form method="post" action="../proses/proses_beranda.php">
+        <fieldset>
+            <legend>Konten Halaman Utama</legend>
 
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
+            <div class="form-group">
+                <label for="judul">Judul Halaman Utama (Kolom: judul)</label>
+                <input type="text" id="judul" name="judul" value="Network and Cyber Security Laboratory">
             </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
+
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi Halaman Utama (Kolom: deskripsi)</label>
+                <textarea id="deskripsi" name="deskripsi" rows="8">Our lab focuses on pioneering research and developing robust solutions...</textarea>
             </div>
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" name="submit" class="btn-primary" value="Simpan Perubahan Home Page">
         </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
+    </form>
+</div>
 
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?> (Tabel: home)</h1>
-        </div>
-
-        <p>Gunakan form ini untuk mengubah judul dan deskripsi yang tampil di halaman utama website.</p>
-
-        <form method="post" action="../proses/proses_beranda.php">
-            
-            <fieldset>
-                <legend>Konten Halaman Utama</legend>
-                
-                <div class="form-group">
-                    <label for="judul">Judul Halaman Utama (Kolom: judul)</label>
-                    <input type="text" id="judul" name="judul" value="Network and Cyber Security Laboratory">
-                </div>
-                
-                <div class="form-group">
-                    <label for="deskripsi">Deskripsi Halaman Utama (Kolom: deskripsi)</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="8">Our lab focuses on pioneering research and developing robust solutions...</textarea>
-                </div>
-            </fieldset>
-
-            <div class="form-group" style="margin-top: 25px;">
-                <input type="submit" name="submit" class="btn-primary" value="Simpan Perubahan Home Page">
-            </div>
-        </form>
-
-    </div>
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

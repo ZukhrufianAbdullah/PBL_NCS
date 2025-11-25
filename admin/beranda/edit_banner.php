@@ -1,134 +1,52 @@
-<?php 
-// File: admin/beranda/edit_banner.php
+<?php
 session_start();
-$page_title = "Edit Banner Halaman Utama";
-$current_page = "edit_banner";
+$pageTitle = 'Edit Banner Halaman Utama';
+$currentPage = 'edit_banner';
+$adminPageStyles = ['forms'];
 
-$base_Url = '..'; 
-//$base_Url = '../admin'; 
-$assetUrl = '/PBL_NCS/assets/admin';
-
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
 
-</head>
-<body>
+<div class="admin-header">
+    <h1><?php echo $pageTitle; ?> (Tabel: banner)</h1>
+    <p>Gunakan form ini untuk mengubah teks dan latar belakang visual di bagian paling atas halaman utama (hero section).</p>
+</div>
 
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
+<div class="card">
+    <form method="post" action="../proses/proses_banner.php" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Konten Teks Banner</legend>
 
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
+            <div class="form-group">
+                <label for="header_banner">Judul Utama Banner (Kolom: header)</label>
+                <input type="text" id="header_banner" name="header_banner" placeholder="Contoh: Network and Cyber Security Laboratory" required>
             </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
+
+            <div class="form-group">
+                <label for="subheadline">Sub Judul / Tagline (Kolom: subheadline)</label>
+                <input type="text" id="subheadline" name="subheadline" placeholder="Contoh: Innovating in Network Security &amp; Cyber Defense" required>
             </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
+
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi Singkat (Kolom: deskripsi)</label>
+                <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Teks kecil di bawah subheadline (opsional)"></textarea>
             </div>
-        </div>
+        </fieldset>
 
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
+        <fieldset>
+            <legend>Background Banner</legend>
+
+            <div class="form-group">
+                <label for="media_path">Upload Latar Belakang Baru (Kolom: media_path)</label>
+                <input type="file" id="media_path" name="media_path" accept="image/*,video/*" required>
+                <small>File saat ini: [simulasi current_banner.jpg]. Unggah gambar atau video (opsional).</small>
             </div>
+        </fieldset>
+
+        <div class="form-group">
+            <input type="submit" class="btn-primary" value="Simpan Perubahan Banner">
         </div>
-    </div>
+    </form>
+</div>
 
-    <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?> (Tabel: banner)</h1>
-        </div>
-
-        <p>Gunakan form ini untuk mengubah teks dan latar belakang visual di bagian paling atas halaman utama (hero section).</p>
-
-        <form method="post" action="../../proses/proses_banner.php" enctype="multipart/form-data">
-            
-            <fieldset style="border: 1px solid #ccc; padding: 20px; margin-bottom: 30px;">
-                <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Konten Teks Banner</legend>
-                
-                <div class="form-group">
-                    <label for="header_banner">Judul Utama Banner (Kolom: header)</label>
-                    <input type="text" id="header_banner" name="header_banner" placeholder="Contoh: Network and Cyber Security Laboratory" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="subheadline">Sub Judul / Tagline (Kolom: subheadline)</label>
-                    <input type="text" id="subheadline" name="subheadline" placeholder="Contoh: Innovating in Network Security & Cyber Defense" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="deskripsi">Deskripsi Singkat (Kolom: deskripsi)</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Teks kecil di bawah subheadline (opsional)"></textarea>
-                </div>
-            </fieldset>
-
-            <fieldset style="border: 1px solid #ccc; padding: 20px;">
-                <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Background Banner</legend>
-                
-                <div class="form-group">
-                    <label for="media_path">Upload Latar Belakang Baru (Kolom: media_path)</label>
-                    <input type="file" id="media_path" name="media_path" accept="image/*,video/*" required>
-                    <small>File saat ini: [simulasi current_banner.jpg]. Unggah gambar atau video (opsional).</small>
-                </div>
-            </fieldset>
-
-            <div class="form-group" style="margin-top: 25px;">
-                <input type="submit" class="btn-primary" value="Simpan Perubahan Banner">
-            </div>
-        </form>
-
-    </div>
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>
