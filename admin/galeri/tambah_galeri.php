@@ -110,7 +110,7 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                     <tr>
                         <td>
                             <?php
-                            $imageSrc = $projectBasePath . ltrim($g['foto_path'], '/');
+                            $imageSrc = $projectBasePath . ltrim($g['media_path'], '/');
                             ?>
                             <img src="<?php echo htmlspecialchars($imageSrc); ?>" class="table-img" alt="<?php echo htmlspecialchars($g['judul']); ?>">
                         </td>
