@@ -12,12 +12,12 @@ $logos = [
     [
         'id' => 1,
         'nama_logo' => 'Politeknik Negeri Malang',
-        'media_path' => $base_url . '/asset/img/logo_polinema.png', 
+        'media_path' => '../../uploads/logo/logo-polinema.png', 
     ],
     [
         'id' => 2,
         'nama_logo' => 'Jurusan Teknologi Informasi',
-        'media_path' => $base_url . '/asset/img/logo_jti.png', 
+        'media_path' => '../../uploads/logo/logo-jti.png', 
     ],
 ];
 
