@@ -3,8 +3,9 @@
 session_start();
 $page_title = "Dashboard Admin";
 $current_page = "dashboard";
+
 $base_url = './'; 
-$base_Url = '../admin/'; 
+$base_Url = '../admin'; 
 $assetUrl = '../assets/admin';
 
 $total_galeri = 0;
@@ -23,23 +24,22 @@ $total_pesan = 0;
 </head>
 <body>
 
-        <div class="sidebar">
+    <div class="sidebar">
         <h2>ADMIN NCS LAB</h2>
-        
-        <a href="index.php">Dashboard</a>
-        
-        <a href="<?php echo $base_url; ?>beranda/edit_beranda.php">Edit Beranda</a>
+        <a href="index.php">Dashboard</a> 
         
         <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_url; ?>includes/header.php">Edit Header</a>
-        <a href="<?php echo $base_url; ?>includes/footer.php">Edit Footer</a>
+        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
+        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
+        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
+        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
 
         <div class="menu-header">MANAJEMEN KONTEN</div>
         
         <div class="dropdown-item">
             <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
                 PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten"></span>
+                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
             </a>
             <div class="submenu-wrapper" id="manajemenKonten">
                 <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>

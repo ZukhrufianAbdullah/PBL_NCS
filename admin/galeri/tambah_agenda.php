@@ -3,8 +3,10 @@
 session_start();
 $page_title = "Tambah Acara Agenda";
 $current_page = "tambah_agenda";
-$base_url = '../../';
-$assetUrl = '../../assets/admin';
+
+$base_Url = '..'; 
+//$base_Url = '../admin'; 
+$assetUrl = '/PBL_NCS/assets/admin';
 
 include '../../config/koneksi.php';
 require_once __DIR__ . '/../../app/helpers/agenda_helper.php';
@@ -26,7 +28,7 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
     <meta charset="UTF-8">
     <title><?php echo $page_title; ?></title>
     <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
+    
     <style>
         .agenda-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
         .agenda-table th, .agenda-table td { padding: 10px; border: 1px solid #ccc; text-align: left; vertical-align: top; }
@@ -36,12 +38,69 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
 <body>
 
     <div class="sidebar">
-        <a href="../index.php">Dashboard</a>
-        <a href="../beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="tambah_galeri.php">Galeri (Tambah)</a>
-        <a href="tambah_agenda.php" class="<?php echo $current_page == 'tambah_agenda' ? 'active' : ''; ?>">Agenda (Tambah)</a>
-        <a href="../arsip/tambah_penelitian.php">Penelitian (Tambah)</a>
-        <a href="../logout.php">Logout</a>
+        <h2>ADMIN NCS LAB</h2>
+        <a href="index.php">Dashboard</a> 
+        
+        <div class="menu-header">PENGATURAN TAMPILAN</div>
+        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
+        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
+        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
+        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
+
+        <div class="menu-header">MANAJEMEN KONTEN</div>
+        
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
+                PROFIL
+                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
+            </a>
+            <div class="submenu-wrapper" id="manajemenKonten">
+                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
+                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
+                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
+            </div>
+        </div>
+        
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
+                GALERI
+                <span class="dropdown-icon" id="icon-galeriMenu">></span>
+            </a>
+            <div class="submenu-wrapper" id="galeriMenu">
+                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
+                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
+                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
+                <div class="menu-subheader">AGENDA</div>
+                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
+                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
+            </div>
+        </div>
+        
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
+                ARSIP
+                <span class="dropdown-icon" id="icon-arsipMenu">></span>
+            </a>
+            <div class="submenu-wrapper" id="arsipMenu">
+                <div class="menu-subheader">PENELITIAN</div>
+                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
+                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
+                <div class="menu-subheader">PENGABDIAN</div>
+                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
+                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
+            </div>
+        </div>
+
+        <div class="dropdown-item">
+            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
+                LAYANAN
+                <span class="dropdown-icon" id="icon-layananMenu">></span>
+            </a>
+            <div class="submenu-wrapper" id="layananMenu">
+                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
+                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
+            </div>
+        </div>
     </div>
 
     <div class="content">
@@ -195,6 +254,6 @@ function openEditAgenda(id) {
     }
 }
 </script>
-
+    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
 </body>
 </html>
