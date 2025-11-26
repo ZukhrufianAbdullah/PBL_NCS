@@ -6,27 +6,41 @@ $pageStyles = ['profil'];
 
 require_once __DIR__ . '/../../config/koneksi.php';
 
-// Ambil id_page = 'profil_visi_misi'
-$sqlPage = "SELECT id_page FROM pages WHERE nama = 'profil_visi_misi' LIMIT 1";
-$pageResult = pg_query($conn, $sqlPage);
-$page = pg_fetch_assoc($pageResult);
-$id_page = $page['id_page'];
+// Ambil data judul
+$qJudulVisiMisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'judul_visi_misi'
+    LIMIT 1");
+$judulVisiMisi = pg_fetch_assoc($qJudulVisiMisi)['content_value'] ?? 'VISI & MISI';
 
-// Ambil VISI
-$sqlVisi = "SELECT content_value FROM page_content 
-            WHERE id_page = $1 AND content_key = 'visi' LIMIT 1";
-$visiResult = pg_query_params($conn, $sqlVisi, array($id_page));
-$visi = (pg_num_rows($visiResult) > 0)
-    ? pg_fetch_assoc($visiResult)['content_value']
-    : "Visi belum ditambahkan.";
+// Ambil data deskripsi
+$qDeskripsiVisiMisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'deskripsi_visi_misi'
+    LIMIT 1");
+$deskripsiVisiMisi = pg_fetch_assoc($qDeskripsiVisiMisi)['content_value'] ?? 'Deskripsi visi misi belum ditambahkan.';
 
-// Ambil MISI
-$sqlMisi = "SELECT content_value FROM page_content 
-            WHERE id_page = $1 AND content_key = 'misi' LIMIT 1";
-$misiResult = pg_query_params($conn, $sqlMisi, array($id_page));
-$misi = (pg_num_rows($misiResult) > 0)
-    ? pg_fetch_assoc($misiResult)['content_value']
-    : "Misi belum ditambahkan.";
+//Ambil data visi
+$qVisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'visi'
+    LIMIT 1");
+$visi = pg_fetch_assoc($qVisi)['content_value'] ?? 'Visi belum ditambahkan.';
+
+//Ambil data misi
+$qMisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'misi'
+    LIMIT 1");
+$misi = pg_fetch_assoc($qMisi)['content_value'] ?? 'Misi belum ditambahkan.';
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -37,8 +51,8 @@ require_once __DIR__ . '/../../includes/page-hero.php';
 <main class="section-gap">
     <div class="container">
         <div class="section-header">
-            <h2>Visi &amp; Misi</h2>
-            <p>Vision and Mission of the Network & Cyber ​​Security Laboratory</p>  
+            <h2><?= nl2br($judulVisiMisi); ?></h2>
+            <p><?= nl2br($deskripsiVisiMisi); ?></p>  
         </div>
 
         <div class="row g-4">

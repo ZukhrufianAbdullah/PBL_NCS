@@ -4,61 +4,100 @@ session_start();
 $pageTitle = 'Edit Visi & Misi';
 $currentPage = 'edit_visi_misi';
 $adminPageStyles = ['forms'];
-
+include '../../config/koneksi.php';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
+
+// Ambil data judul
+$qJudulVisiMisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'judul_visi_misi'
+    LIMIT 1");
+$judulVisiMisi = pg_fetch_assoc($qJudulVisiMisi)['content_value'] ?? '';
+
+// Ambil data deskripsi
+$qDeskripsiVisiMisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'deskripsi_visi_misi'
+    LIMIT 1");
+$deskripsiVisiMisi = pg_fetch_assoc($qDeskripsiVisiMisi)['content_value'] ?? '';
+
+//Ambil data visi
+$qVisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'visi'
+    LIMIT 1");
+$visi = pg_fetch_assoc($qVisi)['content_value'] ?? '';
+
+//Ambil data misi
+$qMisi = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'misi'
+    LIMIT 1");
+$misi = pg_fetch_assoc($qMisi)['content_value'] ?? '';
+
+
 ?>
+
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: profil)</h1>
     <p>Perbarui judul halaman serta teks visi dan misi laboratorium di sini.</p>
 </div>
 
 <div class="card">
-    <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_struktur.php">
+    <form method="post" action="../proses/proses_visi_misi.php">
         <input type="hidden" name="edit_page_content" value="1">
         <fieldset>
             <legend>Konten Halaman Struktur Organisasi</legend>
             <div class="form-group">
                 <label for="judul_page">Judul Halaman</label>
                 <input type="text"
-                       id="judul_page"
-                       name="judul_page"
-                       value="<?php echo htmlspecialchars($judul_page ?? ''); ?>"
+                       id="judul"
+                       name="judul"
+                       value="<?php echo htmlspecialchars($judulVisiMisi); ?>"
                        data-autofocus="true">
             </div>
             <div class="form-group">
                 <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
-                <textarea id="deskripsi_page"
-                          name="deskripsi_page"
-                          rows="4"><?php echo htmlspecialchars($deskripsi_page ?? ''); ?></textarea>
+                <textarea id="deskripsi"
+                          name="deskripsi"
+                          rows="4"><?php echo htmlspecialchars($deskripsiVisiMisi); ?></textarea>
             </div>
         </fieldset>
 
         <div class="form-group">
-            <button type="submit" name="submit" class="btn-primary">Simpan Konten Halaman</button>
+            <button type="submit" name="submit_judul_deskripsi_visi_misi" class="btn-primary">Simpan Konten Halaman</button>
         </div>
     </form>
 </div>
 
 <div class="card">
-    <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_visi_misi.php">
+    <form method="post" action="../proses/proses_visi_misi.php">
         <fieldset>
             <legend>Detail Visi &amp; Misi</legend>
             <div class="form-group">
                 <label for="visi">Isi Visi (Kolom: visi)</label>
                 <textarea id="visi"
                           name="visi"
-                          rows="8"><?php echo htmlspecialchars($visi ?? 'Masukkan teks Visi di sini...'); ?></textarea>
+                          rows="8"><?php echo htmlspecialchars($visi); ?></textarea>
             </div>
             <div class="form-group">
                 <label for="misi">Isi Misi (Kolom: misi)</label>
                 <textarea id="misi"
                           name="misi"
-                          rows="10"><?php echo htmlspecialchars($misi ?? 'Masukkan teks Misi di sini...'); ?></textarea>
+                          rows="10"><?php echo htmlspecialchars($misi); ?></textarea>
             </div>
         </fieldset>
 
         <div class="form-group">
-            <button type="submit" name="submit" class="btn-primary">Simpan Perubahan</button>
+            <button type="submit" name="submit_visi_misi" class="btn-primary">Simpan Perubahan Visi Misi</button>
         </div>
     </form>
 </div>

@@ -9,7 +9,7 @@ $id_user = $_SESSION['id_user'] ?? 1;
 if (isset($_POST['submit'])) {
 
     // Ambil input dari form
-    $deskripsi = trim($_POST['deskripsi']);
+    $deskripsi = ($_POST['deskripsi']);
 
     // 1. Ambil id_page untuk halaman 'home'
     $sqlPage = "SELECT id_page FROM pages WHERE nama = 'home' LIMIT 1";
