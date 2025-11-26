@@ -20,8 +20,12 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
         <fieldset>
             <legend>Konten Footer</legend>
             <div class="form-group">
-                <label for="title_footer">Judul Kolom Developer (Kolom: title_footer)</label>
-                <input type="text" id="title_footer" name="title_footer" value="Developed by" data-autofocus="true">
+                <label for="title_footer">Judul Footer (Kolom: title_footer)</label>
+                <input type="text" id="title_footer" name="title_footer" value="Network and Cyber Security Laboratory" data-autofocus="true">
+            </div>
+            <div class="form-group">
+                <label for="title_developer">Judul Kolom Developer (Kolom: title_developer)</label>
+                <input type="text" id="title_developer" name="title_developer" value="Developed by" data-autofocus="true">
             </div>
             <div class="form-group">
                 <label for="credit_tim_nama">Daftar Nama Developer/Tim (Kolom: nama)</label>
