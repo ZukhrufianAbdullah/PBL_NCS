@@ -1,11 +1,9 @@
 <?php
-// File: admin/edit_header_logo.php (MENGGANTIKAN edit_header.php DAN edit_logo.php)
 session_start();
 $pageTitle = 'Edit Header & Logo';
 $currentPage = 'edit_header';
 $adminPageStyles = ['forms'];
 include '../../config/koneksi.php';
-
 
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 

@@ -114,7 +114,6 @@ a {
 /* ---------------- Hero Banner ---------------- */
 
 .page-hero {
-    background: url("../img/beranda/hero-wave.svg") center/cover no-repeat, linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
     color: #fff;
     text-align: center;
     padding: 5.5rem 0 4rem;
@@ -127,7 +126,7 @@ a {
     position: absolute;
     inset: 0;
     background: url("../img/beranda/grid.svg") center/contain repeat;
-    opacity: 0.15;
+    opacity: 0.35;
 }
 
 .page-hero .hero-content {

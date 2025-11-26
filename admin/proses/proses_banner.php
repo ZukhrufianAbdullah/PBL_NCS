@@ -16,65 +16,99 @@ if (!is_dir($uploadDir)) {
 // Jika tombol submit ditekan
 if (isset($_POST['submit'])) {
 
-    $judul      = $_POST['judul'];
-    $subjudul   = $_POST['subjudul'];
+    // Update Judul dan Subjudul Banner
+    $judul      = $_POST['title_banner'];
+    $subjudul   = $_POST['subheadline_banner'];
 
-    // Ambil data lama dari database untuk menghapus gambar lama
-    $queryOld = pg_query($conn, "SELECT gambar FROM banner WHERE id_banner = 1");
-    $oldData = pg_fetch_assoc($queryOld);
-    $oldBanner = $oldData['gambar'];
+    // Cek apakah title_banner sudah ada
+    $checkTitleBanner = pg_query($conn, 
+    "SELECT * FROM settings WHERE setting_name = 'title_banner'");
 
-    // Cek apakah admin upload gambar baru
-    if ($_FILES['gambar']['name'] != "") {
+    if (pg_num_rows($checkTitleBanner) > 0) {
+        // Update jika sudah ada
+        pg_query_params($conn,
+            "UPDATE settings SET setting_value = $1, id_user = $2
+             WHERE setting_name = 'title_banner'",
+            array($judul, $id_user)
+        );
+    } else {
+        // Insert jika belum ada
+        pg_query_params($conn,
+            "INSERT INTO settings (setting_name, setting_type, setting_value, id_user)
+             VALUES ('title_banner','text', $1, $2)",
+            array($judul, $id_user)
+        );
+    }
 
-        $fileName = $_FILES['gambar']['name'];
-        $tmpFile  = $_FILES['gambar']['tmp_name'];
+    // Cek apakah subheadline_banner sudah ada
+    $checkSubheadlineBanner = pg_query($conn, 
+    "Select * from settings where setting_name = 'subheadline_banner'");
 
-        // Nama file unik
-        $newName = time() . "_" . $fileName;
+    if (pg_num_rows($checkSubheadlineBanner) > 0) {
+        // Update jika sudah ada
+        pg_query_params($conn,
+            "Update settings set setting_value = $1, id_user = $2
+             where setting_name = 'subheadline_banner'",
+            array($subjudul, $id_user)
+        );
+    } else {
+        // Insert jika belum ada
+        pg_query_params($conn,
+            "Insert into settings (setting_name, setting_type, setting_value, id_user)
+             values ('subheadline_banner','text', $1, $2)",
+            array($subjudul, $id_user)
+        );
+    }
+    
 
-        // Upload file banner baru
+    // Update Background
+    if (!empty($_FILES['image_banner']['name'])) {
+        // Cek banner lama
+        $checkBackgroundBanner = pg_query($conn, 
+        "SELECT * FROM settings WHERE setting_name = 'image_banner'");
+
+        $fileName = $_FILES['image_banner']['name'];
+        $tmpFile  = $_FILES['image_banner']['tmp_name'];
+        $newName  = time() . "_" . $fileName;
+
+        // Upload file baru
         move_uploaded_file($tmpFile, $uploadDir . $newName);
 
-        // Hapus banner lama jika ada
-        if (!empty($oldBanner) && file_exists($uploadDir . $oldBanner)) {
-            unlink($uploadDir . $oldBanner);
+        // Jika ada data lama → hapus file lama
+        if ($row = pg_fetch_assoc($checkBackgroundBanner)) {
+            $oldFile = $row['setting_value'];
+            if (!empty($oldFile) && file_exists($uploadDir . $oldFile)) {
+                unlink($uploadDir . $oldFile);
+            }
         }
 
-    } else {
-        // Jika admin tidak mengganti gambar
-        $newName = $oldBanner;
+        // Simpan nama file baru ke database
+        if (pg_num_rows($checkBackgroundBanner) > 0) {
+            // Update jika sudah ada
+            pg_query_params($conn,
+                "Update settings set setting_value = $1, id_user = $2
+                 where setting_name = 'image_banner'",
+                array($newName, $id_user)
+            );
+        } else {
+            // Insert jika belum ada
+            pg_query_params($conn,
+                "Insert into settings (setting_name, setting_type, setting_value, id_user)
+                 values ('image_banner','image', $1, $2)",
+                array($newName, $id_user)
+            );
+        }
     }
-
-    // Update table banner
-    $query = "UPDATE banner 
-              SET judul = $1, subjudul = $2, gambar = $3, id_user = $4
-              WHERE id_banner = 1";
-
-    $params = array($judul, $subjudul, $newName, $id_user);
-
-    $result = pg_query_params($conn, $query, $params);
-
-    if ($result) {
-        echo "<script>
-                alert('Banner berhasil diperbarui!');
-                window.location.href = '../banner/edit_banner.php';
-              </script>";
-        exit();
-    } else {
-        echo "<script>
-                alert('Gagal memperbarui banner!');
-                window.location.href = '../banner/edit_banner.php';
-              </script>";
-        exit();
-    }
-
+    echo"<script>
+            alert('Banner berhasil diperbarui!');
+            window.location.href = '../beranda/edit_banner.php';
+        </script>";
+    exit();
 } else {
-    // Jika file ini diakses tanpa submit
-    echo "<script>
+    echo"<script>
             alert('Akses tidak valid!');
-            window.location.href = '../banner/edit_banner.php';
-          </script>";
+            window.location.href = '../beranda/edit_banner.php';
+        </script>";
     exit();
 }
 ?>
