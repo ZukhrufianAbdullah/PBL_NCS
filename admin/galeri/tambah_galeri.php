@@ -34,29 +34,32 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
           action="<?php echo $adminBasePath; ?>proses/proses_galeri.php"
           enctype="multipart/form-data">
         <input type="hidden" name="tambah" value="1">
-        <fieldset>
-            <legend>Detail Postingan</legend>
-            <div class="form-group">
-                <label for="judul">Judul Postingan</label>
-                <input type="text" id="judul" name="judul" required data-autofocus="true">
-            </div>
-            <div class="form-group">
-                <label for="deskripsi">Deskripsi Postingan</label>
-                <textarea id="deskripsi" name="deskripsi" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="tanggal_kegiatan">Tanggal Kegiatan</label>
-                <input type="date"
-                       id="tanggal_kegiatan"
-                       name="tanggal_kegiatan"
-                       value="<?php echo date('Y-m-d'); ?>"
-                       required>
-            </div>
-            <div class="form-group">
-                <label for="foto_path">Gambar Postingan</label>
-                <input type="file" id="foto_path" name="foto_path" accept="image/*" required>
-            </div>
-        </fieldset>
+
+        <div class="card-header">
+            <h3>Detail Postingan</h3>
+        </div>
+
+        <div class="form-group">
+            <label for="judul">Judul Postingan</label>
+            <input type="text" id="judul" name="judul" required data-autofocus="true">
+        </div>
+        <div class="form-group">
+            <label for="deskripsi">Deskripsi Postingan</label>
+            <textarea id="deskripsi" name="deskripsi" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="tanggal_kegiatan">Tanggal Kegiatan</label>
+            <input type="date"
+                    id="tanggal_kegiatan"
+                    name="tanggal_kegiatan"
+                    value="<?php echo date('Y-m-d'); ?>"
+                    required>
+        </div>
+        <div class="form-group">
+            <label for="foto_path">Gambar Postingan</label>
+            <input type="file" id="foto_path" name="foto_path" accept="image/*" required>
+        </div>
+
         <div class="form-group">
             <button type="submit" class="btn-primary">Tambahkan Postingan Galeri</button>
         </div>
