@@ -4,7 +4,7 @@ session_start();
 
 $pageTitle = 'Kelola Galeri Foto/Video';
 $currentPage = 'edit_galeri';
-$adminPageStyles = ['tables'];
+$adminPageStyles = ['tables', 'dashboard'];
 
 include_once '../../config/koneksi.php';
 require_once __DIR__ . '/../../app/helpers/galeri_helper.php';
@@ -71,7 +71,7 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
         <?php endif; ?>
         
         <!-- Statistics -->
-        <div class="stats-grid">
+        <div class="stats-grid" style="margin-bottom: 24px;">
             <div class="stat-card">
                 <h3>Total Galeri</h3>
                 <p class="stat-number"><?php echo count($galeri_items); ?></p>
@@ -100,16 +100,6 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                 <small>Galeri Foto</small>
             </div>
             
-            <div class="stat-card">
-                <h3>Video</h3>
-                <p class="stat-number">
-                    <?php 
-                    $video = array_filter($galeri_items, function($g) { return $g['jenis_media'] == 'video'; });
-                    echo count($video);
-                    ?>
-                </p>
-                <small>Galeri Video</small>
-            </div>
         </div>
         
         <!-- Content Box -->
@@ -229,19 +219,6 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
             </div>
         </div>
         
-        <!-- Info Card -->
-        <div class="card card-info">
-            <div class="card-header">
-                <h3>💡 Informasi</h3>
-            </div>
-            <ul class="guideline-list">
-                <li>Galeri dengan status <strong>Aktif</strong> akan ditampilkan di website</li>
-                <li>Gunakan foto dengan resolusi minimal 800x600 px untuk hasil terbaik</li>
-                <li>Video harus berupa URL YouTube yang valid</li>
-                <li>Deskripsi maksimal 500 karakter</li>
-                <li>Galeri ditampilkan dalam grid 3 kolom di website</li>
-            </ul>
-        </div>
     </div>
 
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>
