@@ -38,6 +38,7 @@ require_once __DIR__ . '/../../includes/page-hero.php';
     <div class="container">
         <div class="section-header">
             <h2>Visi &amp; Misi</h2>
+            <p>Vision and Mission of the Network & Cyber ​​Security Laboratory</p>  
         </div>
 
         <div class="row g-4">
