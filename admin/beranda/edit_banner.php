@@ -49,7 +49,7 @@ $backgroundBanner = pg_fetch_assoc($qBackgroundBanner)['setting_value'] ?? '';
             <div class="form-group">
                 <label for="media_path">Upload Latar Belakang Baru (Kolom: media_path)</label>
                 <input type="file" id="image_banner" name="image_banner" accept="image/*">
-                <span class="form-help-text">Unggah logo bertipe PNG/JPG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
+                <span class="form-help-text">Unggah logo bertipe PNG/JPG/JPEG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
             </div>
             <?php if (!empty($backgroundBanner)): ?>
             <div style="margin:10px 0;">
@@ -61,7 +61,7 @@ $backgroundBanner = pg_fetch_assoc($qBackgroundBanner)['setting_value'] ?? '';
         </fieldset>
 
         <div class="form-group">
-            <input type="submit" name="submit" class="btn-primary">Simpan Perubahan Header &amp; Logo</button>
+            <button type="submit" name="submit" class="btn-primary">Simpan Perubahan Banner &amp; Logo</button>
         </div>
     </form>
 </div>

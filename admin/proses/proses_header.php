@@ -47,11 +47,45 @@ if (isset($_POST['submit'])) {
     //Update Logo Header
 
     if (!empty($_FILES['logo_header']['name'])) {
+
+        
+        //VALIDASI FILE GAMBAR
+     
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
+        $allowedMime = [
+            'image/png',
+            'image/jpeg',
+            'image/svg+xml'
+        ];
+
+        $fileName = $_FILES['logo_header']['name'];
+        $tmpFile  = $_FILES['logo_header']['tmp_name'];
+        $fileType = mime_content_type($tmpFile);
+        $fileSize = $_FILES['logo_header']['size'];
+
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        // Validasi ekstensi file
+        if (!in_array($fileExt, $allowedExtensions)) {
+            echo "<script>alert('Gagal: Format harus PNG/JPG/JPEG/SVG!'); window.history.back();</script>";
+            exit();
+        }
+
+        // Validasi MIME file
+        if (!in_array($fileType, $allowedMime)) {
+            echo "<script>alert('Gagal: File yang diupload bukan gambar valid!'); window.history.back();</script>";
+            exit();
+        }
+
+        // Validasi ukuran maksimal 3MB (opsional)
+        if ($fileSize > 3 * 1024 * 1024) {
+            echo "<script>alert('Gagal: Ukuran file maksimal 3MB!'); window.history.back();</script>";
+            exit();
+        }
+
         // Cek logo lama
         $checkLogo = pg_query($conn, "SELECT * FROM settings WHERE setting_name = 'logo_header'");
 
-        $fileName = $_FILES['logo_header']['name'];
-        $tmpFile = $_FILES['logo_header']['tmp_name'];
         $newName = time() . "_" . $fileName;
 
         // Upload file baru

@@ -43,7 +43,7 @@ $logoHeader = pg_fetch_assoc($qLogo)['setting_value'] ?? '';
             <div class="form-group">
                 <label for="media_path">Pilih File Logo Baru (Kolom: media_path)</label>
                 <input type="file" id="logo_header" name="logo_header" accept="image/*">
-                <span class="form-help-text">Unggah logo bertipe PNG/JPG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
+                <span class="form-help-text">Unggah logo bertipe PNG/JPG/JPEG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
             </div>
             <?php if (!empty($logoHeader)): ?>
             <div style="margin:10px 0;">

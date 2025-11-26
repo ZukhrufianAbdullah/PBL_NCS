@@ -63,12 +63,49 @@ if (isset($_POST['submit'])) {
 
     // Update Background
     if (!empty($_FILES['image_banner']['name'])) {
+
+        // VALIDASI FORMAT FILE
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
+        $allowedMime = [
+            'image/png',
+            'image/jpeg',
+            'image/svg+xml'
+        ];
+
+        $fileName = $_FILES['image_banner']['name'];
+        $tmpFile  = $_FILES['image_banner']['tmp_name'];
+        $fileType = mime_content_type($tmpFile);
+        $fileSize = $_FILES['image_banner']['size'];
+
+        // Ambil ekstensi
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        // Validasi ekstensi
+        if (!in_array($fileExt, $allowedExtensions)) {
+            echo "<script>alert('Gagal: Format file tidak diizinkan. Gunakan PNG, JPG, atau SVG!'); 
+                window.history.back();</script>";
+            exit();
+        }
+
+        // Validasi MIME type (lebih kuat)
+        if (!in_array($fileType, $allowedMime)) {
+            echo "<script>alert('Gagal: File bukan gambar valid!'); 
+                window.history.back();</script>";
+            exit();
+        }
+
+        // Validasi ukuran (opsional 3MB)
+        if ($fileSize > 3 * 1024 * 1024) {
+            echo "<script>alert('Gagal: Ukuran file maksimal 3MB!'); 
+                window.history.back();</script>";
+            exit();
+        }
+
         // Cek banner lama
         $checkBackgroundBanner = pg_query($conn, 
         "SELECT * FROM settings WHERE setting_name = 'image_banner'");
 
-        $fileName = $_FILES['image_banner']['name'];
-        $tmpFile  = $_FILES['image_banner']['tmp_name'];
+        
         $newName  = time() . "_" . $fileName;
 
         // Upload file baru
