@@ -25,109 +25,118 @@ if ($pcRes && pg_num_rows($pcRes) > 0) {
 
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
+
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: agenda)</h1>
     <p>Form ini digunakan untuk menambahkan acara atau workshop ke halaman Agenda.</p>
+</div>
 
-        <!-- Form tambah agenda -->
-        <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php">
-            <input type="hidden" name="tambah" value="1">
+<!-- Form tambah agenda -->
+<div class="card">
+    <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php">
+        <input type="hidden" name="tambah" value="1">
+        
+            <div class="card-header">
+                <h3>Detail Acara</h3>
+            </div>
+
+            <div class="form-group">
+                <label for="judul_agenda">Judul Acara (Kolom: judul_agenda)</label>
+                <input type="text" id="judul_agenda" name="judul_agenda" required>
+            </div>
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi Singkat (Kolom: deskripsi)</label>
+                <textarea id="deskripsi" name="deskripsi" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tanggal_agenda">Tanggal Acara (Kolom: tanggal_agenda)</label>
+                <input type="date" id="tanggal_agenda" name="tanggal_agenda" value="<?php echo date('Y-m-d'); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Status (Kolom: status)</label>
+                <select id="status" name="status">
+                    <option value="1">Aktif</option>
+                    <option value="0">Arsip</option>
+                </select>
+            </div>
             
-            <fieldset style="border: 1px solid #ccc; padding: 20px;">
-                <legend style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Detail Acara</legend>
-                
-                <div class="form-group">
-                    <label for="judul_agenda">Judul Acara (Kolom: judul_agenda)</label>
-                    <input type="text" id="judul_agenda" name="judul_agenda" required>
-                </div>
-                <div class="form-group">
-                    <label for="deskripsi">Deskripsi Singkat (Kolom: deskripsi)</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="tanggal_agenda">Tanggal Acara (Kolom: tanggal_agenda)</label>
-                    <input type="date" id="tanggal_agenda" name="tanggal_agenda" value="<?php echo date('Y-m-d'); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="status">Status (Kolom: status)</label>
-                    <select id="status" name="status">
-                        <option value="1">Aktif</option>
-                        <option value="0">Arsip</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" style="margin-top: 25px;">
-                    <input type="submit" name="submit_tambah" class="btn-primary" value="Tambahkan Acara Agenda">
-                </div>
-            </fieldset>
+            <div class="form-group" style="margin-top: 25px;">
+                <input type="submit" name="submit_tambah" class="btn-primary" value="Tambahkan Acara Agenda">
+            </div>
+    </form>
+</div>
+
+<div class="card">
+        <div class="card-header">
+                <h3>Konten Halaman Agenda</h3>
+        </div>
+
+        <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php">
+            <input type="hidden" name="edit_page" value="1">
+            <div class="form-group">
+                <label for="judul_page">Section Title</label>
+                <input type="text" id="judul_page" name="judul_page" value="<?php echo htmlspecialchars($pc['section_title'] ?? ''); ?>">
+            </div>
+            <div class="form-group">
+                <label for="deskripsi_page">Section Description</label>
+                <textarea id="deskripsi_page" name="deskripsi_page" rows="3"><?php echo htmlspecialchars($pc['section_description'] ?? ''); ?></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit" name="submit_page" class="btn-primary" value="Simpan Konten Halaman">
+            </div>
         </form>
+</div>
 
-        <!-- Form: Edit page content (section title & description) -->
-        <fieldset style="border: 1px solid #ccc; padding: 20px; margin-top: 20px;">
-            <legend>Konten Halaman Agenda (Section)</legend>
-            <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php">
-                <input type="hidden" name="edit_page" value="1">
-                <div class="form-group">
-                    <label for="judul_page">Section Title</label>
-                    <input type="text" id="judul_page" name="judul_page" value="<?php echo htmlspecialchars($pc['section_title'] ?? ''); ?>">
-                </div>
-                <div class="form-group">
-                    <label for="deskripsi_page">Section Description</label>
-                    <textarea id="deskripsi_page" name="deskripsi_page" rows="3"><?php echo htmlspecialchars($pc['section_description'] ?? ''); ?></textarea>
-                </div>
-                <div class="form-group">
-                    <input type="submit" name="submit_page" class="btn-primary" value="Simpan Konten Halaman">
-                </div>
-            </form>
-        </fieldset>
-
-        <h2>Daftar Agenda</h2>
-
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Judul</th>
-                    <th>Deskripsi</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($agendaItems)): ?>
-                    <tr><td colspan="5" class="text-muted">Belum ada agenda.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($agendaItems as $it): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($it['tanggal_agenda']); ?></td>
-                            <td><?php echo htmlspecialchars($it['judul_agenda']); ?></td>
-                            <td><?php echo nl2br(htmlspecialchars($it['deskripsi'] ?? '')); ?></td>
-                            <td><?php echo $it['status'] ? 'Aktif' : 'Arsip'; ?></td>
-                            <td class="agenda-actions">
-                                <!-- Edit form (buka small edit modal or redirect to edit page) -->
-                                <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php" style="display:inline-block;">
-                                    <input type="hidden" name="edit" value="1">
-                                    <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
-                                    <input type="hidden" name="judul_agenda" value="<?php echo htmlspecialchars($it['judul_agenda']); ?>">
-                                    <input type="hidden" name="tanggal_agenda" value="<?php echo htmlspecialchars($it['tanggal_agenda']); ?>">
-                                    <input type="hidden" name="deskripsi" value="<?php echo htmlspecialchars($it['deskripsi'] ?? ''); ?>">
-                                    <input type="hidden" name="status" value="<?php echo $it['status'] ? '1' : '0'; ?>">
-                                    <button type="button" class="btn-primary" style="background:orange" onclick="openEditAgenda(<?php echo $it['id_agenda']; ?>)">Edit</button>
-                                </form>
-
-                                <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php" onsubmit="return confirm('Hapus agenda ini?');">
-                                    <input type="hidden" name="hapus" value="1">
-                                    <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
-                                    <button type="submit" class="btn-primary" style="background:#e74c3c">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-
+<div class="card">
+    
+    <div class="card-header">
+        <h3>Daftar Agenda</h3>
     </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Judul</th>
+                <th>Deskripsi</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (empty($agendaItems)): ?>
+                <tr><td colspan="5" class="text-muted">Belum ada agenda.</td></tr>
+            <?php else: ?>
+                <?php foreach ($agendaItems as $it): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($it['tanggal_agenda']); ?></td>
+                        <td><?php echo htmlspecialchars($it['judul_agenda']); ?></td>
+                        <td><?php echo nl2br(htmlspecialchars($it['deskripsi'] ?? '')); ?></td>
+                        <td><?php echo $it['status'] ? 'Aktif' : 'Arsip'; ?></td>
+                        <td class="agenda-actions">
+                            <!-- Edit form (buka small edit modal or redirect to edit page) -->
+                            <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php" style="display:inline-block;">
+                                <input type="hidden" name="edit" value="1">
+                                <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
+                                <input type="hidden" name="judul_agenda" value="<?php echo htmlspecialchars($it['judul_agenda']); ?>">
+                                <input type="hidden" name="tanggal_agenda" value="<?php echo htmlspecialchars($it['tanggal_agenda']); ?>">
+                                <input type="hidden" name="deskripsi" value="<?php echo htmlspecialchars($it['deskripsi'] ?? ''); ?>">
+                                <input type="hidden" name="status" value="<?php echo $it['status'] ? '1' : '0'; ?>">
+                                <button type="button" class="btn-primary" style="background:orange" onclick="openEditAgenda(<?php echo $it['id_agenda']; ?>)">Edit</button>
+                            </form>
+
+                            <form method="post" action="<?php echo $adminBasePath; ?>proses/proses_agenda.php" onsubmit="return confirm('Hapus agenda ini?');">
+                                <input type="hidden" name="hapus" value="1">
+                                <input type="hidden" name="id_agenda" value="<?php echo $it['id_agenda']; ?>">
+                                <button type="submit" class="btn-primary" style="background:#e74c3c">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
 <script>
 function openEditAgenda(id) {
