@@ -1,13 +1,44 @@
 <?php
-$defaultSiteTitle = 'Network and Cyber Security Laboratory';
-$settings = isset($conn) ? get_settings($conn, ['site_title', 'footer_copyright']) : [];
-$socialLinks = isset($conn) ? get_social_links($conn) : [];
-$siteTitleValue = $settings['site_title']['setting_value'] ?? $defaultSiteTitle;
-$footerCopy = $settings['footer_copyright']['setting_value'] ?? 'All Rights Reserved.';
+// File: includes/footer.php
 
+// Fungsi untuk mengambil settings
+if (!function_exists('get_settings')) {
+    function get_settings($conn, $setting_names) {
+        $settings = [];
+        $placeholders = implode(',', array_fill(0, count($setting_names), '?'));
+        
+        $query = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN (" . implode(',', array_fill(0, count($setting_names), '?')) . ")";
+        
+        $result = pg_query_params($conn, $query, $setting_names);
+        
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $settings[$row['setting_name']] = $row;
+            }
+        }
+        return $settings;
+    }
+}
+
+// Fungsi untuk mengambil social links
+if (!function_exists('get_social_links')) {
+    function get_social_links($conn) {
+        $social_links = [];
+        $query = "SELECT * FROM sosial_media ORDER BY id_sosialmedia";
+        $result = pg_query($conn, $query);
+        
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $social_links[] = $row;
+            }
+        }
+        return $social_links;
+    }
+}
+
+// Fungsi untuk social icon
 if (!function_exists('lab_social_icon')) {
-    function lab_social_icon(string $platform): string
-    {
+    function lab_social_icon(string $platform): string {
         $platform = strtolower($platform);
         return match ($platform) {
             'linkedin' => 'fa-brands fa-linkedin',
@@ -20,6 +51,22 @@ if (!function_exists('lab_social_icon')) {
         };
     }
 }
+
+// Ambil data - PERBAIKAN: Pastikan hanya mengambil setting yang diperlukan
+$defaultSiteTitle = 'Network and Cyber Security Laboratory';
+$settings = isset($conn) ? get_settings($conn, ['site_title', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim']) : [];
+$socialLinks = isset($conn) ? get_social_links($conn) : [];
+
+// PERBAIKAN: Ambil nilai masing-masing setting secara terpisah
+$siteTitleValue = $settings['site_title']['setting_value'] ?? $defaultSiteTitle;
+$footerCopy = $settings['footer_copyright']['setting_value'] ?? 'All Rights Reserved.';
+$developerTitle = $settings['footer_developer_title']['setting_value'] ?? 'Developed by';
+$creditTim = $settings['footer_credit_tim']['setting_value'] ?? "D4 Teknik Informatika\nAbelas Solihin\nEsatovin Ebenaezer Victoria\nMuhammad Nuril Huda\nNurfinka Lailasari\nZukhrufian Abdullah";
+
+// Parse credit tim menjadi array
+$creditLines = explode("\n", $creditTim);
+$creditLines = array_map('trim', $creditLines);
+$creditLines = array_filter($creditLines);
 ?>
 
 <footer class="lab-footer">
@@ -40,13 +87,10 @@ if (!function_exists('lab_social_icon')) {
                 <?php endif; ?>
             </div>
             <div class="developer-list">
-                <span>Developed by</span>
-                <span>D4 Teknik Informatika</span>
-                <span>Abelas Solihin</span>
-                <span>Esatovin Ebenaezer Victoria</span>
-                <span>Muhammad Nuril Huda</span>
-                <span>Nurfinka Lailasari</span>
-                <span>Zukhrufian Abdullah</span>
+                <span><?php echo htmlspecialchars($developerTitle); ?></span>
+                <?php foreach ($creditLines as $line): ?>
+                    <span><?php echo htmlspecialchars($line); ?></span>
+                <?php endforeach; ?>
             </div>
         </div>
         <div class="footer-bottom">
@@ -61,6 +105,4 @@ if (!function_exists('lab_social_icon')) {
 <!-- Custom JS -->
 <script src="<?php echo $baseUrl; ?>/assets/site/js/main.js?v=<?php echo time(); ?>"></script>
 </body>
-
 </html>
-
