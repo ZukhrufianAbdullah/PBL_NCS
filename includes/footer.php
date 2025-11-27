@@ -52,14 +52,14 @@ if (!function_exists('lab_social_icon')) {
     }
 }
 
-// Ambil data - PERBAIKAN: Pastikan hanya mengambil setting yang diperlukan
+// Ambil data
 $defaultSiteTitle = 'Network and Cyber Security Laboratory';
 $settings = isset($conn) ? get_settings($conn, ['site_title', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim']) : [];
 $socialLinks = isset($conn) ? get_social_links($conn) : [];
 
-// PERBAIKAN: Ambil nilai masing-masing setting secara terpisah
+// PERBAIKAN: Ambil copyright text LENGKAP dari database
 $siteTitleValue = $settings['site_title']['setting_value'] ?? $defaultSiteTitle;
-$footerCopy = $settings['footer_copyright']['setting_value'] ?? 'All Rights Reserved.';
+$footerCopy = $settings['footer_copyright']['setting_value'] ?? '© 2025 Network and Cyber Security Laboratory. All Rights Reserved.';
 $developerTitle = $settings['footer_developer_title']['setting_value'] ?? 'Developed by';
 $creditTim = $settings['footer_credit_tim']['setting_value'] ?? "D4 Teknik Informatika\nAbelas Solihin\nEsatovin Ebenaezer Victoria\nMuhammad Nuril Huda\nNurfinka Lailasari\nZukhrufian Abdullah";
 
@@ -93,8 +93,9 @@ $creditLines = array_filter($creditLines);
                 <?php endforeach; ?>
             </div>
         </div>
+        <!-- PERBAIKAN: Tampilkan copyright text LENGKAP dari database -->
         <div class="footer-bottom">
-            © <?php echo date('Y'); ?> <?php echo htmlspecialchars($siteTitleValue); ?>. <?php echo htmlspecialchars($footerCopy); ?>
+            <?php echo htmlspecialchars($footerCopy); ?>
         </div>
     </div>
 </footer>

@@ -20,7 +20,7 @@ if (!$conn) {
     die("Koneksi database gagal: " . pg_last_error());
 }
 
-// Ambil data settings - PERBAIKAN QUERY
+// Ambil data settings
 $settings_data = [];
 $query_settings = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN ('site_title', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim')";
 $result_settings = pg_query($conn, $query_settings);
@@ -85,8 +85,10 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
         <fieldset>
             <legend>Hak Cipta</legend>
             <div class="form-group">
-                <label for="footer_copyright">Teks Hak Cipta (setting_name: footer_copyright)</label>
-                <textarea id="footer_copyright" name="footer_copyright" rows="2"><?php echo htmlspecialchars($settings_data['footer_copyright'] ?? 'All Rights Reserved.'); ?></textarea>
+                <label for="footer_copyright">Teks Hak Cipta Lengkap (setting_name: footer_copyright)</label>
+                <!-- PERBAIKAN: Ubah default value menjadi teks lengkap -->
+                <textarea id="footer_copyright" name="footer_copyright" rows="2" placeholder="Contoh: © 2025 Network and Cyber Security Laboratory. All Rights Reserved."><?php echo htmlspecialchars($settings_data['footer_copyright'] ?? '© 2025 Network and Cyber Security Laboratory. All Rights Reserved.'); ?></textarea>
+                <span class="form-help-text">Edit keseluruhan teks hak cipta termasuk simbol ©, tahun, dan teks lengkap.</span>
             </div>
         </fieldset>
 
