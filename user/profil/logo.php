@@ -55,30 +55,31 @@ $logos = get_logos($conn);
         <div class="card-grid sm">
 
             <!-- Logo Utama -->
-            <div class="card-basic logo-card text-center">
-                <?php if (!empty($logo1)): ?>
+            <?php if (!empty($logo1)): ?>
+                <div class="card-basic logo-card text-center">
                     <img src="<?= BASE_URL . '/uploads/logo/' . htmlspecialchars($logo1); ?>" 
                         alt="Logo Utama">
-                <?php else: ?>
-                    <p class="text-muted">Logo utama belum diupload.</p>
-                <?php endif; ?>
-                <h5>Logo Utama</h5>
-                <p class="text-muted mb-0">Logo utama laboratorium.</p>
-            </div>
+                    <h5>Logo Utama</h5>
+                    <p class="text-muted mb-0">Logo utama laboratorium.</p>
+                </div>
+            <?php else: ?>
+                <p class="text-muted text-center">Logo utama belum diupload.</p>
+            <?php endif; ?>
 
             <!-- Logo Deskripsi -->
-            <div class="card-basic logo-card text-center">
-                <?php if (!empty($logo2)): ?>
+            <?php if (!empty($logo2)): ?>
+                <div class="card-basic logo-card text-center">
                     <img src="<?= BASE_URL . '/uploads/logo/' . htmlspecialchars($logo2); ?>" 
                         alt="Logo Deskripsi">
-                <?php else: ?>
-                    <p class="text-muted">Logo deskripsi belum diupload.</p>
-                <?php endif; ?>
-                <h5>Logo Deskripsi</h5>
-                <p class="text-muted mb-0">Logo pendukung deskripsi laboratorium.</p>
-            </div>
+                    <h5>Logo Deskripsi</h5>
+                    <p class="text-muted mb-0">Logo pendukung deskripsi laboratorium.</p>
+                </div>
+            <?php else: ?>
+                <p class="text-muted text-center">Logo deskripsi belum diupload.</p>
+            <?php endif; ?>
 
         </div>
+
 
     </div>
 </main>

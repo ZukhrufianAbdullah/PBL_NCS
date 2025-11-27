@@ -123,13 +123,14 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
                 "SELECT id_logo, media_path FROM logo WHERE nama_logo = 'logo_utama' LIMIT 1"
             );
 
+            $rowLogo1 = pg_fetch_assoc($checkLogo1);
             $newFile1 = time() . "_" . $file1;
 
             // Upload file baru
             move_uploaded_file($tmp1, $uploadDir . $newFile1);
 
             //jika ada data lama → hapus file lama
-            if ($rowLogo1 = pg_fetch_assoc($checkLogo1)) {
+            if ($rowLogo1) {
                 $oldFile1 = $rowLogo1['media_path'];
                 if (!empty($oldFile1) && file_exists($uploadDir . $oldFile1)) {
                     unlink($uploadDir . $oldFile1);
@@ -153,6 +154,10 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
                     array($newFile1, $id_user)
                 );
             }
+            echo "<script>
+                alert('Logo berhasil diperbarui!');
+                window.location.href = '../profil/edit_logo.php';
+              </script>";
         }
 
         // LOGO 2
@@ -183,13 +188,14 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
             $checkLogo2 = pg_query($conn,
                 "SELECT id_logo, media_path FROM logo WHERE nama_logo = 'logo_deskripsi' LIMIT 1"
             );
+            $rowLogo2 = pg_fetch_assoc($checkLogo2);
             $newFile2 = time() . "_" . $file2;
 
             // Upload file baru
             move_uploaded_file($tmp2, $uploadDir . $newFile2);
 
             //jika ada data lama → hapus file lama
-            if ($rowLogo2 = pg_fetch_assoc($checkLogo2)) {
+            if ($rowLogo2) {
                 $oldFile2 = $rowLogo2['media_path'];
                 if (!empty($oldFile2) && file_exists($uploadDir . $oldFile2)) {
                     unlink($uploadDir . $oldFile2);
