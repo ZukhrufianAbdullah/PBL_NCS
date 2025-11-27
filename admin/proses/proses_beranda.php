@@ -2,7 +2,7 @@
 session_start();
 include '../../config/koneksi.php';
 
-// Ambil id_user dari session (fallback 1 jika belum login)
+// Ambil id_user dari session (fallback 1)
 $id_user = $_SESSION['id_user'] ?? 1;
 
 // Pastikan tombol submit ditekan

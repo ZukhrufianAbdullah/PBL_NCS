@@ -28,7 +28,7 @@ $backgroundBanner = pg_fetch_assoc($qBackgroundBanner)['setting_value'] ?? '';
 
 <div class="card">
     <form method="post"
-          action="<?php echo $adminBasePath; ?>../admin/proses/proses_banner.php"
+          action="../proses/proses_banner.php"
           enctype="multipart/form-data">
         <fieldset>
             <legend>Konten Teks Banner</legend>

@@ -48,14 +48,14 @@ $misi = pg_fetch_assoc($qMisi)['content_value'] ?? '';
 
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: profil)</h1>
-    <p>Perbarui judul halaman serta teks visi dan misi laboratorium di sini.</p>
+    <p>Kelola halaman visi dan misi di sini</p>
 </div>
 
 <div class="card">
     <form method="post" action="../proses/proses_visi_misi.php">
         <input type="hidden" name="edit_page_content" value="1">
         <fieldset>
-            <legend>Konten Halaman Struktur Organisasi</legend>
+            <legend>Judul dan Deskripsi Visi Misi</legend>
             <div class="form-group">
                 <label for="judul_page">Judul Halaman</label>
                 <input type="text"

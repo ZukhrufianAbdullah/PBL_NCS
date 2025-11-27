@@ -4,176 +4,113 @@ session_start();
 $pageTitle = 'Edit Logo Website';
 $currentPage = 'edit_logo';
 $adminPageStyles = ['forms'];
-
-$baseUrl = '/PBL_NCS';
-
-// --- Data Dummy ---
-$logos = [
-    [
-        'id' => 1,
-        'nama_logo' => 'Politeknik Negeri Malang',
-        'media_path' => '../../uploads/logo/logo-polinema.png', 
-    ],
-    [
-        'id' => 2,
-        'nama_logo' => 'Jurusan Teknologi Informasi',
-        'media_path' => '../../uploads/logo/logo-jti.png', 
-    ],
-];
-
+include '../../config/koneksi.php';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
+
+// Ambil data judul
+$qJudulLogo = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_logo' AND pc.content_key = 'judul_logo'
+    LIMIT 1");
+$judulLogo = pg_fetch_assoc($qJudulLogo)['content_value'] ?? '';
+
+// Ambil data deskripsi
+$qDeskripsiLogo = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_logo' AND pc.content_key = 'deskripsi_logo'
+    LIMIT 1");
+$deskripsiLogo = pg_fetch_assoc($qDeskripsiLogo)['content_value'] ?? '';
+
+// Ambil data Logo 1
+$qLogo1 = pg_query($conn, "
+    SELECT media_path
+    FROM logo 
+    WHERE nama_logo = 'logo_utama'
+    LIMIT 1");
+$logo1 = pg_fetch_assoc($qLogo1)['media_path'] ?? '';
+
+// Ambil data Logo 2
+$qLogo2 = pg_query($conn, "
+    SELECT media_path
+    FROM logo
+    WHERE nama_logo = 'logo_deskripsi'
+    LIMIT 1");
+$logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
 ?>
 
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: logo)</h1>
-    <p>Kelola logo utama yang tampil pada halaman profil beserta teks pendukungnya.</p>
+    <p>Kelola halaman logo di sini</p>
 </div>
 
 <div class="card">
-    <form method="post"
-          action="<?php echo $adminBasePath; ?>proses/proses_logo.php"
-          enctype="multipart/form-data">
+    <form method="post" action="../proses/proses_logo.php">
+        <input type="hidden" name="edit_page_content" value="1">
         <fieldset>
-            <legend>Pengaturan Judul Utama</legend>
+            <legend>Judul dan Deskripsi Logo</legend>
             <div class="form-group">
-                <label for="judul_sub">Sub Judul <span class="required">*</span></label>
-                <span class="form-subtitle">Contoh: Visi &amp; Misi</span>
+                <label for="judul_page">Judul Halaman></label>
                 <input type="text"
-                       id="judul_sub"
-                       name="judul_sub"
-                       value="<?php echo htmlspecialchars($data['judul_sub'] ?? ''); ?>"
+                       id="judul_logo"
+                       name="judul_logo"
+                       value="<?php echo htmlspecialchars($judulLogo);?>"
                        required
                        data-autofocus="true">
             </div>
             <div class="form-group">
-                <label for="deskripsi_sub">Deskripsi Sub Judul <span class="required">*</span></label>
-                <span class="form-subtitle">Teks pendek yang tampil di bawah judul utama.</span>
-                <textarea id="deskripsi_sub"
-                          name="deskripsi_sub"
-                          rows="3"
-                          required><?php echo htmlspecialchars($data['deskripsi_sub'] ?? ''); ?></textarea>
+                <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
+                <textarea id="deskripsi_logo"
+                          name="deskripsi_logo"
+                          rows="3"><?php echo htmlspecialchars($deskripsiLogo); ?></textarea>
             </div>
         </fieldset>
 
         <div class="form-group">
-            <button type="submit" class="btn-primary">Unggah &amp; Simpan Logo</button>
+            <button type="submit" name = "submit_judul_deskripsi_logo" class="btn-primary">Simpan Konten Halaman</button>
         </div>
     </form>
 </div>
 
-<div class="logo-grid">
-    <?php foreach ($logos as $logo): ?>
-        <div class="logo-card">
-            <div class="logo-container">
-                <img src="<?php echo htmlspecialchars($logo['media_path']); ?>"
-                     alt="<?php echo htmlspecialchars($logo['nama_logo']); ?>">
-            </div>
+<div class="card">
+    <form method="post" action="../proses/proses_logo.php" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Upload Logo Website</legend>
 
-            <p class="logo-title"><?php echo htmlspecialchars($logo['nama_logo']); ?></p>
-
-            <div class="card-actions">
-                <button type="button"
-                        class="btn-warning"
-                        onclick="openEditModal(
-                            <?php echo $logo['id']; ?>,
-                            '<?php echo addslashes($logo['nama_logo']); ?>',
-                            '<?php echo addslashes($logo['media_path']); ?>'
-                        )">
-                    Edit
-                </button>
-                <a href="javascript:void(0)" class="btn-danger">Hapus</a>
+            <div class="form-group">
+                <label for="file_logo1">Logo Utama</label>
+                <input type="file" id="file_logo1" name="file_logo1" accept="image/*">
+                <span class="form-help-text">Unggah logo bertipe PNG/JPG/JPEG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
             </div>
+            <?php if (!empty($logo1)): ?>
+            <div style="margin:10px 0;">
+                <p>Logo Utama saat ini:</p>
+                <img src="../../uploads/logo/<?php echo $logo1; ?>"
+                     alt="Logo Utama" style="max-height:120px;">    
+            </div>
+            <?php endif; ?>
+            <input type="hidden" name="id_logo1" value="<?php echo htmlspecialchars($logo1); ?>">
+
+            <div class="form-group">
+                <label for="file_logo2">Logo Deskripsi</label>
+                <input type="file" id="file_logo2" name="file_logo2" accept="image/*">
+                <span class="form-help-text">Unggah logo bertipe PNG/JPG/JPEG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
+            </div>
+            <?php if (!empty($logo2)): ?>
+            <div style="margin:10px 0;">
+                <p>Logo Deskripsi saat ini:</p>
+                <img src="../../uploads/logo/<?php echo $logo2; ?>"
+                     alt="Logo Deskripsi" style="max-height:120px;">    
+            </div>
+            <?php endif; ?>
+            <input type="hidden" name="id_logo2" value="<?php echo htmlspecialchars($logo2); ?>">
+        </fieldset>
+        <div class="form-group">
+            <button type="submit" name="submit_logo" class="btn-primary">Simpan Perubahan Logo</button>
         </div>
-    <?php endforeach; ?>
+    </form>
 </div>
-
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
-        <h3 id="editModalTitle">Edit Logo</h3>
-        <form action="<?php echo $adminBasePath; ?>proses/proses_logo.php"
-              method="POST"
-              enctype="multipart/form-data">
-            <input type="hidden" name="action" value="update">
-            <input type="hidden" name="id_logo" id="edit_id">
-            <input type="hidden" name="old_media_path" id="edit_old_path">
-
-            <div class="form-group">
-                <label for="edit_nama">Nama Logo <span class="required">*</span></label>
-                <input type="text" id="edit_nama" name="nama_logo" required>
-            </div>
-
-            <div class="form-group">
-                <label for="edit_file">Upload Logo Baru (PNG/JPG, Max 2MB)</label>
-                <input type="file"
-                       id="edit_file"
-                       name="logo_file"
-                       accept="image/png, image/jpeg, image/jpg"
-                       onchange="previewImage(this, 'edit_preview')">
-                <span class="form-help-text">Kosongkan jika tidak ingin mengganti logo.</span>
-            </div>
-
-            <div class="form-group">
-                <label>Preview Logo Saat Ini</label>
-                <img id="edit_preview" class="preview-img" src="" alt="Preview Logo">
-            </div>
-
-            <button type="submit" class="btn-primary" name="submit">Simpan Perubahan</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    function openModal(modalId, title = '') {
-        const modal = document.getElementById(modalId);
-        if (!modal) return;
-        modal.style.display = 'block';
-        const titleEl = modal.querySelector('h3');
-        if (title && titleEl) {
-            titleEl.innerText = title;
-        }
-    }
-
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    function openEditModal(id, nama, path) {
-        document.getElementById('edit_id').value = id;
-        document.getElementById('edit_nama').value = nama;
-        const relativePath = path.substring(path.indexOf('asset/img/'));
-        document.getElementById('edit_old_path').value = relativePath;
-        document.getElementById('edit_preview').src = path;
-        document.getElementById('edit_file').value = '';
-        document.getElementById('editModalTitle').innerText = 'Edit Logo: ' + nama;
-        openModal('editModal');
-    }
-
-    function previewImage(input, previewId) {
-        const preview = document.getElementById(previewId);
-        if (!preview) {
-            return;
-        }
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(input.files[0]);
-        } else if (previewId === 'add_preview') {
-            preview.src = '';
-        }
-    }
-
-    window.onclick = function (event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    };
-</script>
-
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>
