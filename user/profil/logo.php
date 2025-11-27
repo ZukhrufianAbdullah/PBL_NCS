@@ -29,7 +29,10 @@ $qLogo1 = pg_query($conn, "
     FROM logo 
     WHERE nama_logo = 'logo_utama'
     LIMIT 1");
-$logo1 = pg_fetch_assoc($qLogo1)['media_path'] ?? '';
+$hasilLogo1 = pg_fetch_assoc($qLogo1);
+$logo1 = (!empty($hasilLogo1['media_path']))
+    ? BASE_URL . '/uploads/logo/' . $hasilLogo1['media_path']
+    : BASE_URL . '/assets/site/img/logo/logo-jti.svg';
 
 // Ambil data Logo 2
 $qLogo2 = pg_query($conn, "
@@ -37,7 +40,10 @@ $qLogo2 = pg_query($conn, "
     FROM logo
     WHERE nama_logo = 'logo_deskripsi'
     LIMIT 1");
-$logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
+$hasilLogo2 = pg_fetch_assoc($qLogo2);
+$logo2 = (!empty($hasilLogo2['media_path']))
+    ? BASE_URL . '/uploads/logo/' . $hasilLogo2['media_path']
+    : BASE_URL . '/assets/site/img/logo/logo-polinema.svg';
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -55,28 +61,20 @@ $logos = get_logos($conn);
         <div class="card-grid sm">
 
             <!-- Logo Utama -->
-            <?php if (!empty($logo1)): ?>
                 <div class="card-basic logo-card text-center">
-                    <img src="<?= BASE_URL . '/uploads/logo/' . htmlspecialchars($logo1); ?>" 
+                    <img src="<?= htmlspecialchars($logo1); ?>" 
                         alt="Logo Utama">
                     <h5>Logo Utama</h5>
                     <p class="text-muted mb-0">Logo utama laboratorium.</p>
                 </div>
-            <?php else: ?>
-                <p class="text-muted text-center">Logo utama belum diupload.</p>
-            <?php endif; ?>
 
             <!-- Logo Deskripsi -->
-            <?php if (!empty($logo2)): ?>
                 <div class="card-basic logo-card text-center">
-                    <img src="<?= BASE_URL . '/uploads/logo/' . htmlspecialchars($logo2); ?>" 
+                    <img src="<?= htmlspecialchars($logo2); ?>" 
                         alt="Logo Deskripsi">
                     <h5>Logo Deskripsi</h5>
                     <p class="text-muted mb-0">Logo pendukung deskripsi laboratorium.</p>
                 </div>
-            <?php else: ?>
-                <p class="text-muted text-center">Logo deskripsi belum diupload.</p>
-            <?php endif; ?>
 
         </div>
 
