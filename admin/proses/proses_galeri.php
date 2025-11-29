@@ -155,8 +155,15 @@ elseif (isset($_POST['edit_galeri'])) {
     $deskripsi   = ($_POST['deskripsi']);
     $tanggal     = ($_POST['tanggal']);
 
-    // Proses upload gambar jika ada
-    $newName = null;
+    // Ambil data lama galeri (termasuk nama file gambar)
+    $sqlOld = "SELECT media_path FROM galeri WHERE id_galeri = $1 LIMIT 1";
+    $resultOld = pg_query_params($conn, $sqlOld, array($id_galeri));
+    $oldData = pg_fetch_assoc($resultOld);
+    $oldImage = $oldData['media_path'];
+    
+    $newName = $oldImage; 
+
+    // Jika upload gambar baru
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
         $allowedMime = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'];
@@ -168,67 +175,57 @@ elseif (isset($_POST['edit_galeri'])) {
 
         $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        // Validasi ekstensi file
         if (!in_array($fileExt, $allowedExtensions)) {
             echo "<script>alert('Gagal: Format harus PNG/JPG/JPEG/SVG!'); window.history.back();</script>";
             exit();
         }
 
-        // Validasi MIME file
         if (!in_array($fileType, $allowedMime)) {
-            echo "<script>alert('Gagal: File yang diupload bukan gambar valid!'); window.history.back();</script>";
+            echo "<script>alert('Gagal: File bukan gambar valid!'); window.history.back();</script>";
             exit();
         }
 
-        // Validasi ukuran maksimal 3MB (opsional)
         if ($fileSize > 3 * 1024 * 1024) {
-            echo "<script>alert('Gagal: Ukuran file maksimal 3MB!'); window.history.back();</script>";
+            echo "<script>alert('Gagal: Ukuran maksimal 3MB!'); window.history.back();</script>";
             exit();
         }
 
+        // Generate nama file baru
         $newName = time() . "_" . $fileName;
 
         // Upload file
-        move_uploaded_file($tmpFile, $uploadDir . $newName);
-    }
-    // Simpan data galeri ke database
-    if ($newName) {
-        $sqlUpdate = "
-            UPDATE galeri
-            SET judul = $1,
-                deskripsi = $2,
-                tanggal = $3,
-                media_path = $4,
-                id_user = $5
-            WHERE id_galeri = $6
-        ";
+        if (move_uploaded_file($tmpFile, $uploadDir . $newName)) {
 
-        $params = array(
-            $judul,
-            $deskripsi,
-            $tanggal,
-            $newName,
-            $id_user,
-            $id_galeri
-        );
-    } else {
-        $sqlUpdate = "
-            UPDATE galeri
-            SET judul = $1,
-                deskripsi = $2,
-                tanggal = $3,
-                id_user = $4
-            WHERE id_galeri = $5
-        ";
+            // Hapus gambar lama jika ada
+            if (!empty($oldImage) && file_exists($uploadDir . $oldImage)) {
+                unlink($uploadDir . $oldImage);
+            }
 
-        $params = array(
-            $judul,
-            $deskripsi,
-            $tanggal,
-            $id_user,
-            $id_galeri
-        );
+        } else {
+            echo "<script>alert('Gagal upload gambar baru!'); window.history.back();</script>";
+            exit();
+        }
     }
+
+    // Query UPDATE
+    $sqlUpdate = "
+        UPDATE galeri
+        SET judul = $1,
+            deskripsi = $2,
+            tanggal = $3,
+            media_path = $4,
+            id_user = $5
+        WHERE id_galeri = $6
+    ";
+
+    $params = array(
+        $judul,
+        $deskripsi,
+        $tanggal,
+        $newName,   
+        $id_user,
+        $id_galeri
+    );
 
     $resultUpdate = pg_query_params($conn, $sqlUpdate, $params);
 
@@ -246,16 +243,34 @@ elseif (isset($_POST['edit_galeri'])) {
     exit();
 }
 
+
 // Hapus Agenda
-elseif (isset($_POST['hapus'])){
+elseif (isset($_POST['hapus'])) {
+
     $id_galeri = $_POST['id_galeri'];
 
+    // Ambil nama file dari database
+    $sqlGet = "SELECT media_path FROM galeri WHERE id_galeri = $1 LIMIT 1";
+    $resultGet = pg_query_params($conn, $sqlGet, array($id_galeri));
+    $data = pg_fetch_assoc($resultGet);
+
+    if ($data) {
+        $fileName = $data['media_path'];
+        $filePath = "../../uploads/galeri/" . $fileName;
+
+        // Hapus file jika ada
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
+    // 3. Hapus database
     $sqlDelete = "DELETE FROM galeri WHERE id_galeri = $1";
     $resultDelete = pg_query_params($conn, $sqlDelete, array($id_galeri));
 
     if ($resultDelete) {
         echo "<script>
-                alert('Galeri berhasil dihapus!');
+                alert('Galeri berhasil dihapus beserta gambarnya!');
                 window.location.href = '../galeri/edit_galeri.php';
               </script>";
     } else {
@@ -264,12 +279,6 @@ elseif (isset($_POST['hapus'])){
                 window.location.href = '../galeri/edit_galeri.php';
               </script>";
     }
-} else {
-    echo "<script>
-            alert('Aksi tidak dikenali.');
-            window.location.href = '../galeri/edit_galeri.php';
-          </script>";
-    exit();
 }
    
 ?>

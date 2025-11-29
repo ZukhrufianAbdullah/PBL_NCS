@@ -45,16 +45,16 @@ $qGaleri = pg_query($conn, "
             <div class="form-group">
                 <label for="judul_galeri">Judul Halaman</label>
                 <input type="text"
-                       id="judul_galeri"
-                       name="judul_galeri"
-                       value="<?php echo htmlspecialchars($judulGaleri);?>"
-                       data-autofocus ="true">
+                    id="judul_galeri"
+                    name="judul_galeri"
+                    value="<?php echo htmlspecialchars($judulGaleri); ?>"
+                    data-autofocus="true">
             </div>
             <div class="form-group">
                 <label for="deskripsi_galeri">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_galeri"
-                          name="deskripsi_galeri"
-                          rows="4"><?php echo htmlspecialchars($deskripsiGaleri); ?></textarea> 
+                    name="deskripsi_galeri"
+                    rows="4"><?php echo htmlspecialchars($deskripsiGaleri); ?></textarea>
             </div>
         </fieldset>
         <div class="form-group">
@@ -124,54 +124,54 @@ $qGaleri = pg_query($conn, "
         </thead>
 
         <tbody>
-        <?php 
-        $no = 1;
-        $hasData = false;
-        while ($row = pg_fetch_assoc($qGaleri)):
-            $hasData = true;
-        ?>
-        <tr>
-            <td><?php echo $no++; ?></td>
+            <?php
+            $no = 1;
+            $hasData = false;
+            while ($row = pg_fetch_assoc($qGaleri)):
+                $hasData = true;
+            ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
 
-            <td>
-                <img src="../../uploads/galeri/<?php echo htmlspecialchars($row['media_path']); ?>"
-                     style="width:70px;border-radius:4px;">
-            </td>
+                    <td>
+                        <img src="../../uploads/galeri/<?php echo htmlspecialchars($row['media_path']); ?>"
+                            style="width:70px;border-radius:4px;">
+                    </td>
 
-            <td><?php echo htmlspecialchars($row['judul']); ?></td>
+                    <td><?php echo htmlspecialchars($row['judul']); ?></td>
 
-            <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
+                    <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
 
-            <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+                    <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
 
-            <td style="text-align:center;">
+                    <td style="text-align:center;">
 
-                <!-- Tombol Edit -->
-                <button class="btn-warning"
-                        onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                    Edit
-                </button>
+                        <!-- Tombol Edit -->
+                        <button class="btn-warning"
+                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                            Edit
+                        </button>
 
-                <!-- Tombol Hapus -->
-                <form method="post" action="../proses/proses_galeri.php"
-                      style="display:inline;"
-                      onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                    <input type="hidden" name="hapus" value="1">
-                    <input type="hidden" name="id_galeri" value="<?php echo $row['id_galeri']; ?>">
-                    <button type="submit" class="btn-danger">Hapus</button>
-                </form>
+                        <!-- Tombol Hapus -->
+                        <form method="post" action="../proses/proses_galeri.php"
+                            style="display:inline;"
+                            onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                            <input type="hidden" name="hapus" value="1">
+                            <input type="hidden" name="id_galeri" value="<?php echo $row['id_galeri']; ?>">
+                            <button type="submit" class="btn-danger">Hapus</button>
+                        </form>
 
-            </td>
-        </tr>
-        <?php endwhile; ?>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
 
-        <?php if (!$hasData): ?>
-        <tr>
-            <td colspan="6" style="text-align:center;padding:15px;color:#777;">
-                <strong>Belum ada galeri yang ditambahkan</strong>
-            </td>
-        </tr>
-        <?php endif; ?>
+            <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:15px;color:#777;">
+                        <strong>Belum ada galeri yang ditambahkan</strong>
+                    </td>
+                </tr>
+            <?php endif; ?>
         </tbody>
 
     </table>
@@ -209,7 +209,13 @@ $qGaleri = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label>Ganti Gambar (Opsional)</label>
+                <label>Gambar Saat Ini</label><br>
+                <img id="edit_preview" src=""
+                    style="width:120px;border-radius:6px;margin-bottom:8px;">
+            </div>
+
+            <div class="form-group">
+                <label>Ganti Gambar</label>
                 <input type="file" name="gambar" accept=".png,.jpg,.jpeg,.svg">
             </div>
 
@@ -226,20 +232,20 @@ $qGaleri = pg_query($conn, "
      SCRIPT JS
 ========================================================= -->
 <script>
-function openEditModal(row) {
-    document.getElementById("edit_id").value = row.id_galeri;
-    document.getElementById("edit_judul").value = row.judul;
-    document.getElementById("edit_deskripsi").value = row.deskripsi;
-    document.getElementById("edit_tanggal").value = row.tanggal;
+    function openEditModal(row) {
+        document.getElementById("edit_id").value = row.id_galeri;
+        document.getElementById("edit_judul").value = row.judul;
+        document.getElementById("edit_deskripsi").value = row.deskripsi;
+        document.getElementById("edit_tanggal").value = row.tanggal;
 
-    document.getElementById("editModal").style.display = "flex";
-}
+        // Tampilkan gambar lama
+        document.getElementById("edit_preview").src = "../../uploads/galeri/" + row.media_path;
 
-function closeModal() {
-    document.getElementById("editModal").style.display = "none";
-}
+        document.getElementById("editModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("editModal").style.display = "none";
+    }
 </script>
-
-        
-
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>
