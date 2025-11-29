@@ -122,21 +122,17 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                             <img src="<?php echo $img; ?>" alt="" class="table-img">
                         </td>
                         <td>
-                            <form class="action-form"
-                                  method="post"
-                                  action="<?php echo $adminBasePath; ?>proses/proses_struktur.php"
-                                  enctype="multipart/form-data">
-                                <input type="hidden" name="edit" value="1">
-                                <input type="hidden" name="id_anggota" value="<?php echo $m['id_anggota']; ?>">
-                                <input type="hidden" name="id_dosen" value="<?php echo $m['id_dosen']; ?>">
-                                <input type="hidden" name="nama_dosen" value="<?php echo htmlspecialchars($m['nama_dosen']); ?>">
-                                <input type="hidden" name="jabatan" value="<?php echo htmlspecialchars($m['jabatan']); ?>">
-                                <button type="button"
-                                        class="btn-warning"
-                                        onclick="openEdit(<?php echo $m['id_anggota']; ?>)">
-                                    Edit
-                                </button>
-                            </form>
+                            <button type="button" 
+                                    class="btn-warning btn-sm" 
+                                    onclick="openEditModal(
+                                        <?php echo $m['id_anggota']; ?>, 
+                                        <?php echo $m['id_dosen']; ?>, 
+                                        '<?php echo htmlspecialchars($m['nama_dosen']); ?>', 
+                                        '<?php echo htmlspecialchars($m['jabatan']); ?>',
+                                        '<?php echo $m['media_path']; ?>'
+                                    )">
+                                Edit
+                            </button>
 
                             <form class="action-form"
                                   method="post"
@@ -144,7 +140,7 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                                   onsubmit="return confirm('Yakin ingin menghapus anggota ini?');">
                                 <input type="hidden" name="hapus" value="1">
                                 <input type="hidden" name="id_anggota" value="<?php echo $m['id_anggota']; ?>">
-                                <button type="submit" class="btn-danger">Hapus</button>
+                                <button type="submit" class="btn-danger btn-sm">Hapus</button>
                             </form>
                         </td>
                     </tr>
@@ -154,53 +150,157 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
     </table>
 </div>
 
+<!-- Modal Edit Anggota -->
+<div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Anggota</h2>
+        <form id="editForm" method="post" action="<?php echo $adminBasePath; ?>proses/proses_struktur.php" enctype="multipart/form-data">
+            <input type="hidden" name="edit" value="1">
+            <input type="hidden" name="id_anggota" id="modal_id_anggota">
+            <input type="hidden" name="id_dosen" id="modal_id_dosen">
+            
+            <div class="form-group">
+                <label for="modal_nama_dosen">Nama Lengkap</label>
+                <input type="text" id="modal_nama_dosen" name="nama_dosen" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="modal_jabatan">Jabatan</label>
+                <input type="text" id="modal_jabatan" name="jabatan" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="modal_foto">Foto Profil</label>
+                <input type="file" id="modal_foto" name="foto" accept="image/*">
+                <small class="form-help-text">Biarkan kosong jika tidak ingin mengubah foto</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Foto Saat Ini:</label>
+                <div id="currentPhotoContainer">
+                    <img id="modal_current_photo" src="" alt="Current Photo" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                    <div id="currentPhotoName" class="text-muted" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+            
+            <div class="form-group" style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-function openEdit(id) {
-    const row = document.querySelector('input[name="id_anggota"][value="' + id + '"]').closest('tr');
-    const currentName = row.querySelector('input[name="nama_dosen"]').value;
-    const currentJabatan = row.querySelector('input[name="jabatan"]').value;
-    const newName = prompt('Ubah nama:', currentName);
-    if (newName === null) return;
-    const newJabatan = prompt('Ubah jabatan:', currentJabatan);
-    if (newJabatan === null) return;
+// Modal functionality
+const modal = document.getElementById("editModal");
+const closeBtn = document.querySelector(".close");
 
-    const f = document.createElement('form');
-    f.method = 'post';
-    f.action = '<?php echo $adminBasePath; ?>proses/proses_struktur.php';
-
-    const hiddenEdit = document.createElement('input');
-    hiddenEdit.type = 'hidden';
-    hiddenEdit.name = 'edit';
-    hiddenEdit.value = '1';
-    f.appendChild(hiddenEdit);
-
-    const hidIdAng = document.createElement('input');
-    hidIdAng.type = 'hidden';
-    hidIdAng.name = 'id_anggota';
-    hidIdAng.value = id;
-    f.appendChild(hidIdAng);
-
-    const hidIdDosen = document.createElement('input');
-    hidIdDosen.type = 'hidden';
-    hidIdDosen.name = 'id_dosen';
-    hidIdDosen.value = row.querySelector('input[name="id_dosen"]').value;
-    f.appendChild(hidIdDosen);
-
-    const hidNama = document.createElement('input');
-    hidNama.type = 'hidden';
-    hidNama.name = 'nama_dosen';
-    hidNama.value = newName;
-    f.appendChild(hidNama);
-
-    const hidJabatan = document.createElement('input');
-    hidJabatan.type = 'hidden';
-    hidJabatan.name = 'jabatan';
-    hidJabatan.value = newJabatan;
-    f.appendChild(hidJabatan);
-
-    document.body.appendChild(f);
-    f.submit();
+function openEditModal(id_anggota, id_dosen, nama, jabatan, media_path) {
+    document.getElementById('modal_id_anggota').value = id_anggota;
+    document.getElementById('modal_id_dosen').value = id_dosen;
+    document.getElementById('modal_nama_dosen').value = nama;
+    document.getElementById('modal_jabatan').value = jabatan;
+    
+    // Set current photo preview
+    const currentPhoto = document.getElementById('modal_current_photo');
+    const currentPhotoName = document.getElementById('currentPhotoName');
+    
+    if (media_path && media_path !== 'default.png') {
+        currentPhoto.src = '<?php echo $projectBasePath; ?>uploads/dosen/' + media_path;
+        currentPhotoName.textContent = media_path;
+    } else {
+        currentPhoto.src = '<?php echo $projectBasePath; ?>uploads/dosen/default.png';
+        currentPhotoName.textContent = 'default.png';
+    }
+    
+    modal.style.display = "block";
 }
+
+function closeModal() {
+    modal.style.display = "none";
+    document.getElementById('editForm').reset();
+}
+
+// Close modal when clicking X or outside
+closeBtn.onclick = closeModal;
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+// Preview image when new file is selected
+document.getElementById('modal_foto').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modal_current_photo').src = e.target.result;
+            document.getElementById('currentPhotoName').textContent = file.name;
+        }
+        reader.readAsDataURL(file);
+    }
+});
 </script>
+
+<style>
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.table-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
+.action-form {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+</style>
 
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

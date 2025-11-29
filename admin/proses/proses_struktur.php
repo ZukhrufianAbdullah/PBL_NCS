@@ -54,7 +54,7 @@ if (isset($_POST['edit_page_content']) && isset($_POST['submit'])) {
 }
 
 // -----------------------------
-// 1) EDIT anggota (nama, jabatan, foto opsional)
+// 1) EDIT anggota (nama, jabatan, foto opsional) - DIPERBAIKI
 // -----------------------------
 if (isset($_POST['edit'])) {
     $id_anggota = $_POST['id_anggota'] ?? null;
@@ -67,38 +67,51 @@ if (isset($_POST['edit'])) {
         exit();
     }
 
-    // Jika ada file foto baru (input name="foto")
+    // PERBAIKAN: Handle file upload dengan lebih baik
     $new_file = null;
-    if (!empty($_FILES['foto']['name'])) {
+    if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
         $file_name = $_FILES['foto']['name'];
         $tmp_file  = $_FILES['foto']['tmp_name'];
+        $file_size = $_FILES['foto']['size'];
         $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        $allowed = ['jpg','jpeg','png','gif','svg'];
+        $allowed = ['jpg','jpeg','png','gif','svg','webp'];
+        
+        // Validasi file
         if (!in_array($ext, $allowed)) {
-            echo "<script>alert('Format foto tidak valid!'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+            echo "<script>alert('Format foto tidak valid! Hanya JPG, PNG, GIF, SVG, WEBP yang diizinkan.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            exit();
         }
-        $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
-        if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
-            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        
+        if ($file_size > 5 * 1024 * 1024) { // 5MB max
+            echo "<script>alert('Ukuran file terlalu besar! Maksimal 5MB.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            exit();
         }
 
-        // ambil foto lama untuk dihapus
+        // Generate unique filename
+        $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
+        
+        if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
+            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            exit();
+        }
+
+        // Ambil foto lama untuk dihapus
         $old = pg_fetch_assoc(pg_query_params($conn, "SELECT media_path FROM dosen WHERE id_dosen = $1", array($id_dosen)));
         if (!empty($old['media_path']) && $old['media_path'] !== $default_foto) {
             $oldpath = $upload_dir . $old['media_path'];
             if (file_exists($oldpath)) @unlink($oldpath);
         }
 
-        // update media_path pada dosen
+        // Update dengan foto baru
         pg_query_params($conn, "UPDATE dosen SET media_path = $1, nama_dosen=$2, id_user=$3 WHERE id_dosen = $4",
             array($new_file, $nama, $id_user, $id_dosen));
     } else {
-        // update tanpa foto
+        // Update tanpa mengubah foto
         pg_query_params($conn, "UPDATE dosen SET nama_dosen = $1, id_user = $2 WHERE id_dosen = $3",
             array($nama, $id_user, $id_dosen));
     }
 
-    // update jabatan pada anggota_lab
+    // Update jabatan pada anggota_lab
     pg_query_params($conn, "UPDATE anggota_lab SET jabatan = $1 WHERE id_anggota = $2",
         array($jabatan, $id_anggota));
 
@@ -119,20 +132,29 @@ if (isset($_POST['tambah'])) {
     }
 
     // upload foto (opsional)
-    if (!empty($_FILES['foto']['name'])) {
+    $new_file = $default_foto;
+    if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
         $file_name = $_FILES['foto']['name'];
         $tmp_file  = $_FILES['foto']['tmp_name'];
+        $file_size = $_FILES['foto']['size'];
         $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        $allowed = ['jpg','jpeg','png','gif','svg'];
+        $allowed = ['jpg','jpeg','png','gif','svg','webp'];
+        
         if (!in_array($ext, $allowed)) {
-            echo "<script>alert('Format foto tidak valid!'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+            echo "<script>alert('Format foto tidak valid! Hanya JPG, PNG, GIF, SVG, WEBP yang diizinkan.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            exit();
         }
+        
+        if ($file_size > 5 * 1024 * 1024) {
+            echo "<script>alert('Ukuran file terlalu besar! Maksimal 5MB.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            exit();
+        }
+        
         $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
         if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
-            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            exit();
         }
-    } else {
-        $new_file = $default_foto;
     }
 
     // insert dosen
@@ -144,7 +166,7 @@ if (isset($_POST['tambah'])) {
     $row = pg_fetch_assoc($ins);
     $id_dosen_baru = $row['id_dosen'];
 
-    // insert anggota_lab -> koreksi: kolom = (id_dosen, jabatan)
+    // insert anggota_lab
     $q2 = pg_query_params($conn, "INSERT INTO anggota_lab (id_dosen, jabatan) VALUES ($1, $2)",
         array($id_dosen_baru, $jabatan));
     if (!$q2) {
@@ -175,8 +197,7 @@ if (isset($_POST['hapus'])) {
     // hapus entry anggota_lab
     pg_query_params($conn, "DELETE FROM anggota_lab WHERE id_anggota = $1", array($id_anggota));
 
-    // optional: hapus dosen juga (jika tidak ada referensi lain) — keputusan design
-    // di sini kita hapus record dosen jika tidak ada referensi lain di anggota_lab
+    // hapus dosen jika tidak ada referensi lain
     $checkRef = pg_query_params($conn, "SELECT COUNT(*) as cnt FROM anggota_lab WHERE id_dosen = $1", array($id_dosen));
     $cnt = intval(pg_fetch_result($checkRef, 0, 'cnt'));
     if ($cnt === 0) {
