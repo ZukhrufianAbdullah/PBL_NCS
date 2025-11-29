@@ -3,13 +3,23 @@ session_start();
 $pageTitle = 'Dashboard Admin';
 $currentPage = 'dashboard';
 $adminPageStyles = ['dashboard'];
+include '../config/koneksi.php';
+require_once __DIR__ . '/includes/admin_header.php';
 
-$total_galeri = 0;
-$total_agenda = 0;
-$total_penelitian = 0;
+// Total Galeri
+$qTotalGaleri = pg_query($conn, "SELECT COUNT(*) AS total FROM galeri;");
+$total_galeri = pg_fetch_assoc($qTotalGaleri)['total'];
+
+// Total Agenda
+$qTotalAgenda = pg_query($conn, "SELECT COUNT(*) AS total FROM agenda;");
+$total_agenda = pg_fetch_assoc($qTotalAgenda)['total'];
+
+// Total Penelitian
+$total_penelitian =0;
+
+// Total Pesan Masuk
 $total_pesan = 0;
 
-require_once __DIR__ . '/includes/admin_header.php';
 ?>
 
 <div class="admin-header">
@@ -31,7 +41,7 @@ require_once __DIR__ . '/includes/admin_header.php';
     <div class="stat-card">
         <h3>Total Galeri</h3>
         <p class="stat-number"><?php echo $total_galeri; ?></p>
-        <small>Foto &amp; Video</small>
+        <small>Kegiatan yang sudah dilaksanakan</small>
     </div>
     <div class="stat-card">
         <h3>Total Agenda</h3>
@@ -55,8 +65,8 @@ require_once __DIR__ . '/includes/admin_header.php';
         <h3>🚀 Aksi Cepat</h3>
     </div>
     <div class="action-grid">
-        <a href="<?php echo $adminBasePath; ?>galeri/tambah_galeri.php" class="btn-primary">+ Tambah Galeri</a>
-        <a href="<?php echo $adminBasePath; ?>galeri/tambah_agenda.php" class="btn-primary">+ Tambah Agenda</a>
+        <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri.php" class="btn-primary">+ Tambah Galeri</a>
+        <a href="<?php echo $adminBasePath; ?>galeri/edit_agenda.php" class="btn-primary">+ Tambah Agenda</a>
         <a href="<?php echo $adminBasePath; ?>arsip/tambah_penelitian.php" class="btn-primary">+ Tambah Penelitian</a>
         <a href="<?php echo $adminBasePath; ?>layanan/lihat_pesan.php" class="btn-success">📧 Lihat Pesan</a>
     </div>
