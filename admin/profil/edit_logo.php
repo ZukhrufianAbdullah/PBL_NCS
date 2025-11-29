@@ -65,7 +65,7 @@ $logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
                 <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_logo"
                           name="deskripsi_logo"
-                          rows="3"><?php echo htmlspecialchars($deskripsiLogo); ?></textarea>
+                          rows="4"><?php echo htmlspecialchars($deskripsiLogo); ?></textarea>
             </div>
         </fieldset>
 

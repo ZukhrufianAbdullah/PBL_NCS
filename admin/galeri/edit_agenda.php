@@ -2,229 +2,247 @@
 // File: admin/galeri/edit_agenda.php
 session_start();
 
-$page_title = "Kelola Agenda";
+$page_title = "EDIT AGENDA";
 $current_page = "edit_agenda";
+$adminPageStyles = ['forms', 'tables'];
+include '../../config/koneksi.php';
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 
-$base_Url = '..'; 
-//$base_Url = '../admin'; 
-$assetUrl = '/PBL_NCS/assets/admin';
+// Ambil data judul
+$qJudulAgenda = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'galeri_agenda' AND pc.content_key = 'judul_agenda'
+    LIMIT 1");
+$judulAgenda = pg_fetch_assoc($qJudulAgenda)['content_value'] ?? '';
 
-// Dummy data (nanti dari database: tabel agenda)
-$data_agenda = [
-    [
-        'id_agenda' => 1,
-        'judul_agenda' => 'Workshop Cyber Security 2024',
-        'deskripsi' => 'Workshop tentang keamanan siber dan penetration testing',
-        'tanggal_agenda' => '2024-12-15',
-        'status' => 1,
-        'kategori' => 'Workshop'
-    ],
-    [
-        'id_agenda' => 2,
-        'judul_agenda' => 'Seminar Network Security',
-        'deskripsi' => 'Seminar nasional tentang keamanan jaringan komputer',
-        'tanggal_agenda' => '2024-12-20',
-        'status' => 1,
-        'kategori' => 'Seminar'
-    ],
-    [
-        'id_agenda' => 3,
-        'judul_agenda' => 'Pelatihan Ethical Hacking',
-        'deskripsi' => 'Pelatihan dasar ethical hacking untuk mahasiswa',
-        'tanggal_agenda' => '2024-11-10',
-        'status' => 0,
-        'kategori' => 'Pelatihan'
-    ]
-];
+// Ambil data deskripsi
+$qDeskripsiAgenda = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'galeri_agenda' AND pc.content_key = 'deskripsi_agenda'
+    LIMIT 1");
+$deskripsiAgenda = pg_fetch_assoc($qDeskripsiAgenda)['content_value'] ?? '';
+
+// Ambil data agenda
+$qAgenda = pg_query($conn, "
+    SELECT * 
+    FROM agenda
+    ORDER BY tanggal ASC");
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">\
 
-</head>
-<body>
 
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>/setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>/setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
+<div class="admin-header">
+    <h1><?php echo $page_title; ?> (Tabel: page_content)</h1>
+    <p>Kelola halaman agenda di sini</p>
+</div>
+<div class="card">
+    <form method="post" action="../proses/proses_agenda.php">
+        <input type="hidden" name="edit_page_content" value="1">
+        <fieldset>
+            <legend>Judul dan Deskripsi Agenda</legend>
+            <div class="form-group">
+                <label for="judul_agenda">Judul Halaman</label>
+                <input type="text"
+                       id="judul_agenda"
+                       name="judul_agenda"
+                       value="<?php echo htmlspecialchars($judulAgenda);?>"
+                       data-autofocus ="true">
+            </div>
+            <div class="form-group">
+                <label for="deskripsi_agenda">Deskripsi Singkat Halaman</label>
+                <textarea id="deskripsi_agenda"
+                          name="deskripsi_agenda"
+                          rows="4"><?php echo htmlspecialchars($deskripsiAgenda); ?></textarea> 
+            </div>
+        </fieldset>
+        <div class="form-group">
+            <button type="submit" name="submit_judul_deskripsi_agenda" class="btn-primary">Simpan Konten Halaman</button>
+        </div>
+    </form>
+</div>
 
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
-            </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
+<!-- ============================
+     FORM TAMBAH AGENDA
+=============================== -->
+<div class="card">
+    <form method="post" action="../proses/proses_agenda.php">
+        <input type="hidden" name="tambah_agenda" value="1">
 
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
+        <fieldset>
+            <legend>Tambah Agenda Baru</legend>
+
+            <div class="form-group">
+                <label for="judul_agenda_baru">Judul Agenda</label>
+                <input type="text" id="judul_agenda_baru" name="judul" required>
             </div>
+
+            <div class="form-group">
+                <label for="deskripsi_baru">Deskripsi</label>
+                <textarea id="deskripsi_baru" name="deskripsi" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="tanggal_baru">Tanggal Agenda</label>
+                <input type="date" id="tanggal_baru" name="tanggal" required
+                       value="<?php echo date('Y-m-d'); ?>">
+            </div>
+
+            <div class="form-group">
+                <label for="status_baru">Status</label>
+                <select id="status_baru" name="status">
+                    <option value="1">Aktif</option>
+                    <option value="0">Arsip</option>
+                </select>
+            </div>
+
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit" name="tambah_agenda" class="btn-primary">
+                Tambah Agenda
+            </button>
         </div>
+    </form>
+</div>
+
+<br>
+
+<!-- ============================
+     TABEL DAFTAR AGENDA
+=============================== -->
+
+<div class="card">
+    <div class="card-header">
+        <h3>Daftar Agenda</h3>
     </div>
 
-    <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
-        </div>
-        
-        <?php if(isset($_GET['success'])): ?>
-        <div class="alert-success">
-            <?php 
-            if($_GET['success'] == 'delete') {
-                echo 'Agenda berhasil dihapus!';
-            } else {
-                echo 'Data berhasil diperbarui!';
-            }
-            ?>
-        </div>
-        <?php endif; ?>
-        
-        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Cari agenda..." 
-                           onkeyup="searchTable('searchInput', 'agendaTable')"
-                           style="max-width: 300px;">
-                </div>
-                <a href="tambah_agenda.php" class="btn-primary">
-                    + Tambah Agenda Baru
-                </a>
-            </div>
-            
-            <?php if(empty($data_agenda)): ?>
-                <div class="alert-info">
-                    Belum ada data agenda. Silakan tambah data baru.
-                </div>
-            <?php else: ?>
-            
-            <table id="agendaTable">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Judul Agenda</th>
-                        <th>Deskripsi</th>
-                        <th style="width: 120px;">Tanggal</th>
-                        <th style="width: 100px;">Kategori</th>
-                        <th style="width: 80px;">Status</th>
-                        <th style="width: 150px; text-align: center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $no = 1;
-                    foreach($data_agenda as $agenda): 
-                        // Cek apakah agenda sudah lewat
-                        $tanggal = strtotime($agenda['tanggal_agenda']);
-                        $sekarang = time();
-                        $sudah_lewat = $tanggal < $sekarang;
-                    ?>
-                    <tr style="<?php echo $sudah_lewat ? 'opacity: 0.6;' : ''; ?>">
-                        <td><?php echo $no++; ?></td>
-                        <td>
-                            <strong><?php echo $agenda['judul_agenda']; ?></strong>
-                            <?php if($sudah_lewat): ?>
-                                <br><small style="color: #dc3545;">Sudah Berlalu</small>
-                            <?php endif; ?>
-                        </td>
-                        <td><?php echo substr($agenda['deskripsi'], 0, 60) . '...'; ?></td>
-                        <td><?php echo date('d/m/Y', strtotime($agenda['tanggal_agenda'])); ?></td>
-                        <td>
-                            <span class="badge badge-info">
-                                <?php echo $agenda['kategori']; ?>
-                            </span>
-                        </td>
-                        <td>
-                            <?php if($agenda['status'] == 1): ?>
-                                <span class="badge badge-success">Aktif</span>
-                            <?php else: ?>
-                                <span class="badge badge-danger">Tidak Aktif</span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="text-align: center;">
-                            <a href="edit_agenda_form.php?id=<?php echo $agenda['id_agenda']; ?>" 
-                               class="btn-warning" style="margin-right: 5px;">
-                                Edit
-                            </a>
-                            <button onclick="return confirmDelete('<?php echo $agenda['judul_agenda']; ?>')" 
-                                    class="btn-danger">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <?php endif; ?>
-        </div>
-        
-        <div class="card">
-            <div class="card-header">
-                <h3>Informasi</h3>
-            </div>
-            <ul style="line-height: 1.8; color: #555; padding-left: 20px;">
-                <li>Agenda dengan status <strong>Aktif</strong> akan ditampilkan di website</li>
-                <li>Agenda yang sudah lewat tanggalnya akan ditandai dengan warna redup</li>
-                <li>Gunakan tombol "Edit" untuk mengubah data agenda</li>
-                <li>Gunakan tombol "Hapus" untuk menghapus agenda</li>
-                <li>Agenda ditampilkan berurutan dari tanggal terdekat</li>
-            </ul>
-        </div>
-    </div>
+    <table class="data-table" id="agendaTable">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Judul Agenda</th>
+                <th>Deskripsi</th>
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th style="width: 150px; text-align:center;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+    <?php 
+    $no = 1;
+    $hasData = false;
 
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+    while ($row = pg_fetch_assoc($qAgenda)): 
+        $hasData = true;
+    ?>
+    <tr>
+        <td><?php echo $no++; ?></td>
+        <td><?php echo htmlspecialchars($row['judul']); ?></td>
+        <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
+        <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+        <td>
+            <?php echo ($row['status'] === 't')
+                ? '<span class="badge badge-success">Aktif</span>'
+                : '<span class="badge badge-danger">Arsip</span>'; ?>
+        </td>
+        <td style="text-align:center;">
+            <button class="btn-warning" 
+                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                Edit
+            </button>
+
+            <form method="post" action="../proses/proses_agenda.php" 
+                  style="display:inline;" 
+                  onsubmit="return confirm('Yakin ingin menghapus agenda ini?');">
+                <input type="hidden" name="hapus" value="1">
+                <input type="hidden" name="id_agenda" value="<?php echo $row['id_agenda']; ?>">
+                <button type="submit" class="btn-danger">Hapus</button>
+            </form>
+        </td>
+    </tr>
+    <?php endwhile; ?>
+
+    <?php if (!$hasData): ?>
+    <tr>
+        <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+            <strong>Belum ada agenda yang ditambahkan</strong>
+        </td>
+    </tr>
+    <?php endif; ?>
+</tbody>
+
+    </table>
+</div>
+
+
+<!-- ============================
+     MODAL EDIT AGENDA
+=============================== -->
+<div id="editModal" class="modal" style="
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); justify-content:center; align-items:center;
+">
+    <div class="modal-content" style="background:#fff; padding:20px; width:400px; border-radius:8px;">
+        <h3>Edit Agenda</h3>
+        <form method="post" action="../proses/proses_agenda.php">
+
+            <input type="hidden" name="edit_agenda" value="1">
+            <input type="hidden" name="id_agenda" id="edit_id">
+
+            <div class="form-group">
+                <label>Judul</label>
+                <input type="text" name="judul" id="edit_judul" required>
+            </div>
+
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" id="edit_deskripsi" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" name="tanggal" id="edit_tanggal" required>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" id="edit_status">
+                    <option value="1">Aktif</option>
+                    <option value="0">Arsip</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-top:10px;">
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                <button type="button" class="btn-danger" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ============================
+     SCRIPT JS
+=============================== -->
+
+<script>
+function openEditModal(row) {
+    document.getElementById("edit_id").value = row.id_agenda;
+    document.getElementById("edit_judul").value = row.judul;
+    document.getElementById("edit_deskripsi").value = row.deskripsi;
+    document.getElementById("edit_tanggal").value = row.tanggal;
+    document.getElementById("edit_status").value = (row.status === "t" ? "1" : "0");
+
+
+    document.getElementById("editModal").style.display = "flex";
+}
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+</script>
+
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>
+
