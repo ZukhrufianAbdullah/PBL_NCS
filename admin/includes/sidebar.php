@@ -58,27 +58,19 @@ $matchesPage = function ($keys) use ($currentPage) {
 
     <div class="dropdown-item">
         <button type="button"
-                class="dropdown-toggle<?php echo $matchesPage(['tambah_galeri','edit_galeri','tambah_agenda','edit_agenda']) ? ' is-open' : ''; ?>"
+                class="dropdown-toggle<?php echo $matchesPage(['edit_galeri','edit_agenda']) ? ' is-open' : ''; ?>"
                 data-sidebar-toggle="galeriMenu">
             <span>Galeri</span>
             <span class="dropdown-icon" aria-hidden="true">&rsaquo;</span>
         </button>
-        <div class="submenu-wrapper<?php echo $matchesPage(['tambah_galeri','edit_galeri','tambah_agenda','edit_agenda']) ? ' is-open' : ''; ?>"
+        <div class="submenu-wrapper<?php echo $matchesPage(['edit_galeri','edit_agenda']) ? ' is-open' : ''; ?>"
              id="galeriMenu">
-            <div class="menu-subheader">Galeri Foto/Video</div>
-            <a href="<?php echo $adminBasePath; ?>galeri/tambah_galeri.php"
-               class="sidebar-link<?php echo $matchesPage('tambah_galeri') ? ' is-active' : ''; ?>">
-                Tambah Galeri
-            </a>
+            <div class="menu-subheader">Galeri Foto</div>
             <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri.php"
                class="sidebar-link<?php echo $matchesPage('edit_galeri') ? ' is-active' : ''; ?>">
                 Kelola Galeri
             </a>
             <div class="menu-subheader">Agenda</div>
-            <a href="<?php echo $adminBasePath; ?>galeri/tambah_agenda.php"
-               class="sidebar-link<?php echo $matchesPage('tambah_agenda') ? ' is-active' : ''; ?>">
-                Tambah Agenda
-            </a>
             <a href="<?php echo $adminBasePath; ?>galeri/edit_agenda.php"
                class="sidebar-link<?php echo $matchesPage('edit_agenda') ? ' is-active' : ''; ?>">
                 Kelola Agenda

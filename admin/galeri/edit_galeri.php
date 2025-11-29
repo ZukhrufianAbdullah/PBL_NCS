@@ -2,223 +2,244 @@
 // File: admin/galeri/edit_galeri.php
 session_start();
 
-$pageTitle = 'Kelola Galeri Foto/Video';
+$pageTitle = 'Kelola Galeri Foto';
 $currentPage = 'edit_galeri';
-$adminPageStyles = ['tables', 'dashboard'];
-
+$adminPageStyles = ['tables', 'dashboard', 'forms'];
 include_once '../../config/koneksi.php';
-require_once __DIR__ . '/../../app/helpers/galeri_helper.php';
-// Dummy data galeri
-$galeri_items = [
-    [
-        'id_galeri' => 1,
-        'judul' => 'Advanced Network Security Training',
-        'media_path' => 'uploads/galeri/workshop1.jpg',
-        'jenis_media' => 'foto',
-        'deskripsi' => 'Pelatihan mendalam tentang teknik keamanan jaringan terbaru untuk mahasiswa tingkat akhir.',
-        'tanggal_kegiatan' => '2024-06-15',
-        'status' => 1
-    ],
-    [
-        'id_galeri' => 2,
-        'judul' => 'Expert Action: Research Cryptography',
-        'media_path' => 'uploads/galeri/seminar1.jpg',
-        'jenis_media' => 'foto',
-        'deskripsi' => 'Seminar yang membahas aplikasi dan riset terkini dalam kriptografi pasca-kuantum.',
-        'tanggal_kegiatan' => '2024-07-20',
-        'status' => 1
-    ],
-    [
-        'id_galeri' => 3,
-        'judul' => 'Public Safety: Cyber Security Workshop',
-        'media_path' => 'uploads/galeri/publicsafety.jpg',
-        'jenis_media' => 'foto',
-        'deskripsi' => 'Kegiatan pengabdian masyarakat untuk meningkatkan kesadaran keamanan siber dasar.',
-        'tanggal_kegiatan' => '2024-08-01',
-        'status' => 1
-    ],
-];
-
-// Alert
-$alert_message = '';
-$alert_type = '';
-
-if (isset($_GET['success'])) {
-    $alert_type = 'alert-success';
-    if ($_GET['success'] == 'add') {
-        $alert_message = '✓ Galeri berhasil ditambahkan!';
-    } elseif ($_GET['success'] == 'update') {
-        $alert_message = '✓ Galeri berhasil diperbarui!';
-    } elseif ($_GET['success'] == 'delete') {
-        $alert_message = '✓ Galeri berhasil dihapus!';
-    }
-} elseif (isset($_GET['error'])) {
-    $alert_type = 'alert-error';
-    $alert_message = '❌ ' . htmlspecialchars($_GET['error']);
-}
-
 require_once dirname(__DIR__) . '/includes/admin_header.php';
+
+//Ambil data judul
+$qJudulGaleri = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'judul_galeri'
+    LIMIT 1");
+$judulGaleri = pg_fetch_assoc($qJudulGaleri)['content_value'] ?? '';
+
+// Ambil data deskripsi
+$qDeskripsiGaleri = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'deskripsi_galeri'
+    LIMIT 1");
+$deskripsiGaleri = pg_fetch_assoc($qDeskripsiGaleri)['content_value'] ?? '';
+
+// Ambil data Galeri
+$qGaleri = pg_query($conn, "
+    SELECT * 
+    FROM galeri
+    ORDER BY tanggal ASC");
 ?>
+
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: galeri)</h1>
-    <p>Kelola dan pantau seluruh postingan galeri foto/video pada halaman utama website NCS Lab.</p>
+    <p>Kelola halaman agenda di sini</p>
 </div>
-        <!-- Alert -->
-        <?php if (!empty($alert_message)): ?>
-        <div class="<?php echo $alert_type; ?> admin-alert">
-            <?php echo $alert_message; ?>
+<div class="card">
+    <form method="post" action="../proses/proses_galeri.php">
+        <input type="hidden" name="edit_page_content" value="1">
+        <fieldset>
+            <legend>Judul dan Deskripsi Galeri</legend>
+            <div class="form-group">
+                <label for="judul_galeri">Judul Halaman</label>
+                <input type="text"
+                       id="judul_galeri"
+                       name="judul_galeri"
+                       value="<?php echo htmlspecialchars($judulGaleri);?>"
+                       data-autofocus ="true">
+            </div>
+            <div class="form-group">
+                <label for="deskripsi_galeri">Deskripsi Singkat Halaman</label>
+                <textarea id="deskripsi_galeri"
+                          name="deskripsi_galeri"
+                          rows="4"><?php echo htmlspecialchars($deskripsiGaleri); ?></textarea> 
+            </div>
+        </fieldset>
+        <div class="form-group">
+            <button type="submit" name="submit_judul_deskripsi_galeri" class="btn-primary">Simpan Konten Halaman</button>
         </div>
-        <?php endif; ?>
-        
-        <!-- Statistics -->
-        <div class="stats-grid" style="margin-bottom: 24px;">
-            <div class="stat-card">
-                <h3>Total Galeri</h3>
-                <p class="stat-number"><?php echo count($galeri_items); ?></p>
-                <small>Foto & Video</small>
+    </form>
+</div>
+<!-- =========================================================
+     FORM TAMBAH GALERI
+========================================================= -->
+<div class="card">
+    <form method="post" action="../proses/proses_galeri.php" enctype="multipart/form-data">
+        <input type="hidden" name="tambah_galeri" value="1">
+
+        <fieldset>
+            <legend>Tambah Galeri Baru</legend>
+
+            <div class="form-group">
+                <label>Judul</label>
+                <input type="text" name="judul" required>
             </div>
-            
-            <div class="stat-card">
-                <h3>Galeri Aktif</h3>
-                <p class="stat-number">
-                    <?php 
-                    $aktif = array_filter($galeri_items, function($g) { return $g['status'] == 1; });
-                    echo count($aktif);
-                    ?>
-                </p>
-                <small>Ditampilkan di Website</small>
+
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" rows="3"></textarea>
             </div>
-            
-            <div class="stat-card">
-                <h3>Foto</h3>
-                <p class="stat-number">
-                    <?php 
-                    $foto = array_filter($galeri_items, function($g) { return $g['jenis_media'] == 'foto'; });
-                    echo count($foto);
-                    ?>
-                </p>
-                <small>Galeri Foto</small>
+
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" name="tanggal" required value="<?php echo date('Y-m-d'); ?>">
             </div>
-            
+
+            <div class="form-group">
+                <label>Upload Gambar</label>
+                <input type="file" name="gambar" accept=".png,.jpg,.jpeg,.svg" required>
+            </div>
+
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit" class="btn-primary">Tambah Galeri</button>
         </div>
-        
-        <!-- Content Box -->
-        <div class="card">
-            <div class="table-actions">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Cari judul, deskripsi..." 
-                           onkeyup="searchTable('searchInput', 'galeriTable')">
-                </div>
-                <a href="<?php echo $adminBasePath; ?>galeri/tambah_galeri.php" class="btn-primary">
-                    + Tambah Galeri Baru
-                </a>
-            </div>
-            
-            <?php if(empty($galeri_items)): ?>
-                <div class="alert-info">
-                    Belum ada data galeri. Silakan tambah data baru.
-                </div>
-            <?php else: ?>
-            
-            <table id="galeriTable" class="data-table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Media</th>
-                        <th>Judul</th>
-                        <th>Deskripsi</th>
-                        <th>Tanggal</th>
-                        <th>Jenis</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $no = 1;
-                    foreach($galeri_items as $item): 
-                    ?>
-                    <tr>
-                        <td class="text-center"><?php echo $no++; ?></td>
-                        <td>
-                            <?php if($item['jenis_media'] == 'foto'): ?>
-                                <?php $imageSrc = $projectBasePath . $item['media_path']; ?>
-                                <img src="<?php echo htmlspecialchars($imageSrc); ?>" 
-                                     alt="<?php echo htmlspecialchars($item['judul']); ?>"
-                                     class="table-img">
-                            <?php else: ?>
-                                <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 8px;">
-                                    <span style="font-size: 24px;">🎥</span>
-                                </div>
-                            <?php endif; ?>
-                        </td>
-                        <td><strong><?php echo htmlspecialchars($item['judul']); ?></strong></td>
-                        <td><?php echo substr(htmlspecialchars($item['deskripsi']), 0, 80) . '...'; ?></td>
-                        <td><?php echo date('d/m/Y', strtotime($item['tanggal_kegiatan'])); ?></td>
-                        <td>
-                            <span class="badge <?php echo $item['jenis_media'] == 'foto' ? 'badge-info' : 'badge-warning'; ?>">
-                                <?php echo strtoupper($item['jenis_media']); ?>
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <?php if($item['status'] == 1): ?>
-                                <span class="badge badge-success">Aktif</span>
-                            <?php else: ?>
-                                <span class="badge badge-danger">Nonaktif</span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="action-cell">
-                            <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri_form.php?id=<?php echo $item['id_galeri']; ?>" 
-                               class="btn-warning btn-small btn-action">
-                                ✏️ Edit
-                            </a>
-                            <a href="<?php echo $adminBasePath; ?>proses/proses_galeri.php?action=delete&id=<?php echo $item['id_galeri']; ?>" 
-                               class="btn-danger btn-small" 
-                               onclick="return confirmDelete('<?php echo htmlspecialchars($item['judul']); ?>')">
-                                🗑️ Hapus
-                            </a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <?php endif; ?>
-        </div>
-        
-        <!-- Preview Card (Figma Style) -->
-        <div class="card card-preview">
-            <div class="card-header">
-                <h3>👁️ Preview Tampilan Website (Grid 3 Kolom)</h3>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 20px;">
-                <?php foreach ($galeri_items as $item): ?>
-                <div class="anggota-card" style="border-top: 3px solid #FCD917;">
-                    <?php if($item['jenis_media'] == 'foto'): ?>
-                        <?php $imageSrc = $projectBasePath . $item['media_path']; ?>
-                        <img src="<?php echo htmlspecialchars($imageSrc); ?>" 
-                             alt="<?php echo htmlspecialchars($item['judul']); ?>" 
-                             style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
-                    <?php else: ?>
-                        <div style="width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 8px; margin-bottom: 15px;">
-                            <span style="font-size: 48px;">🎥</span>
-                        </div>
-                    <?php endif; ?>
-                    <p style="color: #666; font-size: 12px; margin: 0 0 5px 0;">
-                        <?php echo date('M d, Y', strtotime($item['tanggal_kegiatan'])); ?>
-                    </p>
-                    <h4 style="margin: 0 0 10px 0; color: #060771; font-size: 16px;">
-                        <?php echo htmlspecialchars($item['judul']); ?>
-                    </h4>
-                    <p style="color: #666; font-size: 14px; line-height: 1.6;">
-                        <?php echo substr(htmlspecialchars($item['deskripsi']), 0, 100) . '...'; ?>
-                    </p>
-                </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        
+    </form>
+</div>
+
+
+<br>
+
+<!-- =========================================================
+     TABEL DAFTAR GALERI
+========================================================= -->
+<div class="card">
+    <div class="card-header">
+        <h3>Daftar Galeri</h3>
     </div>
+
+    <table class="data-table" id="galeriTable">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Gambar</th>
+                <th>Judul</th>
+                <th>Deskripsi</th>
+                <th>Tanggal</th>
+                <th style="width:150px;text-align:center;">Aksi</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        <?php 
+        $no = 1;
+        $hasData = false;
+        while ($row = pg_fetch_assoc($qGaleri)):
+            $hasData = true;
+        ?>
+        <tr>
+            <td><?php echo $no++; ?></td>
+
+            <td>
+                <img src="../../uploads/galeri/<?php echo htmlspecialchars($row['media_path']); ?>"
+                     style="width:70px;border-radius:4px;">
+            </td>
+
+            <td><?php echo htmlspecialchars($row['judul']); ?></td>
+
+            <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
+
+            <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+
+            <td style="text-align:center;">
+
+                <!-- Tombol Edit -->
+                <button class="btn-warning"
+                        onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                    Edit
+                </button>
+
+                <!-- Tombol Hapus -->
+                <form method="post" action="../proses/proses_galeri.php"
+                      style="display:inline;"
+                      onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                    <input type="hidden" name="hapus" value="1">
+                    <input type="hidden" name="id_galeri" value="<?php echo $row['id_galeri']; ?>">
+                    <button type="submit" class="btn-danger">Hapus</button>
+                </form>
+
+            </td>
+        </tr>
+        <?php endwhile; ?>
+
+        <?php if (!$hasData): ?>
+        <tr>
+            <td colspan="6" style="text-align:center;padding:15px;color:#777;">
+                <strong>Belum ada galeri yang ditambahkan</strong>
+            </td>
+        </tr>
+        <?php endif; ?>
+        </tbody>
+
+    </table>
+</div>
+
+
+
+<!-- =========================================================
+     MODAL EDIT GALERI
+========================================================= -->
+<div id="editModal" class="modal" style="
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); justify-content:center; align-items:center;
+">
+    <div class="modal-content" style="background:#fff; padding:20px; width:420px; border-radius:8px;">
+        <h3>Edit Galeri</h3>
+
+        <form method="post" action="../proses/proses_galeri.php" enctype="multipart/form-data">
+            <input type="hidden" name="edit_galeri" value="1">
+            <input type="hidden" name="id_galeri" id="edit_id">
+
+            <div class="form-group">
+                <label>Judul</label>
+                <input type="text" name="judul" id="edit_judul" required>
+            </div>
+
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" id="edit_deskripsi" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" name="tanggal" id="edit_tanggal" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ganti Gambar (Opsional)</label>
+                <input type="file" name="gambar" accept=".png,.jpg,.jpeg,.svg">
+            </div>
+
+            <div class="form-group" style="margin-top:10px;">
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                <button type="button" class="btn-danger" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- =========================================================
+     SCRIPT JS
+========================================================= -->
+<script>
+function openEditModal(row) {
+    document.getElementById("edit_id").value = row.id_galeri;
+    document.getElementById("edit_judul").value = row.judul;
+    document.getElementById("edit_deskripsi").value = row.deskripsi;
+    document.getElementById("edit_tanggal").value = row.tanggal;
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+</script>
+
+        
 
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

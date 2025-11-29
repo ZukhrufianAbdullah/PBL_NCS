@@ -3,38 +3,48 @@ define('BASE_URL', '../..');
 $pageTitle = 'Galeri - Galeri';
 $activePage = 'galeri-galeri';
 $pageStyles = ['galeri'];
-$bannerTitle = 'Network and Cyber Security Laboratory';
-$bannerSubtitle = 'Innovating in Network Security & Cyber Defense';
+require_once __DIR__ . '/../../config/koneksi.php';
+
+// Ambil data Judul
+$qJudulGaleri = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'judul_galeri'
+    LIMIT 1");
+$judulGaleri = pg_fetch_assoc($qJudulGaleri)['content_value'] ?? '';
+
+// Ambil data Deskripsi
+$qDeskripsiGaleri = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'deskripsi_galeri'
+    LIMIT 1");
+$deskripsiGaleri = pg_fetch_assoc($qDeskripsiGaleri)['content_value'] ?? '';
+
+// Ambil data Galeri (DATA DATABASE)
+$qGaleri = pg_query($conn, "
+    SELECT * 
+    FROM galeri
+    ORDER BY tanggal ASC");
+
+// Ubah query menjadi array PHP
+$posts = [];
+while ($row = pg_fetch_assoc($qGaleri)) {
+    $posts[] = $row;
+}
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 require_once __DIR__ . '/../../includes/page-hero.php';
-
-require_once __DIR__ . '/../../app/helpers/galeri_helper.php';
-
-// Ambil halaman + pagination
-$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$limit = 8;
-$galeri = get_galeri_paginated($conn, $page, $limit);
-$posts = $galeri['data'];           // ← ini WAJIB
-$total_pages = $galeri['total_pages'];
-$current_page = $galeri['current_page'];
-
-
-// Ambil konten header galeri
-$pageContent = get_galeri_page_content($conn);
-$sectionTitle = $pageContent['section_title'] ?? 'Galeri';
-$sectionDescription = $pageContent['section_description'] ??
-                      'Explore our commitment to community service and the impact of our projects.';
-
 ?>
 <main class="section-gap">
     <div class="container">
         <div class="section-header">
-            <h2><?php echo htmlspecialchars($sectionTitle); ?></h2>
-            <p><?php echo htmlspecialchars($sectionDescription); ?></p>
+            <h2><?= nl2br($judulGaleri); ?></h2>
+            <p><?= nl2br($deskripsiGaleri); ?></p>
         </div>
-
 
         <?php if (empty($posts)): ?>
             <p class="text-center text-muted">Belum ada dokumentasi galeri.</p>
@@ -43,48 +53,22 @@ $sectionDescription = $pageContent['section_description'] ??
             <div class="card-grid">
                 <?php foreach ($posts as $post): ?>
                     <?php
-                        $imagePath = !empty($post['media_path'])
-                            ? BASE_URL . '/uploads/galeri/' . htmlspecialchars($post['media_path'])
-                            : BASE_URL . '/assets/site/img/logo/lab-logo.svg';
-
-                        $dateLabel = $post['tanggal_kegiatan']
-                            ? date('d M Y', strtotime($post['tanggal_kegiatan']))
-                            : 'Dokumentasi';
+                    $imagePath = BASE_URL . '/uploads/galeri/' . htmlspecialchars($post['media_path']);
+                    $dateLabel = date('d M Y', strtotime($post['tanggal']));
                     ?>
                     <article class="article-card">
-                        <img src="<?php echo $imagePath; ?>" 
-                             alt="<?php echo htmlspecialchars($post['judul']); ?>">
+                        <img src="<?= $imagePath ?>"
+                            alt="<?= htmlspecialchars($post['judul']) ?>">
                         <div class="card-body">
-                            <span><?php echo htmlspecialchars($dateLabel); ?></span>
-                            <h5><?php echo htmlspecialchars($post['judul']); ?></h5>
+                            <span><?= htmlspecialchars($dateLabel) ?></span>
+                            <h5><?= htmlspecialchars($post['judul']) ?></h5>
                             <p class="text-muted mb-0">
-                                <?php echo nl2br(htmlspecialchars($post['deskripsi'] ?? '')); ?>
+                                <?= nl2br(htmlspecialchars($post['deskripsi'] ?? '')); ?>
                             </p>
                         </div>
                     </article>
                 <?php endforeach; ?>
             </div>
-
-            <!-- PAGINATION -->
-            <div class="pagination">
-                <?php if ($current_page > 1): ?>
-                    <a class="btn-pagination" 
-                       href="?page=<?php echo $current_page - 1; ?>"><</a>
-                <?php endif; ?>
-
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <a class="btn-pagination <?php echo ($i == $current_page) ? 'active' : ''; ?>" 
-                       href="?page=<?php echo $i; ?>">
-                       <?php echo $i; ?>
-                    </a>
-                <?php endfor; ?>
-
-                <?php if ($current_page < $total_pages): ?>
-                    <a class="btn-pagination" 
-                       href="?page=<?php echo $current_page + 1; ?>">></a>
-                <?php endif; ?>
-            </div>
-
         <?php endif; ?>
     </div>
 </main>

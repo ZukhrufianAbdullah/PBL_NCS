@@ -9,180 +9,267 @@ $id_user = $_SESSION['id_user'] ?? 1;
 $uploadDir = '../../uploads/galeri/';
 if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
-/* ============================================================
-   HELPER: Pastikan halaman "galeri_dokumentasi" ada
-   ============================================================ */
-function galeri_ensure_page($conn, $pageName) {
-    $q = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1", [$pageName]);
-    if ($q && pg_num_rows($q) > 0) {
-        return pg_fetch_result($q, 0, 'id_page');
-    }
+// ambil id_page untuk halaman 'galeri_galeri'
+    $sqlPage = "SELECT id_page FROM pages WHERE nama = 'galeri_galeri' LIMIT 1";
+    $resultPage = pg_query($conn, $sqlPage);
 
-    $insert = pg_query_params($conn,
-        "INSERT INTO pages (nama) VALUES ($1) RETURNING id_page",
-        [$pageName]
-    );
-    return pg_fetch_result($insert, 0, 'id_page');
-}
-
-/* ============================================================
-   HELPER: Insert/update page_content
-   ============================================================ */
-function galeri_upsert_content($conn, $pageId, $key, $value, $userId) {
-    $check = pg_query_params($conn,
-        "SELECT id_page_content FROM page_content WHERE id_page=$1 AND content_key=$2",
-        [$pageId, $key]
-    );
-
-    if ($check && pg_num_rows($check) > 0) {
-        pg_query_params($conn,
-            "UPDATE page_content SET content_value=$1, id_user=$2 WHERE id_page=$3 AND content_key=$4",
-            [$value, $userId, $pageId, $key]
-        );
-    } else {
-        pg_query_params($conn,
-            "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-             VALUES ($1, $2, 'text', $3, $4)",
-            [$pageId, $key, $value, $userId]
-        );
-    }
-}
-
-/* ============================================================
-   0. EDIT KONTEN HALAMAN (section title & description)
-   ============================================================ */
-if (isset($_POST['edit_page'])) {
-
-    $pageId = galeri_ensure_page($conn, "galeri_dokumentasi");
-
-    galeri_upsert_content($conn, $pageId, 'section_title', $_POST['judul_page'], $id_user);
-    galeri_upsert_content($conn, $pageId, 'section_description', $_POST['deskripsi_page'], $id_user);
-
-    echo "<script>
-            alert('Konten halaman galeri berhasil diperbarui!');
-            window.location.href='../galeri/tambah_galeri.php';
-          </script>";
-    exit();
-}
-
-/* ============================================================
-   1. TAMBAH DATA GALERI
-   ============================================================ */
-if (isset($_POST['tambah'])) {
-
-    $tanggal    = $_POST['tanggal_kegiatan'];
-    $judul      = $_POST['judul'];
-    $deskripsi  = $_POST['deskripsi'];
-
-    // Upload file
-    $file = $_FILES['foto_path'];
-    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    $allowed = ['jpg','jpeg','png','webp'];
-
-    if (!in_array($ext, $allowed)) {
-        echo "<script>alert('Format gambar tidak didukung'); history.back();</script>";
+    if (!$resultPage || pg_num_rows($resultPage) === 0) {
+        echo "<script>
+                alert('Halaman Galeri tidak ditemukan di tabel pages!');
+                window.location.href = '../galeri/edit_galeri.php';
+                </script>";
         exit();
     }
+    $page = pg_fetch_assoc($resultPage);
+    $id_page = $page['id_page'];
 
-    $newName = time() . "_" . preg_replace('/[^a-zA-Z0-9-_\.]/', '_', $file['name']);
-    move_uploaded_file($file['tmp_name'], $uploadDir . $newName);
+//Kelola konten halaman Galeri
+if (isset($_POST['submit_judul_deskripsi_galeri'])) {
+    //Ambil input dari form
+    $judul_galeri   = ($_POST['judul_galeri']);
+    $deskripsi_galeri = ($_POST['deskripsi_galeri']);
 
-    $q = pg_query_params($conn,
-        "INSERT INTO galeri (tanggal_kegiatan, judul, deskripsi, media_path, id_user)
-         VALUES ($1,$2,$3,$4,$5)",
-        [$tanggal, $judul, $deskripsi, $newName, $id_user]
-    );
+    //Update atau Insert judul galeri
+    $checkJudulGaleri = "SELECT id_page_content FROM page_content
+                WHERE id_page = $1 AND content_key = 'judul_galeri' LIMIT 1";
+    $checkResultJudulGaleri = pg_query_params($conn, $checkJudulGaleri, array($id_page));
 
-    echo "<script>
-            alert('Postingan galeri berhasil ditambahkan!');
-            window.location.href='../galeri/tambah_galeri.php';
-          </script>";
-    exit();
+    if (pg_num_rows($checkResultJudulGaleri) > 0) {
+        // UPDATE
+        $updateJudulGaleri = "UPDATE page_content
+                   SET content_value = $1, id_user = $2
+                   WHERE id_page = $3 AND content_key = 'judul_galeri'";
+        $resultJudulGaleri = pg_query_params($conn, $updateJudulGaleri, array($judul_galeri, $id_user, $id_page));
+    } else {
+        // INSERT
+        $insertJudulGaleri = "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
+                   VALUES ($1, 'judul_galeri', 'text', $2, $3)";
+        $resultJudulGaleri = pg_query_params($conn, $insertJudulGaleri, array($id_page, $judul_galeri, $id_user));
+    }
+
+    // Update atau Insert deskripsi galeri
+    $checkDeskripsiGaleri = "SELECT id_page_content FROM page_content
+                WHERE id_page = $1 AND content_key = 'deskripsi_galeri' LIMIT 1";
+    $checkResultDeskripsiGaleri = pg_query_params($conn, $checkDeskripsiGaleri, array($id_page));
+
+    if (pg_num_rows($checkResultDeskripsiGaleri) > 0) {
+        // UPDATE
+        $updateDeskripsiGaleri = "UPDATE page_content
+                   SET content_value = $1, id_user = $2
+                   WHERE id_page = $3 AND content_key = 'deskripsi_galeri'";
+        $resultDeskripsiGaleri = pg_query_params($conn, $updateDeskripsiGaleri, array($deskripsi_galeri, $id_user, $id_page));
+    } else {
+        // INSERT
+        $insertDeskripsiGaleri = "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
+                   VALUES ($1, 'deskripsi_galeri', 'text', $2, $3)";
+        $resultDeskripsiGaleri = pg_query_params($conn, $insertDeskripsiGaleri, array($id_page, $deskripsi_galeri, $id_user));
+    }
+
+    // Cek hasil
+    if ($resultJudulGaleri && $resultDeskripsiGaleri) {
+        echo "<script>
+                alert('Konten halaman Galeri berhasil diperbarui!');
+                window.location.href = '../galeri/edit_galeri.php';
+                </script>";
+    } else {
+        echo "<script>
+                alert('Gagal memperbarui konten halaman Galeri!');
+                window.location.href = '../galeri/edit_galeri.php';
+                </script>"; 
+    }    
 }
+// Tambah Galeri
+elseif (isset($_POST['tambah_galeri'])) {
+    $judul       = ($_POST['judul']);
+    $deskripsi   = ($_POST['deskripsi']);
+    $tanggal     = ($_POST['tanggal']);
 
-/* ============================================================
-   2. EDIT DATA GALERI
-   ============================================================ */
-if (isset($_POST['edit'])) {
+    // Proses upload gambar
+    if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
+        $allowedMime = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'];
+        
+        $fileName = $_FILES['gambar']['name'];
+        $tmpFile  = $_FILES['gambar']['tmp_name'];
+        $fileType = mime_content_type($tmpFile);
+        $fileSize = $_FILES['gambar']['size'];
 
-    $id = $_POST['id_galeri'];
-    $tanggal   = $_POST['tanggal_kegiatan'];
-    $judul     = $_POST['judul'];
-    $deskripsi = $_POST['deskripsi'];
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-    // Ambil media lama
-    $old = pg_fetch_assoc(pg_query_params($conn,
-        "SELECT media_path FROM galeri WHERE id_galeri=$1",
-        [$id]
-    ));
-    $oldMedia = $old['media_path'];
-
-    // Upload gambar baru jika ada
-    if (!empty($_FILES['foto_path']['name'])) {
-        $file = $_FILES['foto_path'];
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, ['jpg','jpeg','png','webp'])) {
-            echo "<script>alert('Format gambar tidak didukung'); history.back();</script>";
+        // Validasi ekstensi file
+        if (!in_array($fileExt, $allowedExtensions)) {
+            echo "<script>alert('Gagal: Format harus PNG/JPG/JPEG/SVG!'); window.history.back();</script>";
             exit();
         }
 
-        $newName = time() . "_" . preg_replace('/[^a-zA-Z0-9-_\.]/', '_', $file['name']);
-        move_uploaded_file($file['tmp_name'], $uploadDir . $newName);
+        // Validasi MIME file
+        if (!in_array($fileType, $allowedMime)) {
+            echo "<script>alert('Gagal: File yang diupload bukan gambar valid!'); window.history.back();</script>";
+            exit();
+        }
 
-        // Hapus gambar lama
-        if (file_exists($uploadDir . $oldMedia)) unlink($uploadDir . $oldMedia);
+        // Validasi ukuran maksimal 3MB (opsional)
+        if ($fileSize > 3 * 1024 * 1024) {
+            echo "<script>alert('Gagal: Ukuran file maksimal 3MB!'); window.history.back();</script>";
+            exit();
+        }
 
+        $newName = time() . "_" . $fileName;
+
+        // Upload file
+        move_uploaded_file($tmpFile, $uploadDir . $newName);
+
+        // Simpan data galeri ke database
+       $sqlInsert = "
+            INSERT INTO galeri (judul, deskripsi, tanggal, media_path, id_user)
+            VALUES ($1, $2, $3, $4, $5)
+        ";
+
+        $resultInsert = pg_query_params($conn, $sqlInsert, array(
+            $judul,
+            $deskripsi,
+            $tanggal,
+            $newName,
+            $id_user
+        ));
+
+        if ($resultInsert) {
+            echo "<script>
+                    alert('Galeri berhasil ditambahkan!');
+                    window.location.href = '../galeri/edit_galeri.php';
+                  </script>";
+        } else {
+            echo "<script>
+                    alert('Gagal menambah galeri!');
+                    window.location.href = '../galeri/edit_galeri.php';
+                  </script>";
+        }
+    }
+    exit();
+}
+
+// Update Galeri
+elseif (isset($_POST['edit_galeri'])) {
+    $id_galeri   = $_POST['id_galeri'];
+    $judul       = ($_POST['judul']);
+    $deskripsi   = ($_POST['deskripsi']);
+    $tanggal     = ($_POST['tanggal']);
+
+    // Proses upload gambar jika ada
+    $newName = null;
+    if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
+        $allowedMime = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'];
+        
+        $fileName = $_FILES['gambar']['name'];
+        $tmpFile  = $_FILES['gambar']['tmp_name'];
+        $fileType = mime_content_type($tmpFile);
+        $fileSize = $_FILES['gambar']['size'];
+
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        // Validasi ekstensi file
+        if (!in_array($fileExt, $allowedExtensions)) {
+            echo "<script>alert('Gagal: Format harus PNG/JPG/JPEG/SVG!'); window.history.back();</script>";
+            exit();
+        }
+
+        // Validasi MIME file
+        if (!in_array($fileType, $allowedMime)) {
+            echo "<script>alert('Gagal: File yang diupload bukan gambar valid!'); window.history.back();</script>";
+            exit();
+        }
+
+        // Validasi ukuran maksimal 3MB (opsional)
+        if ($fileSize > 3 * 1024 * 1024) {
+            echo "<script>alert('Gagal: Ukuran file maksimal 3MB!'); window.history.back();</script>";
+            exit();
+        }
+
+        $newName = time() . "_" . $fileName;
+
+        // Upload file
+        move_uploaded_file($tmpFile, $uploadDir . $newName);
+    }
+    // Simpan data galeri ke database
+    if ($newName) {
+        $sqlUpdate = "
+            UPDATE galeri
+            SET judul = $1,
+                deskripsi = $2,
+                tanggal = $3,
+                media_path = $4,
+                id_user = $5
+            WHERE id_galeri = $6
+        ";
+
+        $params = array(
+            $judul,
+            $deskripsi,
+            $tanggal,
+            $newName,
+            $id_user,
+            $id_galeri
+        );
     } else {
-        $newName = $oldMedia;
+        $sqlUpdate = "
+            UPDATE galeri
+            SET judul = $1,
+                deskripsi = $2,
+                tanggal = $3,
+                id_user = $4
+            WHERE id_galeri = $5
+        ";
+
+        $params = array(
+            $judul,
+            $deskripsi,
+            $tanggal,
+            $id_user,
+            $id_galeri
+        );
     }
 
-    pg_query_params($conn,
-        "UPDATE galeri SET 
-            tanggal_kegiatan=$1,
-            judul=$2,
-            deskripsi=$3,
-            media_path=$4,
-            id_user=$5
-         WHERE id_galeri=$6",
-        [$tanggal, $judul, $deskripsi, $newName, $id_user, $id]
-    );
+    $resultUpdate = pg_query_params($conn, $sqlUpdate, $params);
 
-    echo "<script>
-            alert('Postingan galeri berhasil diperbarui!');
-            window.location.href='../galeri/tambah_galeri.php';
-          </script>";
+    if ($resultUpdate) {
+        echo "<script>
+                alert('Galeri berhasil diperbarui!');
+                window.location.href = '../galeri/edit_galeri.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Gagal memperbarui galeri!');
+                window.location.href = '../galeri/edit_galeri.php';
+              </script>";
+    }
     exit();
 }
 
-/* ============================================================
-   3. HAPUS DATA GALERI
-   ============================================================ */
-if (isset($_POST['hapus'])) {
+// Hapus Agenda
+elseif (isset($_POST['hapus'])){
+    $id_galeri = $_POST['id_galeri'];
 
-    $id = $_POST['id_galeri'];
+    $sqlDelete = "DELETE FROM galeri WHERE id_galeri = $1";
+    $resultDelete = pg_query_params($conn, $sqlDelete, array($id_galeri));
 
-    // Ambil media lama
-    $old = pg_fetch_assoc(pg_query_params($conn,
-        "SELECT media_path FROM galeri WHERE id_galeri=$1",
-        [$id]
-    ));
-    $oldMedia = $old['media_path'];
-
-    // Hapus file
-    if (file_exists($uploadDir . $oldMedia))
-        unlink($uploadDir . $oldMedia);
-
-    // Hapus dari DB
-    pg_query_params($conn,
-        "DELETE FROM galeri WHERE id_galeri=$1",
-        [$id]
-    );
-
+    if ($resultDelete) {
+        echo "<script>
+                alert('Galeri berhasil dihapus!');
+                window.location.href = '../galeri/edit_galeri.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Gagal menghapus galeri!');
+                window.location.href = '../galeri/edit_galeri.php';
+              </script>";
+    }
+} else {
     echo "<script>
-            alert('Postingan galeri berhasil dihapus!');
-            window.location.href='../galeri/tambah_galeri.php';
+            alert('Aksi tidak dikenali.');
+            window.location.href = '../galeri/edit_galeri.php';
           </script>";
     exit();
 }
-
+   
 ?>
