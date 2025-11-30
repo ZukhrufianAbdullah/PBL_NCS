@@ -3,7 +3,8 @@
 session_start();
 $pageTitle = 'Edit Footer Details';
 $currentPage = 'edit_footer';
-$adminPageStyles = ['forms'];
+$adminPageStyles = ['forms', 'tables'];
+
 
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
@@ -138,32 +139,39 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
 <div class="card">
     <fieldset>
         <legend>Daftar Sosial Media</legend>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Platform</th>
-                    <th>URL</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($sosmed_data as $sosmed): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($sosmed['nama_sosialmedia']); ?></td>
-                    <td><?php echo htmlspecialchars($sosmed['platform']); ?></td>
-                    <td><?php echo htmlspecialchars($sosmed['url']); ?></td>
-                    <td>
-                        <form method="post" action="../../admin/proses/proses_footer.php" style="display:inline;">
-                            <input type="hidden" name="hapus_sosmed" value="1">
-                            <input type="hidden" name="id_sosialmedia" value="<?php echo $sosmed['id_sosialmedia']; ?>">
-                            <button type="submit" class="btn-danger btn-sm" onclick="return confirm('Yakin hapus sosial media ini?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+
+        <div class="data-table">
+            <table class="my-table">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Platform</th>
+                        <th>URL</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($sosmed_data as $sosmed): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($sosmed['nama_sosialmedia']); ?></td>
+                        <td><?php echo htmlspecialchars($sosmed['platform']); ?></td>
+                        <td><?php echo htmlspecialchars($sosmed['url']); ?></td>
+                        <td>
+                            <form method="post" action="../../admin/proses/proses_footer.php" style="display:inline;">
+                                <input type="hidden" name="hapus_sosmed" value="1">
+                                <input type="hidden" name="id_sosialmedia" value="<?php echo $sosmed['id_sosialmedia']; ?>">
+                                <button type="submit" class="btn-danger btn-sm"
+                                        onclick="return confirm('Yakin hapus sosial media ini?')">
+                                    Hapus
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
     </fieldset>
 </div>
 <?php endif; ?>
