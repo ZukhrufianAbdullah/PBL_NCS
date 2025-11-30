@@ -7,57 +7,63 @@ $adminPageStyles = ['forms', 'tables'];
 include_once '../../config/koneksi.php';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
-//Ambil data judul
-$qJudulSarana = pg_query($conn, "
-    SELECT pc.content_value 
-    FROM page_content pc
-    JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'judul_sarana'
-    LIMIT 1");
-$judulSarana = pg_fetch_assoc($qJudulSarana)['content_value'] ?? '';
-
-// Ambil data deskripsi
-$qDeskripsiSarana = pg_query($conn, "
-    SELECT pc.content_value 
-    FROM page_content pc
-    JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'deskripsi_sarana'
-    LIMIT 1");
-$deskripsiSarana = pg_fetch_assoc($qDeskripsiSarana)['content_value'] ?? '';
-
 // Ambil data Sarana
 $qSarana = pg_query($conn, "
     SELECT * 
     FROM sarana
     ORDER BY nama_sarana ASC");
 
+// Ambil data section title & description untuk halaman sarana
+$page_key = "layanan_sarana";
+$qPage = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1", array($page_key));
+if ($qPage && pg_num_rows($qPage) > 0) {
+    $page = pg_fetch_assoc($qPage);
+    $id_page = $page['id_page'];
+    
+    // Ambil section title
+    $qTitle = pg_query_params($conn, 
+        "SELECT content_value FROM page_content WHERE id_page = $1 AND content_key = 'section_title'",
+        array($id_page)
+    );
+    $section_title = $qTitle && pg_num_rows($qTitle) > 0 ? pg_fetch_assoc($qTitle)['content_value'] : 'Sarana & Prasarana';
+    
+    // Ambil section description
+    $qDesc = pg_query_params($conn, 
+        "SELECT content_value FROM page_content WHERE id_page = $1 AND content_key = 'section_description'",
+        array($id_page)
+    );
+    $section_description = $qDesc && pg_num_rows($qDesc) > 0 ? pg_fetch_assoc($qDesc)['content_value'] : 'Fasilitas dan infrastruktur yang mendukung kegiatan NCS Lab';
+} else {
+    $section_title = 'Sarana & Prasarana';
+    $section_description = 'Fasilitas dan infrastruktur yang mendukung kegiatan NCS Lab';
+}
 ?>
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: sarana)</h1>
     <p>Kelola halaman sarana dan prasarana di sini</p>
 </div>
+
+<!-- ============================
+     FORM EDIT SECTION TITLE & DESCRIPTION
+=============================== -->
 <div class="card">
     <form method="post" action="../proses/proses_sarana_prasarana.php">
-        <input type="hidden" name="edit_page_content" value="1">
+        <input type="hidden" name="edit_section_content" value="1">
         <fieldset>
-            <legend>Judul dan Deskripsi Sarana Prasarana</legend>
+            <legend>Judul dan Deskripsi Halaman Sarana Prasarana</legend>
             <div class="form-group">
-                <label for="judul_sarana">Judul Halaman</label>
-                <input type="text"
-                       id="judul_sarana"
-                       name="judul_sarana"
-                       value="<?php echo htmlspecialchars($judulSarana);?>"
-                       data-autofocus ="true">
+                <label for="section_title">Judul Halaman</label>
+                <input type="text" id="section_title" name="section_title" 
+                       value="<?php echo htmlspecialchars($section_title); ?>"
+                       data-autofocus="true">
             </div>
             <div class="form-group">
-                <label for="deskripsi_sarana">Deskripsi Singkat Halaman</label>
-                <textarea id="deskripsi_sarana"
-                          name="deskripsi_sarana"
-                          rows="4"><?php echo htmlspecialchars($deskripsiSarana); ?></textarea> 
+                <label for="section_description">Deskripsi Halaman</label>
+                <textarea id="section_description" name="section_description" rows="4"><?php echo htmlspecialchars($section_description); ?></textarea>
             </div>
         </fieldset>
         <div class="form-group">
-            <button type="submit" name="submit_judul_deskripsi_sarana" class="btn-primary">Simpan Konten Halaman</button>
+            <button type="submit" class="btn-primary">Simpan Judul & Deskripsi</button>
         </div>
     </form>
 </div>
@@ -151,8 +157,6 @@ $qSarana = pg_query($conn, "
     </table>
 </div>
 
-
-
 <!-- ======================================================
      MODAL EDIT
 ====================================================== -->
@@ -191,8 +195,6 @@ $qSarana = pg_query($conn, "
         </form>
     </div>
 </div>
-
-
 
 <!-- ======================================================
      SCRIPT JS

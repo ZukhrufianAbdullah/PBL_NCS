@@ -73,8 +73,8 @@ if (isset($_POST['tambah'])) {
     $result = pg_query_params($conn, $query, $params);
 
     echo $result
-        ? "<script>alert('Penelitian berhasil ditambahkan!'); window.location.href='../arsip/tambah_penelitian.php';</script>"
-        : "<script>alert('Gagal menambahkan penelitian!'); window.location.href='../arsip/tambah_penelitian.php';</script>";
+        ? "<script>alert('Penelitian berhasil ditambahkan!'); window.location.href='../arsip/edit_penelitian.php';</script>"
+        : "<script>alert('Gagal menambahkan penelitian!'); window.location.href='../arsip/edit_penelitian.php';</script>";
     exit();
 }
 
@@ -129,8 +129,8 @@ if (isset($_POST['edit'])) {
     $result = pg_query_params($conn, $query, $params);
 
     echo $result
-        ? "<script>alert('Penelitian berhasil diperbarui!'); window.location.href='../arsip/tambah_penelitian.php';</script>"
-        : "<script>alert('Gagal memperbarui penelitian!'); window.location.href='../arsip/tambah_penelitian.php';</script>";
+        ? "<script>alert('Penelitian berhasil diperbarui!'); window.location.href='../arsip/edit_penelitian.php';</script>"
+        : "<script>alert('Gagal memperbarui penelitian!'); window.location.href='../arsip/edit_penelitian.php';</script>";
     exit();
 }
 
@@ -159,8 +159,8 @@ if (isset($_POST['hapus'])) {
     $result = pg_query_params($conn, $query, array($id_penelitian));
 
     echo $result
-        ? "<script>alert('Penelitian berhasil dihapus!'); window.location.href='../arsip/tambah_penelitian.php';</script>"
-        : "<script>alert('Gagal menghapus penelitian!'); window.location.href='../arsip/tambah_penelitian.php';</script>";
+        ? "<script>alert('Penelitian berhasil dihapus!'); window.location.href='../arsip/edit_penelitian.php';</script>"
+        : "<script>alert('Gagal menghapus penelitian!'); window.location.href='../arsip/edit_penelitian.php';</script>";
 
     exit();
 }
@@ -191,7 +191,7 @@ if (isset($_POST['edit_page'])) {
 
     echo "<script>
             alert('Konten halaman Penelitian berhasil diperbarui!');
-            window.location.href = '../arsip/tambah_penelitian.php';
+            window.location.href = '../arsip/edit_penelitian.php';
           </script>";
     exit();
 }

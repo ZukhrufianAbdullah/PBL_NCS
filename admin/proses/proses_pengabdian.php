@@ -59,7 +59,7 @@ if (isset($_POST['edit_page_content'])) {
 
     echo "<script>
             alert('Konten halaman Pengabdian berhasil diperbarui!');
-            window.location.href='../arsip/tambah_pengabdian.php';
+            window.location.href='../arsip/edit_pengabdian.php';
           </script>";
     exit();
 }
@@ -73,18 +73,18 @@ if (isset($_POST['tambah'])) {
 
     $judul        = input_trim('judul_pengabdian');
     $tahun        = input_trim('tahun');
-    $id_ketua     = input_trim('id_ketua');
+    $id_ketua     = input_trim('id_ketua'); 
     $skema        = input_trim('skema');
 
     if (empty($judul) || empty($tahun) || empty($id_ketua) || empty($skema)) {
         echo "<script>alert('Judul, Tahun, Skema, dan Ketua wajib diisi!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
         exit();
     }
 
     if (!ctype_digit($tahun) || !ctype_digit($id_ketua)) {
         echo "<script>alert('Format tahun atau ketua tidak valid!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
         exit();
     }
 
@@ -96,11 +96,11 @@ if (isset($_POST['tambah'])) {
 
     if ($res) {
         echo "<script>alert('Data pengabdian berhasil ditambahkan!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
     } else {
         $err = pg_last_error($conn);
         echo "<script>alert('Gagal menambahkan data: " . addslashes($err) . "'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
     }
     exit();
 }
@@ -118,19 +118,19 @@ if (isset($_POST['edit'])) {
 
     if (empty($id_pengabdian) || !ctype_digit($id_pengabdian)) {
         echo "<script>alert('ID pengabdian tidak valid!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
         exit();
     }
 
     if (empty($judul) || empty($tahun) || empty($id_ketua) || empty($skema)) {
         echo "<script>alert('Judul, Tahun, Skema, dan Ketua wajib diisi!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
         exit();
     }
 
     if (!ctype_digit($tahun) || !ctype_digit($id_ketua)) {
         echo "<script>alert('Format tahun atau ketua tidak valid!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
         exit();
     }
 
@@ -150,11 +150,11 @@ if (isset($_POST['edit'])) {
 
     if ($res) {
         echo "<script>alert('Data pengabdian berhasil diperbarui!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
     } else {
         $err = pg_last_error($conn);
         echo "<script>alert('Gagal memperbarui data: " . addslashes($err) . "'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
     }
     exit();
 }
@@ -168,7 +168,7 @@ if (isset($_GET['hapus'])) {
 
     if (!ctype_digit((string)$id_pengabdian)) {
         echo "<script>alert('ID tidak valid!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
         exit();
     }
 
@@ -177,11 +177,11 @@ if (isset($_GET['hapus'])) {
 
     if ($res) {
         echo "<script>alert('Data pengabdian berhasil dihapus!'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
     } else {
         $err = pg_last_error($conn);
         echo "<script>alert('Gagal menghapus data: " . addslashes($err) . "'); 
-              window.location='../arsip/tambah_pengabdian.php';</script>";
+              window.location='../arsip/edit_pengabdian.php';</script>";
     }
     exit();
 }
@@ -190,7 +190,7 @@ if (isset($_GET['hapus'])) {
 /* ===========================================================
    TIDAK ADA AKSI
    =========================================================== */
-echo "<script>alert('Aksi tidak valid'); window.location='../arsip/tambah_pengabdian.php';</script>";
+echo "<script>alert('Aksi tidak valid'); window.location='../arsip/edit_pengabdian.php';</script>";
 exit();
 
 ?>

@@ -57,13 +57,18 @@
     font-weight: 500;
     cursor: pointer;
 }
+.sidebar button.is-active {
+    background-color: var(--hover-blue) !important;
+    border-left: 5px solid var(--accent-yellow) !important;
+    padding-left: 22px !important;
+}
 
 .sidebar a:hover,
 .sidebar button:hover,
 .sidebar a.is-active {
-    background-color: var(--hover-blue);
-    border-left: 5px solid var(--accent-yellow);
-    padding-left: 22px;
+    background-color: var(--hover-blue) !important;
+    border-left: 5px solid var(--accent-yellow) !important;
+    padding-left: 22px !important;
 }
 
 .dropdown-item {

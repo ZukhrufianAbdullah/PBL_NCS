@@ -2,174 +2,293 @@
 // File: admin/arsip/edit_penelitian.php
 session_start();
 
-$page_title = "Kelola Penelitian";
+$page_title = "KELOLA PENELITIAN";
 $current_page = "edit_penelitian";
+$adminPageStyles = ['forms', 'tables'];
+include '../../config/koneksi.php';
+require_once dirname(__DIR__) . '/includes/admin_header.php';
 
-$base_Url = '..'; 
-//$base_Url = '../admin'; 
-$assetUrl = '/PBL_NCS/assets/admin';
+// Ambil data dosen untuk dropdown
+$dosenOptions = [];
+$dosenResult = pg_query($conn, "SELECT id_dosen, nama_dosen FROM dosen ORDER BY nama_dosen ASC");
+if ($dosenResult) {
+    $dosenOptions = pg_fetch_all($dosenResult) ?: [];
+}
 
-// Dummy data
-$data_penelitian = [
-    [
-        'id_penelitian' => 1,
-        'judul_penelitian' => 'Analisis Keamanan Jaringan Menggunakan Machine Learning',
-        'tahun' => 2024,
-        'author' => 'Dr. Ahmad Fauzi, M.Kom',
-        'status' => 'Selesai'
-    ],
-    [
-        'id_penelitian' => 2,
-        'judul_penelitian' => 'Implementasi Blockchain untuk Keamanan Data',
-        'tahun' => 2024,
-        'author' => 'Siti Nurhaliza, M.T',
-        'status' => 'Berjalan'
-    ]
-];
+// Ambil data penelitian dari database
+$qPenelitian = pg_query($conn, "
+    SELECT p.*, d.nama_dosen 
+    FROM penelitian p 
+    LEFT JOIN dosen d ON p.id_author = d.id_dosen 
+    ORDER BY p.tahun DESC, p.id_penelitian DESC");
+
+// Ambil data section title & description untuk halaman penelitian
+$page_key = "arsip_penelitian";
+$qPage = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1", array($page_key));
+if ($qPage && pg_num_rows($qPage) > 0) {
+    $page = pg_fetch_assoc($qPage);
+    $id_page = $page['id_page'];
+    
+    // Ambil section title
+    $qTitle = pg_query_params($conn, 
+        "SELECT content_value FROM page_content WHERE id_page = $1 AND content_key = 'section_title'",
+        array($id_page)
+    );
+    $section_title = $qTitle && pg_num_rows($qTitle) > 0 ? pg_fetch_assoc($qTitle)['content_value'] : 'Penelitian';
+    
+    // Ambil section description
+    $qDesc = pg_query_params($conn, 
+        "SELECT content_value FROM page_content WHERE id_page = $1 AND content_key = 'section_description'",
+        array($id_page)
+    );
+    $section_description = $qDesc && pg_num_rows($qDesc) > 0 ? pg_fetch_assoc($qDesc)['content_value'] : 'Daftar penelitian yang dilakukan oleh NCS Lab';
+} else {
+    $section_title = 'Penelitian';
+    $section_description = 'Daftar penelitian yang dilakukan oleh NCS Lab';
+}
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/admin-dashboard.css">
 
-</head>
-<body>
+<div class="admin-header">
+    <h1><?php echo $page_title; ?> (Tabel: penelitian)</h1>
+    <p>Kelola data penelitian dan publikasi di sini</p>
+</div>
 
-    <div class="sidebar">
-        <h2>ADMIN NCS LAB</h2>
-        <a href="index.php">Dashboard</a> 
-        
-        <div class="menu-header">PENGATURAN TAMPILAN</div>
-        <a href="<?php echo $base_Url; ?>setting/edit_header.php">Edit Header</a>
-        <a href="<?php echo $base_Url; ?>setting/edit_footer.php">Edit Footer</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_beranda.php">Edit Beranda</a>
-        <a href="<?php echo $base_Url; ?>/beranda/edit_banner.php">Edit Banner</a>
-
-        <div class="menu-header">MANAJEMEN KONTEN</div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('manajemenKonten')">
-                PROFIL
-                <span class="dropdown-icon" id="icon-manajemenKonten">></span>
-            </a>
-            <div class="submenu-wrapper" id="manajemenKonten">
-                <a href="<?php echo $base_Url;?>/profil/edit_visi_misi.php">Visi & Misi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_struktur.php">Struktur Organisasi</a>
-                <a href="<?php echo $base_Url;?>/profil/edit_logo.php">Edit Logo</a>
+<!-- ============================
+     FORM EDIT SECTION TITLE & DESCRIPTION
+=============================== -->
+<div class="card">
+    <form method="post" action="../proses/proses_penelitian.php">
+        <input type="hidden" name="edit_page" value="1">
+        <fieldset>
+            <legend>Judul dan Deskripsi Halaman Penelitian</legend>
+            <div class="form-group">
+                <label for="judul_page">Judul Halaman</label>
+                <input type="text" id="judul_page" name="judul_page" 
+                       value="<?php echo htmlspecialchars($section_title); ?>"
+                       data-autofocus="true">
             </div>
-        </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('galeriMenu')">
-                GALERI
-                <span class="dropdown-icon" id="icon-galeriMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="galeriMenu">
-                <div class="menu-subheader">GALERI FOTO/VIDEO</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_galeri.php">Tambah Galeri</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_galeri.php">Kelola Galeri</a>
-                <div class="menu-subheader">AGENDA</div>
-                <a href="<?php echo $base_Url;?>/galeri/tambah_agenda.php">Tambah Agenda</a>
-                <a href="<?php echo $base_Url;?>/galeri/edit_agenda.php">Kelola Agenda</a>
+            <div class="form-group">
+                <label for="deskripsi_page">Deskripsi Halaman</label>
+                <textarea id="deskripsi_page" name="deskripsi_page" rows="4"><?php echo htmlspecialchars($section_description); ?></textarea>
             </div>
+        </fieldset>
+        <div class="form-group">
+            <button type="submit" class="btn-primary">Simpan Judul & Deskripsi</button>
         </div>
-        
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('arsipMenu')">
-                ARSIP
-                <span class="dropdown-icon" id="icon-arsipMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="arsipMenu">
-                <div class="menu-subheader">PENELITIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_penelitian.php">Tambah Penelitian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_penelitian.php">Kelola Penelitian</a>
-                <div class="menu-subheader">PENGABDIAN</div>
-                <a href="<?php echo $base_Url;?>/arsip/tambah_pengabdian.php">Tambah Pengabdian</a>
-                <a href="<?php echo $base_Url;?>/arsip/edit_pengabdian.php">Kelola Pengabdian</a>
-            </div>
-        </div>
+    </form>
+</div>
 
-        <div class="dropdown-item">
-            <a href="javascript:void(0);" class="dropdown-toggle" onclick="toggleMenu('layananMenu')">
-                LAYANAN
-                <span class="dropdown-icon" id="icon-layananMenu">></span>
-            </a>
-            <div class="submenu-wrapper" id="layananMenu">
-                <a href="<?php echo $base_Url;?>/layanan/edit_sarana_prasarana.php">Sarana & Prasarana</a>
-                <a href="<?php echo $base_Url;?>/layanan/lihat_pesan.php">Pesan Konsultatif</a>
-            </div>
-        </div>
-    </div>
+<!-- ============================
+     FORM TAMBAH PENELITIAN
+=============================== -->
+<div class="card">
+    <form method="post" action="../proses/proses_penelitian.php" enctype="multipart/form-data">
+        <input type="hidden" name="tambah" value="1">
 
-    <div class="content">
-        <div class="admin-header">
-            <h1><?php echo $page_title; ?></h1>
-        </div>
-        
-        <?php if(isset($_GET['success'])): ?>
-        <div class="alert-success">
-            Penelitian berhasil <?php echo $_GET['success'] == 'delete' ? 'dihapus' : 'diperbarui'; ?>!
-        </div>
-        <?php endif; ?>
-        
-        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <fieldset>
+            <legend>Tambah Penelitian Baru</legend>
             
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Cari penelitian..." 
-                           onkeyup="searchTable('searchInput', 'penelitianTable')">
-                </div>
-                <a href="tambah_penelitian.php" class="btn-primary">
-                    + Tambah Penelitian Baru
-                </a>
+            <div class="form-group">
+                <label for="judul_penelitian">Judul Penelitian</label>
+                <input type="text" id="judul_penelitian" name="judul_penelitian" required>
             </div>
             
-            <table id="penelitianTable">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Judul Penelitian</th>
-                        <th style="width: 200px;">Peneliti</th>
-                        <th style="width: 80px;">Tahun</th>
-                        <th style="width: 100px;">Status</th>
-                        <th style="width: 150px; text-align: center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $no = 1;
-                    foreach($data_penelitian as $penelitian): 
-                    ?>
-                    <tr>
-                        <td><?php echo $no++; ?></td>
-                        <td><strong><?php echo $penelitian['judul_penelitian']; ?></strong></td>
-                        <td><?php echo $penelitian['author']; ?></td>
-                        <td><?php echo $penelitian['tahun']; ?></td>
-                        <td>
-                            <span class="badge badge-<?php echo $penelitian['status'] == 'Selesai' ? 'success' : 'warning'; ?>">
-                                <?php echo $penelitian['status']; ?>
-                            </span>
-                        </td>
-                        <td style="text-align: center;">
-                            <a href="edit_penelitian_form.php?id=<?php echo $penelitian['id_penelitian']; ?>" 
-                               class="btn-warning" style="margin-right: 5px;">
-                                Edit
-                            </a>
-                            <button onclick="return confirmDelete('<?php echo $penelitian['judul_penelitian']; ?>')" 
-                                    class="btn-danger">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi Singkat</label>
+                <textarea id="deskripsi" name="deskripsi" rows="6"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="tahun">Tahun Publikasi</label>
+                <input type="number" id="tahun" name="tahun" value="<?php echo date('Y'); ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_author">Penulis</label>
+                <select id="id_author" name="id_author">
+                    <option value="">Pilih Penulis</option>
+                    <?php foreach ($dosenOptions as $dosen): ?>
+                        <option value="<?php echo $dosen['id_dosen']; ?>">
+                            <?php echo htmlspecialchars($dosen['nama_dosen']); ?>
+                        </option>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pdf">Upload File PDF</label>
+                <input type="file" id="pdf" name="pdf" accept=".pdf">
+                <span class="form-help-text">Unggah file PDF hasil penelitian.</span>
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit" class="btn-primary">Publikasikan Penelitian</button>
         </div>
+    </form>
+</div>
+
+<br>
+
+<!-- ============================
+     TABEL DAFTAR PENELITIAN
+=============================== -->
+<div class="card">
+    <div class="card-header">
+        <h3>Daftar Penelitian</h3>
     </div>
 
-    <script src="<?php echo $assetUrl; ?>/js/admin-dashboard.js"></script>
-</body>
-</html>
+    <table class="data-table" id="penelitianTable">
+        <thead>
+            <tr>
+                <th class="col-no">No</th>
+                <th>Judul Penelitian</th>
+                <th class="col-jabatan">Peneliti</th>
+                <th class="col-urutan">Tahun</th>
+                <th class="col-status">File</th>
+                <th class="col-aksi">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+            $no = 1;
+            $hasData = false;
+
+            while ($row = pg_fetch_assoc($qPenelitian)): 
+                $hasData = true;
+            ?>
+            <tr>
+                <td><?php echo $no++; ?></td>
+                <td>
+                    <strong><?php echo htmlspecialchars($row['judul_penelitian']); ?></strong>
+                    <?php if (!empty($row['deskripsi'])): ?>
+                    <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
+                    <?php endif; ?>
+                </td>
+                <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
+                <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
+                <td style="text-align: center;">
+                    <?php if (!empty($row['media_path'])): ?>
+                        <span class="badge badge-success">Ada PDF</span>
+                    <?php else: ?>
+                        <span class="badge badge-danger">Tidak Ada</span>
+                    <?php endif; ?>
+                </td>
+                <td style="text-align: center;">
+                    <button class="btn-warning" 
+                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                        Edit
+                    </button>
+
+                    <form method="post" action="../proses/proses_penelitian.php" 
+                          style="display:inline;" 
+                          onsubmit="return confirm('Yakin ingin menghapus penelitian ini?');">
+                        <input type="hidden" name="hapus" value="1">
+                        <input type="hidden" name="id_penelitian" value="<?php echo $row['id_penelitian']; ?>">
+                        <button type="submit" class="btn-danger">Hapus</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endwhile; ?>
+
+            <?php if (!$hasData): ?>
+            <tr>
+                <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                    <strong>Belum ada penelitian yang ditambahkan</strong>
+                </td>
+            </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<!-- ============================
+     MODAL EDIT PENELITIAN
+=============================== -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3>Edit Penelitian</h3>
+        <form method="post" action="../proses/proses_penelitian.php" enctype="multipart/form-data">
+            <input type="hidden" name="edit" value="1">
+            <input type="hidden" name="id_penelitian" id="edit_id">
+
+            <div class="form-group">
+                <label>Judul Penelitian</label>
+                <input type="text" name="judul_penelitian" id="edit_judul" required>
+            </div>
+
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" id="edit_deskripsi" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tahun</label>
+                <input type="number" name="tahun" id="edit_tahun" required>
+            </div>
+
+            <div class="form-group">
+                <label>Penulis</label>
+                <select name="id_author" id="edit_author">
+                    <option value="">Pilih Penulis</option>
+                    <?php foreach ($dosenOptions as $dosen): ?>
+                        <option value="<?php echo $dosen['id_dosen']; ?>">
+                            <?php echo htmlspecialchars($dosen['nama_dosen']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>File PDF (Biarkan kosong jika tidak ingin mengubah)</label>
+                <input type="file" name="pdf" accept=".pdf">
+                <span class="form-help-text" id="current_file"></span>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px; display: flex; gap: 10px;">
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================
+     SCRIPT JS
+=============================== -->
+<script>
+function openEditModal(row) {
+    document.getElementById("edit_id").value = row.id_penelitian;
+    document.getElementById("edit_judul").value = row.judul_penelitian;
+    document.getElementById("edit_deskripsi").value = row.deskripsi || '';
+    document.getElementById("edit_tahun").value = row.tahun;
+    document.getElementById("edit_author").value = row.id_author || '';
+    
+    // Tampilkan info file saat ini
+    const currentFile = document.getElementById("current_file");
+    if (row.media_path) {
+        currentFile.innerHTML = `File saat ini: <strong>${row.media_path}</strong>`;
+        currentFile.style.color = "var(--success-green)";
+    } else {
+        currentFile.innerHTML = "Belum ada file PDF";
+        currentFile.style.color = "var(--danger-red)";
+    }
+
+    document.getElementById("editModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+// Close modal ketika klik di luar modal
+window.onclick = function(event) {
+    const modal = document.getElementById("editModal");
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
+
+<?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>
