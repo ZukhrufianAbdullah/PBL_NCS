@@ -53,7 +53,7 @@ $logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
         <fieldset>
             <legend>Judul dan Deskripsi Logo</legend>
             <div class="form-group">
-                <label for="judul_page">Judul Halaman></label>
+                <label for="judul_page">Judul Halaman</label>
                 <input type="text"
                        id="judul_logo"
                        name="judul_logo"

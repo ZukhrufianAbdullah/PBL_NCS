@@ -1,48 +1,56 @@
 <?php
-include '../../config/koneksi.php';
+// File: user/proses/proses_konsultatif.php
+session_start();
 
-// Pastikan request dari form POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Define BASE_URL untuk konsistensi
+define('BASE_URL', '../..');
 
-    $nama_pengirim = $_POST['nama_pengirim'];
-    $isi_pesan     = $_POST['isi_pesan'];
+// Koneksi database
+$config_path = $_SERVER['DOCUMENT_ROOT'] . '/PBL_NCS/config/koneksi.php';
+if (!file_exists($config_path)) {
+    die("Database configuration file not found");
+}
+require_once $config_path;
 
-    // Validasi sederhana
-    if (empty($nama_pengirim) || empty($isi_pesan)) {
-        echo "<script>
-                alert('Nama dan pesan tidak boleh kosong!');
-                window.location.href='../konsultatif.php';
-              </script>";
-        exit();
-    }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama_pengirim = $_POST['nama_pengirim'] ?? '';
+    $isi_pesan = $_POST['isi_pesan'] ?? '';
 
-    // Query INSERT ke tabel konsultatif
-    $query = "
-        INSERT INTO konsultatif (nama_pengirim, isi_pesan, tanggal_kirim)
-        VALUES ($1, $2, NOW())
-    ";
+    if (!empty($nama_pengirim) && !empty($isi_pesan)) {
+        // Simpan ke database - PostgreSQL version
+        $sql = "INSERT INTO konsultatif (nama_pengirim, isi_pesan) VALUES ($1, $2)";
+        $result = pg_query_params($conn, $sql, array($nama_pengirim, $isi_pesan));
 
-    $result = pg_query_params($conn, $query, array($nama_pengirim, $isi_pesan));
-
-    if ($result) {
-        echo "<script>
-                alert('Pesan berhasil dikirim!');
-                window.location.href='../konsultatif.php';
-              </script>";
+        if ($result) {
+            // Set session untuk notifikasi sukses
+            $_SESSION['alert_type'] = 'success';
+            $_SESSION['alert_message'] = "Pesan berhasil dikirim. Kami akan menghubungi Anda segera.";
+            
+            // OPSIONAL: Kirim notifikasi ke admin (bisa dikembangkan dengan email/websocket)
+            // notifyAdminNewMessage($nama_pengirim, $isi_pesan);
+            
+        } else {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = "Terjadi kesalahan saat mengirim pesan: " . pg_last_error($conn);
+        }
     } else {
-        echo "<script>
-                alert('Gagal mengirim pesan!');
-                window.location.href='../konsultatif.php';
-              </script>";
+        $_SESSION['alert_type'] = 'error';
+        $_SESSION['alert_message'] = "Nama dan pesan harus diisi.";
     }
 
+    // Redirect kembali ke halaman konsultatif
+    header("Location: " . BASE_URL . "/user/layanan/konsultatif.php");
+    exit();
+} else {
+    // Jika bukan POST, redirect ke halaman konsultatif
+    header("Location: " . BASE_URL . "/user/layanan/konsultatif.php");
     exit();
 }
 
-// Jika akses langsung tanpa POST
-echo "<script>
-        alert('Akses tidak valid!');
-        window.location.href='../konsultatif.php';
-      </script>";
-exit();
+// Fungsi untuk notifikasi admin (opsional - bisa dikembangkan)
+function notifyAdminNewMessage($nama_pengirim, $isi_pesan) {
+    // Contoh: Simpan notifikasi di database atau kirim email
+    // Ini adalah placeholder untuk pengembangan lebih lanjut
+    error_log("Pesan baru dari: $nama_pengirim - " . substr($isi_pesan, 0, 50) . "...");
+}
 ?>
