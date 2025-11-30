@@ -127,5 +127,10 @@ $matchesPage = function ($keys) use ($currentPage) {
             </a>
         </div>
     </div>
+
+    <a href="<?php echo $projectBasePath; ?>user/index.php" class="sidebar-link">
+        Logout
+    </a>
+
 </aside>
 
