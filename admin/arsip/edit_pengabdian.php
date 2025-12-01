@@ -17,10 +17,7 @@ if ($dosenResult) {
 
 // Ambil data pengabdian dari database
 $qPengabdian = pg_query($conn, "
-    SELECT p.*, d.nama_dosen 
-    FROM pengabdian p 
-    LEFT JOIN dosen d ON p.id_ketua = d.id_dosen 
-    ORDER BY p.tahun DESC, p.id_pengabdian DESC");
+    SELECT * FROM view_pengabdian ORDER BY tahun DESC");
 
 // Ambil data section title & description untuk halaman pengabdian
 $page_key = "arsip_pengabdian";

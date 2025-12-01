@@ -88,16 +88,7 @@ function get_penelitian($conn, ?int $limit = null): array
     $limitClause = build_limit_clause($limit, $params);
 
     $sql = "
-        SELECT p.id_penelitian,
-               p.judul_penelitian,
-               p.deskripsi,
-               p.tahun,
-               p.media_path,
-               p.tanggal_upload,
-               d.nama_dosen AS author_name
-        FROM penelitian p
-        LEFT JOIN dosen d ON d.id_dosen = p.id_author
-        ORDER BY p.tanggal_upload DESC
+        SELECT * FROM view_penelitian ORDER BY tahun DESC, id_penelitian DESC
         {$limitClause}
     ";
 
@@ -110,15 +101,7 @@ function get_pengabdian($conn, ?int $limit = null): array
     $limitClause = build_limit_clause($limit, $params);
 
     $sql = "
-        SELECT pgd.id_pengabdian,
-               pgd.judul_pengabdian,
-               pgd.skema,
-               pgd.tahun,
-               d.nama_dosen AS ketua,
-               d.id_dosen
-        FROM pengabdian pgd
-        LEFT JOIN dosen d ON d.id_dosen = pgd.id_ketua
-        ORDER BY pgd.tahun DESC, pgd.id_pengabdian DESC
+        SELECT * FROM view_pengabdian ORDER BY tahun DESC
         {$limitClause}
     ";
 

@@ -17,10 +17,7 @@ if ($dosenResult) {
 
 // Ambil data penelitian dari database
 $qPenelitian = pg_query($conn, "
-    SELECT p.*, d.nama_dosen 
-    FROM penelitian p 
-    LEFT JOIN dosen d ON p.id_author = d.id_dosen 
-    ORDER BY p.tahun DESC, p.id_penelitian DESC");
+    SELECT * FROM view_penelitian ORDER BY tahun DESC, id_penelitian DESC");
 
 // Ambil data section title & description untuk halaman penelitian
 $page_key = "arsip_penelitian";
@@ -169,7 +166,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                 <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
                 <td style="text-align: center;">
                     <?php if (!empty($row['media_path'])): ?>
-                        <span class="badge badge-success">Ada PDF</span>
+                        <span class="badge badge-success">PDF</span>
                     <?php else: ?>
                         <span class="badge badge-danger">Tidak Ada</span>
                     <?php endif; ?>
