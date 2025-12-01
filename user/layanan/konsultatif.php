@@ -15,29 +15,37 @@ $config_path = $_SERVER['DOCUMENT_ROOT'] . '/PBL_NCS/config/koneksi.php';
 if (file_exists($config_path)) {
     require_once $config_path;
     
-    // Ambil konten dari database
+    // PERBAIKAN: Ambil konten dengan key yang sama seperti di admin
     $id_page = null;
     $res = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1 LIMIT 1", ['layanan_konsultatif']);
     if ($res && pg_num_rows($res) > 0) {
         $id_page = pg_fetch_result($res, 0, 'id_page');
     }
-    $judul = '';
-    $deskripsi = '';
+    
+    $section_title = '';
+    $section_description = '';
+    
     if ($id_page) {
+        // PERBAIKAN: Gunakan key yang sama dengan admin
         $pc = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", array($id_page));
+        $content_data = [];
         while ($r = pg_fetch_assoc($pc)) {
-            if ($r['content_key'] === 'judul') $judul = $r['content_value'];
-            if ($r['content_key'] === 'deskripsi') $deskripsi = $r['content_value'];
+            $content_data[$r['content_key']] = $r['content_value'];
         }
+        
+        // PERBAIKAN: Ambil dengan key 'section_title' dan 'section_description'
+        $section_title = $content_data['section_title'] ?? 'Konsultatif';
+        $section_description = $content_data['section_description'] ?? 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
+    } else {
+        // Fallback jika halaman belum ada
+        $section_title = 'Konsultatif';
+        $section_description = 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
     }
 } else {
     // Fallback jika koneksi.php tidak ada
-    $judul = '';
-    $deskripsi = '';
+    $section_title = 'Konsultatif';
+    $section_description = 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
 }
-
-$title_konsultatif = $judul ?: 'Konsultatif';
-$description_konsultatif = $deskripsi ?: 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
 ?>
 
 <!-- SweetAlert2 CSS -->
@@ -46,8 +54,9 @@ $description_konsultatif = $deskripsi ?: 'Leveraging academic expertise to offer
 <main class="section-gap">
     <div class="container">
         <div class="section-header">
-            <h2><?php echo htmlspecialchars($title_konsultatif); ?></h2>
-            <p><?php echo htmlspecialchars($description_konsultatif); ?></p>
+            <!-- PERBAIKAN: Gunakan variabel yang benar -->
+            <h2><?php echo htmlspecialchars($section_title); ?></h2>
+            <p><?php echo htmlspecialchars($section_description); ?></p>
         </div>
         <form class="card-basic contact-form" method="POST" action="<?php echo BASE_URL; ?>/user/proses/proses_konsultatif.php" id="konsultasiForm">
             <div class="mb-3">
