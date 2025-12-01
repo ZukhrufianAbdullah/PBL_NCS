@@ -10,16 +10,18 @@ $id_user = $_SESSION['id_user'] ?? 1;
 // ===========================================================================
 if (isset($_POST['update_footer'])) {
     $site_title = $_POST['site_title'] ?? '';
+    $footer_description = $_POST['footer_description'] ?? ''; // BARU: Deskripsi footer terpisah
     $footer_developer_title = $_POST['footer_developer_title'] ?? 'Developed by';
     $footer_copyright = $_POST['footer_copyright'] ?? 'All Rights Reserved.';
     $footer_credit_tim = $_POST['footer_credit_tim'] ?? '';
 
     // DEBUG: Untuk memastikan data yang diterima benar
-    error_log("Data received - site_title: $site_title, footer_copyright: $footer_copyright");
+    error_log("Data received - site_title: $site_title, footer_description: $footer_description");
 
     // Update masing-masing setting secara terpisah
     $settings = [
         'site_title' => $site_title,
+        'footer_description' => $footer_description, // BARU: Setting terpisah
         'footer_developer_title' => $footer_developer_title,
         'footer_copyright' => $footer_copyright,
         'footer_credit_tim' => $footer_credit_tim
