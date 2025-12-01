@@ -1,5 +1,8 @@
 <?php
 include '../../config/koneksi.php';
+// Include helper
+include __DIR__ . "/../../app/helpers/page_helper.php";
+
 session_start();
 
 $id_user = $_SESSION['id_user'] ?? 1;
@@ -9,28 +12,6 @@ $upload_dir = "../../uploads/penelitian/";
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0777, true);
 }
-
-function upsert_page_content($conn, int $pageId, string $contentKey, string $contentType, string $contentValue, int $userId): void
-{
-    $checkSql = "SELECT id_page_content FROM page_content WHERE id_page = $1 AND content_key = $2";
-    $existing = pg_query_params($conn, $checkSql, array($pageId, $contentKey));
-
-    if ($existing && pg_num_rows($existing) > 0) {
-        $updateSql = "
-            UPDATE page_content
-            SET content_type = $1, content_value = $2, id_user = $3
-            WHERE id_page = $4 AND content_key = $5
-        ";
-        pg_query_params($conn, $updateSql, array($contentType, $contentValue, $userId, $pageId, $contentKey));
-    } else {
-        $insertSql = "
-            INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-            VALUES ($1, $2, $3, $4, $5)
-        ";
-        pg_query_params($conn, $insertSql, array($pageId, $contentKey, $contentType, $contentValue, $userId));
-    }
-}
-
 
 // ==================================================================
 // 1. TAMBAH PENELITIAN
@@ -168,31 +149,37 @@ if (isset($_POST['hapus'])) {
 
 // ==================================================================
 // 4. UPDATE PAGE CONTENT (judul + deskripsi)
-//    page_key = "arsip_penelitian"
 // ==================================================================
 if (isset($_POST['edit_page'])) {
 
     $judul_pc     = $_POST['judul_page'];
     $deskripsi_pc = $_POST['deskripsi_page'];
-    $page_key     = "arsip_penelitian";
-
-    $pageResult = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1", array($page_key));
-    if ($pageResult && pg_num_rows($pageResult) > 0) {
-        $page = pg_fetch_assoc($pageResult);
-        $pageId = (int) $page['id_page'];
-    } else {
-        $insertPage = pg_query_params($conn, "INSERT INTO pages (nama) VALUES ($1) RETURNING id_page", array($page_key));
-        $pageData = pg_fetch_assoc($insertPage);
-        $pageId = (int) $pageData['id_page'];
+    
+    // GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
+    $id_page = ensure_page_exists($conn, 'arsip_penelitian');
+    
+    if (!$id_page) {
+        echo "<script>alert('Gagal membuat atau mendapatkan halaman Penelitian!');
+              window.location.href='../arsip/edit_penelitian.php';</script>";
+        exit();
     }
 
-    upsert_page_content($conn, $pageId, 'section_title', 'text', $judul_pc, $id_user);
-    upsert_page_content($conn, $pageId, 'section_description', 'text', $deskripsi_pc, $id_user);
+    // GUNAKAN HELPER FUNCTION untuk upsert content
+    // Menggunakan 'section_title' dan 'section_description' untuk konsistensi
+    $resultJudul = upsert_page_content($conn, $id_page, 'section_title', $judul_pc, $id_user);
+    $resultDeskripsi = upsert_page_content($conn, $id_page, 'section_description', $deskripsi_pc, $id_user);
 
-    echo "<script>
-            alert('Konten halaman Penelitian berhasil diperbarui!');
-            window.location.href = '../arsip/edit_penelitian.php';
-          </script>";
+    if ($resultJudul && $resultDeskripsi) {
+        echo "<script>
+                alert('Konten halaman Penelitian berhasil diperbarui!');
+                window.location.href = '../arsip/edit_penelitian.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Gagal memperbarui konten halaman Penelitian!');
+                window.location.href = '../arsip/edit_penelitian.php';
+              </script>";
+    }
     exit();
 }
 

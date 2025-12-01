@@ -13,7 +13,7 @@
 }
 
 /* ===========================
-   Artikel Card
+   Artikel Card - UKURAN TETAP KONSISTEN
 =========================== */
 .article-card {
     border-radius: var(--radius-md);
@@ -21,8 +21,10 @@
     background: var(--surface);
     box-shadow: var(--shadow);
     overflow: hidden;
-
-    opacity: 0; /* mulai tersembunyi */
+    width: 100%; /* Pastikan lebar mengikuti parent */
+    min-width: 0; /* Mencegah card melebar berlebihan */
+    
+    opacity: 0;
     animation: fadeInUp 0.8s ease-out forwards;
 }
 
@@ -32,12 +34,16 @@
 .article-card:nth-child(3) { animation-delay: 0.3s; }
 .article-card:nth-child(4) { animation-delay: 0.4s; }
 .article-card:nth-child(5) { animation-delay: 0.5s; }
+.article-card:nth-child(6) { animation-delay: 0.5s; }
+.article-card:nth-child(7) { animation-delay: 0.5s; }
+.article-card:nth-child(8) { animation-delay: 0.5s; }
 
-/* Gambar di artikel */
+/* Gambar di artikel - UKURAN TETAP */
 .article-card img {
     height: 180px;
     width: 100%;
     object-fit: cover;
+    display: block;
 }
 
 /* Body artikel */
@@ -53,6 +59,69 @@
     color: var(--text-muted);
     margin-bottom: 0.35rem;
 }
+
+/* ===========================
+   Card Grid untuk Galeri - PERBAIKAN UTAMA
+=========================== */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Untuk memastikan grid tetap 4 kolom di desktop */
+@media (min-width: 1200px) {
+    .card-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Untuk kasus single card: tetap ukuran normal */
+.card-grid:has(.article-card:only-child) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    justify-content: center;
+}
+
+/* Responsive untuk card grid galeri */
+@media (max-width: 1200px) and (min-width: 993px) {
+    .card-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) and (min-width: 577px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Adjust animation delays untuk 2 kolom */
+    .article-card:nth-child(odd) { animation-delay: 0.1s; }
+    .article-card:nth-child(even) { animation-delay: 0.2s; }
+}
+
+@media (max-width: 576px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Untuk kasus satu card di mobile - ukuran tetap normal */
+    .article-card:only-child {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .article-card:nth-child(n) { animation-delay: 0.1s; }
+}
+
+/* Solusi alternatif: Grid container dengan jumlah kolom tetap */
+.alternative-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
 
 /* ===========================
    Agenda Card
@@ -99,7 +168,7 @@
     border: 1px solid var(--blue-mid);
     color: var(--blue-mid);
     font-weight: 600;
-    border-radius: 50%;
+    border-radius: 50%; 
     transition: all 0.2s ease-in-out;
     text-decoration: none;
     width: 38px;

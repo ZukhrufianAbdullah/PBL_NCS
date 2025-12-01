@@ -12,7 +12,7 @@ $qJudulSarana = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'judul_sarana'
+    WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'section_title'
     LIMIT 1");
 $judulSarana = pg_fetch_assoc($qJudulSarana)['content_value'] ?? '';
 
@@ -21,7 +21,7 @@ $qDeskripsiSarana = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'deskripsi_sarana'
+    WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'section_description'
     LIMIT 1");
 $deskripsiSarana = pg_fetch_assoc($qDeskripsiSarana)['content_value'] ?? '';
 

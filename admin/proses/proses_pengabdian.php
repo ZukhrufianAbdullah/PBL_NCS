@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../../config/koneksi.php';
+// Include helper
+include __DIR__ . "/../../app/helpers/page_helper.php";
 
 // ambil id_user dari session (fallback 1 jika belum ada)
 $id_user = $_SESSION['id_user'] ?? 1;
@@ -10,40 +12,6 @@ function input_trim($key) {
     return isset($_POST[$key]) ? trim($_POST[$key]) : null;
 }
 
-function ensure_page($conn, string $pageName): int
-{
-    $pageResult = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1", array($pageName));
-    if ($pageResult && pg_num_rows($pageResult) > 0) {
-        $page = pg_fetch_assoc($pageResult);
-        return (int) $page['id_page'];
-    }
-
-    $insertPage = pg_query_params($conn, "INSERT INTO pages (nama) VALUES ($1) RETURNING id_page", array($pageName));
-    $page = pg_fetch_assoc($insertPage);
-    return (int) $page['id_page'];
-}
-
-function upsert_pengabdian_page_content($conn, int $pageId, string $contentKey, string $value, int $userId): void
-{
-    $checkSql = "SELECT id_page_content FROM page_content WHERE id_page = $1 AND content_key = $2";
-    $existing = pg_query_params($conn, $checkSql, array($pageId, $contentKey));
-
-    if ($existing && pg_num_rows($existing) > 0) {
-        $updateSql = "
-            UPDATE page_content
-            SET content_type = 'text', content_value = $1, id_user = $2
-            WHERE id_page = $3 AND content_key = $4
-        ";
-        pg_query_params($conn, $updateSql, array($value, $userId, $pageId, $contentKey));
-    } else {
-        $insertSql = "
-            INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-            VALUES ($1, $2, 'text', $3, $4)
-        ";
-        pg_query_params($conn, $insertSql, array($pageId, $contentKey, $value, $userId));
-    }
-}
-
 /* ===========================================================
    0) UPDATE PAGE CONTENT PENGABDIAN
    =========================================================== */
@@ -51,20 +19,34 @@ if (isset($_POST['edit_page_content'])) {
 
     $judul_page     = $_POST['judul_page'];
     $deskripsi_page = $_POST['deskripsi_page'];
-    $page_key       = "arsip_pengabdian";    // <= page untuk Pengabdian
+    
+    // GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
+    $id_page = ensure_page_exists($conn, 'arsip_pengabdian');
+    
+    if (!$id_page) {
+        echo "<script>alert('Gagal membuat atau mendapatkan halaman Pengabdian!');
+              window.location.href='../arsip/edit_pengabdian.php';</script>";
+        exit();
+    }
 
-    $pageId = ensure_page($conn, $page_key);
-    upsert_pengabdian_page_content($conn, $pageId, 'section_title', $judul_page, $id_user);
-    upsert_pengabdian_page_content($conn, $pageId, 'section_description', $deskripsi_page, $id_user);
+    // GUNAKAN HELPER FUNCTION untuk upsert content
+    // Menggunakan 'section_title' dan 'section_description' untuk konsistensi
+    $resultJudul = upsert_page_content($conn, $id_page, 'section_title', $judul_page, $id_user);
+    $resultDeskripsi = upsert_page_content($conn, $id_page, 'section_description', $deskripsi_page, $id_user);
 
-    echo "<script>
-            alert('Konten halaman Pengabdian berhasil diperbarui!');
-            window.location.href='../arsip/edit_pengabdian.php';
-          </script>";
+    if ($resultJudul && $resultDeskripsi) {
+        echo "<script>
+                alert('Konten halaman Pengabdian berhasil diperbarui!');
+                window.location.href='../arsip/edit_pengabdian.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Gagal memperbarui konten halaman Pengabdian!');
+                window.location.href='../arsip/edit_pengabdian.php';
+              </script>";
+    }
     exit();
 }
-
-
 
 /* ===========================================================
    1) TAMBAH PENGABDIAN

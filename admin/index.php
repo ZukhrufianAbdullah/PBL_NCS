@@ -15,10 +15,12 @@ $qTotalAgenda = pg_query($conn, "SELECT COUNT(*) AS total FROM agenda;");
 $total_agenda = pg_fetch_assoc($qTotalAgenda)['total'];
 
 // Total Penelitian
-$total_penelitian =0;
+$qTotalPenelitian = pg_query($conn, "SELECT COUNT(*) AS total FROM penelitian;");
+$total_penelitian = pg_fetch_assoc($qTotalPenelitian)['total'];
 
 // Total Pesan Masuk
-$total_pesan = 0;
+$qTotalPesan = pg_query($conn, "SELECT COUNT(*) AS total FROM konsultatif;");
+$total_pesan = pg_fetch_assoc($qTotalPesan)['total'];
 
 ?>
 

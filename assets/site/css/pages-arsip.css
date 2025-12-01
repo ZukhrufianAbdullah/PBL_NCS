@@ -13,6 +13,16 @@
 }
 
 /* ===========================
+   Research Grid Container (3 kolom)
+=========================== */
+.research-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* ===========================
    Research Card
 =========================== */
 .research-card {
@@ -21,9 +31,19 @@
     padding: 1.75rem;
     background: var(--surface);
     box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 280px;
 
     opacity: 0; /* mulai tersembunyi */
     animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.research-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* Stagger effect untuk multiple research cards */
@@ -31,16 +51,76 @@
 .research-card:nth-child(2) { animation-delay: 0.2s; }
 .research-card:nth-child(3) { animation-delay: 0.3s; }
 .research-card:nth-child(4) { animation-delay: 0.4s; }
+.research-card:nth-child(5) { animation-delay: 0.5s; }
+.research-card:nth-child(6) { animation-delay: 0.6s; }
 
 /* Year di card */
 .research-card .year {
     float: right;
     font-weight: 700;
     color: var(--blue-mid);
+    background: #eef4ff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.research-card h5 {
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: var(--text);
+    flex-grow: 0;
+}
+
+.research-card .text-muted {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #666;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    line-clamp: 3; /* Batasi teks menjadi 3 baris */
+    -webkit-box-orient: vertical;
+}
+
+.research-card .btn-brand {
+    align-self: center;
+    margin-top: auto;
 }
 
 /* ===========================
-   Lab Table
+   Responsive Design
+=========================== */
+@media (max-width: 992px) {
+    .research-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .research-card:nth-child(3) { animation-delay: 0.2s; }
+    .research-card:nth-child(4) { animation-delay: 0.3s; }
+    .research-card:nth-child(5) { animation-delay: 0.4s; }
+    .research-card:nth-child(6) { animation-delay: 0.5s; }
+}
+
+@media (max-width: 768px) {
+    .research-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .research-card {
+        min-height: auto;
+        padding: 1.25rem;
+    }
+    
+    .research-card:nth-child(n) { animation-delay: 0.1s; }
+}
+
+/* ===========================
+   Lab Table (jika masih diperlukan)
 =========================== */
 .lab-table {
     width: 100%;
@@ -70,4 +150,70 @@
 
 .lab-table tr:last-child td {
     border-bottom: none;
+}
+
+/* ===========================
+   Pagination
+=========================== */
+.pagination {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-pagination {
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 50%;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0 0.25rem;
+}
+
+.btn-pagination:hover:not(.active):not(:disabled) {
+    background: var(--blue-light);
+    border-color: var(--blue-mid);
+    color: var(--blue-mid);
+    transform: translateY(-1px);
+}
+
+.btn-pagination.active {
+    background: var(--blue-mid);
+    border-color: var(--blue-mid);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-pagination:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive pagination */
+@media (max-width: 576px) {
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .btn-pagination {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+}
+
+/* Animation for pagination */
+.pagination {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 0.3s;
 }

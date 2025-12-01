@@ -22,8 +22,8 @@ $deskripsi = '';
 if ($id_page) {
     $pc = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", array($id_page));
     while ($r = pg_fetch_assoc($pc)) {
-        if ($r['content_key'] === 'judul') $judul = $r['content_value'];
-        if ($r['content_key'] === 'deskripsi') $deskripsi = $r['content_value'];
+        if ($r['content_key'] === 'section_title') $judul = $r['content_value'];
+        if ($r['content_key'] === 'section_description') $deskripsi = $r['content_value'];
     }
 }
 

@@ -2,6 +2,8 @@
 // File: admin/proses/proses_struktur.php
 session_start();
 include '../../config/koneksi.php';
+// Include helper
+include __DIR__ . "/../../app/helpers/page_helper.php";
 
 // Folder upload
 $upload_dir = "../../uploads/dosen/";
@@ -19,42 +21,32 @@ $id_user = $_SESSION['id_user'] ?? 1;
 if (isset($_POST['edit_page_content']) && isset($_POST['submit'])) {
     $judul_page     = trim($_POST['judul_page'] ?? '');
     $deskripsi_page = trim($_POST['deskripsi_page'] ?? '');
-    $page_key       = "profil_struktur";
-
-    // Ambil id_page
-    $pg = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1 LIMIT 1", array($page_key));
-    if (!$pg || pg_num_rows($pg) === 0) {
-        echo "<script>alert('Halaman tidak ditemukan.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+    
+    // GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
+    $id_page = ensure_page_exists($conn, 'profil_struktur');
+    
+    if (!$id_page) {
+        echo "<script>alert('Gagal membuat atau mendapatkan halaman Struktur Organisasi!'); 
+              window.location.href='../profil/edit_struktur.php';</script>"; 
+        exit();
     }
-    $page = pg_fetch_assoc($pg);
-    $id_page = $page['id_page'];
 
-    // upsert judul
-    $check = pg_query_params($conn, "SELECT id_page_content FROM page_content WHERE id_page=$1 AND content_key='judul' LIMIT 1", array($id_page));
-    if (pg_num_rows($check) > 0) {
-        pg_query_params($conn, "UPDATE page_content SET content_value=$1, id_user=$2 WHERE id_page=$3 AND content_key='judul'",
-            array($judul_page, $id_user, $id_page));
+    // Gunakan helper untuk upsert content
+    $resultJudul = upsert_page_content($conn, $id_page, 'section_title', $judul_page, $id_user);
+    $resultDeskripsi = upsert_page_content($conn, $id_page, 'section_description', $deskripsi_page, $id_user);
+
+    if ($resultJudul && $resultDeskripsi) {
+        echo "<script>alert('Konten halaman Struktur Organisasi berhasil diperbarui!'); 
+              window.location.href='../profil/edit_struktur.php';</script>";
     } else {
-        pg_query_params($conn, "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) VALUES ($1,'judul','text',$2,$3)",
-            array($id_page, $judul_page, $id_user));
+        echo "<script>alert('Gagal memperbarui konten halaman!'); 
+              window.location.href='../profil/edit_struktur.php';</script>";
     }
-
-    // upsert deskripsi
-    $check2 = pg_query_params($conn, "SELECT id_page_content FROM page_content WHERE id_page=$1 AND content_key='deskripsi' LIMIT 1", array($id_page));
-    if (pg_num_rows($check2) > 0) {
-        pg_query_params($conn, "UPDATE page_content SET content_value=$1, id_user=$2 WHERE id_page=$3 AND content_key='deskripsi'",
-            array($deskripsi_page, $id_user, $id_page));
-    } else {
-        pg_query_params($conn, "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) VALUES ($1,'deskripsi','text',$2,$3)",
-            array($id_page, $deskripsi_page, $id_user));
-    }
-
-    echo "<script>alert('Konten halaman Struktur Organisasi berhasil diperbarui!'); window.location.href='../profil/edit_struktur.php';</script>";
     exit();
 }
 
 // -----------------------------
-// 1) EDIT anggota (nama, jabatan, foto opsional) - DIPERBAIKI
+// 1) EDIT anggota (nama, jabatan, foto opsional)
 // -----------------------------
 if (isset($_POST['edit'])) {
     $id_anggota = $_POST['id_anggota'] ?? null;
@@ -67,7 +59,7 @@ if (isset($_POST['edit'])) {
         exit();
     }
 
-    // PERBAIKAN: Handle file upload dengan lebih baik
+    // Handle file upload
     $new_file = null;
     if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
         $file_name = $_FILES['foto']['name'];
@@ -78,12 +70,14 @@ if (isset($_POST['edit'])) {
         
         // Validasi file
         if (!in_array($ext, $allowed)) {
-            echo "<script>alert('Format foto tidak valid! Hanya JPG, PNG, GIF, SVG, WEBP yang diizinkan.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            echo "<script>alert('Format foto tidak valid! Hanya JPG, PNG, GIF, SVG, WEBP yang diizinkan.'); 
+                  window.location.href='../profil/edit_struktur.php';</script>"; 
             exit();
         }
         
         if ($file_size > 5 * 1024 * 1024) { // 5MB max
-            echo "<script>alert('Ukuran file terlalu besar! Maksimal 5MB.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            echo "<script>alert('Ukuran file terlalu besar! Maksimal 5MB.'); 
+                  window.location.href='../profil/edit_struktur.php';</script>"; 
             exit();
         }
 
@@ -91,7 +85,8 @@ if (isset($_POST['edit'])) {
         $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
         
         if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
-            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            echo "<script>alert('Gagal mengupload foto.'); 
+                  window.location.href='../profil/edit_struktur.php';</script>"; 
             exit();
         }
 
@@ -141,18 +136,21 @@ if (isset($_POST['tambah'])) {
         $allowed = ['jpg','jpeg','png','gif','svg','webp'];
         
         if (!in_array($ext, $allowed)) {
-            echo "<script>alert('Format foto tidak valid! Hanya JPG, PNG, GIF, SVG, WEBP yang diizinkan.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            echo "<script>alert('Format foto tidak valid! Hanya JPG, PNG, GIF, SVG, WEBP yang diizinkan.'); 
+                  window.location.href='../profil/edit_struktur.php';</script>"; 
             exit();
         }
         
         if ($file_size > 5 * 1024 * 1024) {
-            echo "<script>alert('Ukuran file terlalu besar! Maksimal 5MB.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            echo "<script>alert('Ukuran file terlalu besar! Maksimal 5MB.'); 
+                  window.location.href='../profil/edit_struktur.php';</script>"; 
             exit();
         }
         
         $new_file = "dosen_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
         if (!move_uploaded_file($tmp_file, $upload_dir . $new_file)) {
-            echo "<script>alert('Gagal mengupload foto.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+            echo "<script>alert('Gagal mengupload foto.'); 
+                  window.location.href='../profil/edit_struktur.php';</script>"; 
             exit();
         }
     }
@@ -161,7 +159,8 @@ if (isset($_POST['tambah'])) {
     $ins = pg_query_params($conn, "INSERT INTO dosen (nama_dosen, media_path, id_user) VALUES ($1, $2, $3) RETURNING id_dosen",
         array($nama, $new_file, $id_user));
     if (!$ins) {
-        echo "<script>alert('Gagal menambahkan dosen.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        echo "<script>alert('Gagal menambahkan dosen.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+        exit();
     }
     $row = pg_fetch_assoc($ins);
     $id_dosen_baru = $row['id_dosen'];
@@ -170,7 +169,8 @@ if (isset($_POST['tambah'])) {
     $q2 = pg_query_params($conn, "INSERT INTO anggota_lab (id_dosen, jabatan) VALUES ($1, $2)",
         array($id_dosen_baru, $jabatan));
     if (!$q2) {
-        echo "<script>alert('Gagal menambahkan anggota_lab.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        echo "<script>alert('Gagal menambahkan anggota_lab.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+        exit();
     }
 
     echo "<script>alert('Anggota baru berhasil ditambahkan!'); window.location.href='../profil/edit_struktur.php';</script>";
@@ -183,13 +183,15 @@ if (isset($_POST['tambah'])) {
 if (isset($_POST['hapus'])) {
     $id_anggota = $_POST['id_anggota'] ?? null;
     if (!$id_anggota) {
-        echo "<script>alert('Parameter tidak lengkap.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        echo "<script>alert('Parameter tidak lengkap.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+        exit();
     }
 
     // ambil id_dosen terkait
     $res = pg_query_params($conn, "SELECT id_dosen FROM anggota_lab WHERE id_anggota = $1 LIMIT 1", array($id_anggota));
     if (!$res || pg_num_rows($res) === 0) {
-        echo "<script>alert('Anggota tidak ditemukan.'); window.location.href='../profil/edit_struktur.php';</script>"; exit();
+        echo "<script>alert('Anggota tidak ditemukan.'); window.location.href='../profil/edit_struktur.php';</script>"; 
+        exit();
     }
     $r = pg_fetch_assoc($res);
     $id_dosen = $r['id_dosen'];

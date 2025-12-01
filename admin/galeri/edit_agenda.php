@@ -13,7 +13,7 @@ $qJudulAgenda = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'galeri_agenda' AND pc.content_key = 'judul_agenda'
+    WHERE p.nama = 'galeri_agenda' AND pc.content_key = 'section_title'
     LIMIT 1");
 $judulAgenda = pg_fetch_assoc($qJudulAgenda)['content_value'] ?? '';
 
@@ -22,7 +22,7 @@ $qDeskripsiAgenda = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'galeri_agenda' AND pc.content_key = 'deskripsi_agenda'
+    WHERE p.nama = 'galeri_agenda' AND pc.content_key = 'section_description'
     LIMIT 1");
 $deskripsiAgenda = pg_fetch_assoc($qDeskripsiAgenda)['content_value'] ?? '';
 

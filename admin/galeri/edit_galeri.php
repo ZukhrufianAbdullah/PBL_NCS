@@ -13,7 +13,7 @@ $qJudulGaleri = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'judul_galeri'
+    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'section_title'
     LIMIT 1");
 $judulGaleri = pg_fetch_assoc($qJudulGaleri)['content_value'] ?? '';
 
@@ -22,7 +22,7 @@ $qDeskripsiGaleri = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'deskripsi_galeri'
+    WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'section_description'
     LIMIT 1");
 $deskripsiGaleri = pg_fetch_assoc($qDeskripsiGaleri)['content_value'] ?? '';
 

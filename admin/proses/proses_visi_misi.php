@@ -1,65 +1,31 @@
 <?php
 session_start();
 include '../../config/koneksi.php';
+// Include helper
+include __DIR__ . "/../../app/helpers/page_helper.php";
 
 // Ambil id_user dari session (fallback 1 jika belum login)
 $id_user = $_SESSION['id_user'] ?? 1;
 
+// GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
+$id_page = ensure_page_exists($conn, 'profil_visi_misi');
 
-// ambil id_page untuk halaman 'profil_visi_misi'
-    $sqlPage = "SELECT id_page FROM pages WHERE nama = 'profil_visi_misi' LIMIT 1";
-    $resultPage = pg_query($conn, $sqlPage);
-
-    if (!$resultPage || pg_num_rows($resultPage) === 0) {
-        echo "<script>
-                alert('Halaman Visi & Misi tidak ditemukan di tabel pages!');
-                window.location.href = '../profil/edit_visi_misi.php';
-                </script>";
-        exit();
-    }
-    $page = pg_fetch_assoc($resultPage);
-    $id_page = $page['id_page'];
+if (!$id_page) {
+    echo "<script>
+            alert('Gagal membuat atau mendapatkan halaman Visi & Misi!');
+            window.location.href = '../profil/edit_visi_misi.php';
+          </script>";
+    exit();
+}
 
 if (isset($_POST['submit_judul_deskripsi_visi_misi'])) {
     //Ambil input dari form
     $judul = ($_POST['judul']);
     $deskripsi = ($_POST['deskripsi']);
 
-    // UPDATE atau INSERT judul
-    $checkJudul = "SELECT id_page_content FROM page_content 
-              WHERE id_page = $1 AND content_key = 'judul_visi_misi' LIMIT 1";
-    $checkResultJudulVisiMisi = pg_query_params($conn, $checkJudul, array($id_page));
-
-    if (pg_num_rows($checkResultJudulVisiMisi) > 0) {
-        // UPDATE
-        $updateJudul = "UPDATE page_content 
-                   SET content_value = $1, id_user = $2
-                   WHERE id_page = $3 AND content_key = 'judul_visi_misi'";
-        $resultJudul = pg_query_params($conn, $updateJudul, array($judul, $id_user, $id_page));
-    } else {
-        // INSERT
-        $insertJudul = "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-                   VALUES ($1, 'judul_visi_misi', 'text', $2, $3)";
-        $resultJudul = pg_query_params($conn, $insertJudul, array($id_page, $judul, $id_user));
-    }
-
-    // UPDATE atau INSERT deskripsi
-    $checkDeskripsi = "SELECT id_page_content FROM page_content 
-              WHERE id_page = $1 AND content_key = 'deskripsi_visi_misi' LIMIT 1";
-    $checkResultDeskripsiVisiMisi = pg_query_params($conn, $checkDeskripsi, array($id_page));
-
-    if (pg_num_rows($checkResultDeskripsiVisiMisi) > 0) {
-        // UPDATE
-        $updateDeskripsi = "UPDATE page_content 
-                   SET content_value = $1, id_user = $2
-                   WHERE id_page = $3 AND content_key = 'deskripsi_visi_misi'";
-        $resultDeskripsi = pg_query_params($conn, $updateDeskripsi, array($deskripsi, $id_user, $id_page));
-    } else {
-        // INSERT
-        $insertDeskripsi = "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-                   VALUES ($1, 'deskripsi_visi_misi', 'text', $2, $3)";
-        $resultDeskripsi = pg_query_params($conn, $insertDeskripsi, array($id_page, $deskripsi, $id_user));
-    }
+    // Gunakan helper untuk upsert content
+    $resultJudul = upsert_page_content($conn, $id_page, 'section_title', $judul, $id_user);
+    $resultDeskripsi = upsert_page_content($conn, $id_page, 'section_description', $deskripsi, $id_user);
 
     // Cek hasil
     if ($resultJudul && $resultDeskripsi) {
@@ -131,6 +97,6 @@ if (isset($_POST['submit_judul_deskripsi_visi_misi'])) {
             alert('Akses tidak valid!');
             window.location.href = '../profil/edit_visi_misi.php';
           </script>";
-exit();
+    exit();
 }
-?>
+?>  

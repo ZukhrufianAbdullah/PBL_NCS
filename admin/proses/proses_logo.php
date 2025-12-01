@@ -1,64 +1,31 @@
 <?php
 session_start();
 include "../../config/koneksi.php";
+// Include helper
+include __DIR__ . "/../../app/helpers/page_helper.php";
 
 // Ambil id_user dari session (fallback ke 1)
 $id_user = $_SESSION['id_user'] ?? 1;
 
-// ambil id_page untuk halaman 'profil_logo'
-    $sqlPage = "SELECT id_page FROM pages WHERE nama = 'profil_logo' LIMIT 1";
-    $resultPage = pg_query($conn, $sqlPage);
+// GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
+$id_page = ensure_page_exists($conn, 'profil_logo');
 
-    if (!$resultPage || pg_num_rows($resultPage) === 0) {
-        echo "<script>
-                alert('Halaman Logo tidak ditemukan di tabel pages!');
-                window.location.href = '../profil/edit_logo.php';
-                </script>";
-        exit();
-    }
-    $page = pg_fetch_assoc($resultPage);
-    $id_page = $page['id_page'];
+if (!$id_page) {
+    echo "<script>
+            alert('Gagal membuat atau mendapatkan halaman Logo!');
+            window.location.href = '../profil/edit_logo.php';
+          </script>";
+    exit();
+}
 
 if (isset($_POST['submit_judul_deskripsi_logo'])) {
     //Ambil input dari form
     $judul_logo   = ($_POST['judul_logo']);
     $deskripsi_logo = ($_POST['deskripsi_logo']);
 
-    //Update atau Insert judul logo
-    $checkJudulLogo = "SELECT id_page_content FROM page_content
-                WHERE id_page = $1 AND content_key = 'judul_logo' LIMIT 1";
-    $checkResultJudulLogo = pg_query_params($conn, $checkJudulLogo, array($id_page));
-
-    if (pg_num_rows($checkResultJudulLogo) > 0) {
-        // UPDATE
-        $updateJudulLogo = "UPDATE page_content
-                   SET content_value = $1, id_user = $2
-                   WHERE id_page = $3 AND content_key = 'judul_logo'";
-        $resultJudulLogo = pg_query_params($conn, $updateJudulLogo, array($judul_logo, $id_user, $id_page));
-    } else {
-        // INSERT
-        $insertJudulLogo = "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-                   VALUES ($1, 'judul_logo', 'text', $2, $3)";
-        $resultJudulLogo = pg_query_params($conn, $insertJudulLogo, array($id_page, $judul_logo, $id_user));
-    }
-
-    // Update atau Insert deskripsi logo
-    $checkDeskripsiLogo = "SELECT id_page_content FROM page_content
-                WHERE id_page = $1 AND content_key = 'deskripsi_logo' LIMIT 1";
-    $checkResultDeskripsiLogo = pg_query_params($conn, $checkDeskripsiLogo, array($id_page));
-
-    if (pg_num_rows($checkResultDeskripsiLogo) > 0) {
-        // UPDATE
-        $updateDeskripsiLogo = "UPDATE page_content
-                   SET content_value = $1, id_user = $2
-                   WHERE id_page = $3 AND content_key = 'deskripsi_logo'";
-        $resultDeskripsiLogo = pg_query_params($conn, $updateDeskripsiLogo, array($deskripsi_logo, $id_user, $id_page));
-    } else {
-        // INSERT
-        $insertDeskripsiLogo = "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user)
-                   VALUES ($1, 'deskripsi_logo', 'text', $2, $3)";
-        $resultDeskripsiLogo = pg_query_params($conn, $insertDeskripsiLogo, array($id_page, $deskripsi_logo, $id_user));
-    }
+    // Gunakan helper untuk upsert content dengan section_title dan section_description
+    $resultJudulLogo = upsert_page_content($conn, $id_page, 'section_title', $judul_logo, $id_user);
+    $resultDeskripsiLogo = upsert_page_content($conn, $id_page, 'section_description', $deskripsi_logo, $id_user);
 
     // Cek hasil
     if ($resultJudulLogo && $resultDeskripsiLogo) {
@@ -154,10 +121,6 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
                     array($newFile1, $id_user)
                 );
             }
-            echo "<script>
-                alert('Logo berhasil diperbarui!');
-                window.location.href = '../profil/edit_logo.php';
-              </script>";
         }
 
         // LOGO 2
@@ -218,12 +181,14 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
                     array($newFile2, $id_user)
                 );
             }
-            echo "<script>
+        }  
+        
+        // Tampilkan alert setelah kedua logo diproses
+        echo "<script>
                 alert('Logo berhasil diperbarui!');
                 window.location.href = '../profil/edit_logo.php';
               </script>";
-            exit();
-        }  
+        exit();
 
 } else {
     echo "<script>

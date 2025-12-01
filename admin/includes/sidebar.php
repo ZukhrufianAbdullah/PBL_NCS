@@ -75,14 +75,12 @@ $matchesPage = function ($keys) use ($currentPage) {
         </button>
         <div class="submenu-wrapper<?php echo $matchesPage(['edit_galeri','edit_agenda']) ? ' is-open' : ''; ?>"
              id="galeriMenu">
-            <div class="menu-subheader">Galeri Foto</div>
-            <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri.php"
+           <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri.php"
                class="sidebar-link<?php echo $matchesPage('edit_galeri') ? ' is-active' : ''; ?>"
                data-page="edit_galeri">
                 Kelola Galeri
             </a>
-            <div class="menu-subheader">Agenda</div>
-            <a href="<?php echo $adminBasePath; ?>galeri/edit_agenda.php"
+           <a href="<?php echo $adminBasePath; ?>galeri/edit_agenda.php"
                class="sidebar-link<?php echo $matchesPage('edit_agenda') ? ' is-active' : ''; ?>"
                data-page="edit_agenda">
                 Kelola Agenda
@@ -100,14 +98,12 @@ $matchesPage = function ($keys) use ($currentPage) {
         </button>
         <div class="submenu-wrapper<?php echo $matchesPage(['edit_penelitian','edit_pengabdian']) ? ' is-open' : ''; ?>"
              id="arsipMenu">
-            <div class="menu-subheader">Penelitian</div>
-            <a href="<?php echo $adminBasePath; ?>arsip/edit_penelitian.php"
+           <a href="<?php echo $adminBasePath; ?>arsip/edit_penelitian.php"
                class="sidebar-link<?php echo $matchesPage('edit_penelitian') ? ' is-active' : ''; ?>"
                data-page="edit_penelitian">
                 Kelola Penelitian
             </a>
-            <div class="menu-subheader">Pengabdian</div>
-            <a href="<?php echo $adminBasePath; ?>arsip/edit_pengabdian.php"
+           <a href="<?php echo $adminBasePath; ?>arsip/edit_pengabdian.php"
                class="sidebar-link<?php echo $matchesPage('edit_pengabdian') ? ' is-active' : ''; ?>"
                data-page="edit_pengabdian">
                 Kelola Pengabdian

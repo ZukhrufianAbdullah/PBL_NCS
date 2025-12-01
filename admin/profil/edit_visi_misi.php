@@ -12,7 +12,7 @@ $qJudulVisiMisi = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'judul_visi_misi'
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'section_title'
     LIMIT 1");
 $judulVisiMisi = pg_fetch_assoc($qJudulVisiMisi)['content_value'] ?? '';
 
@@ -21,7 +21,7 @@ $qDeskripsiVisiMisi = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
     JOIN pages p ON pc.id_page = p.id_page
-    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'deskripsi_visi_misi'
+    WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'section_description'
     LIMIT 1");
 $deskripsiVisiMisi = pg_fetch_assoc($qDeskripsiVisiMisi)['content_value'] ?? '';
 

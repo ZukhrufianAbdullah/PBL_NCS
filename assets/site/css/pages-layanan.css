@@ -10,23 +10,55 @@
     }
 }
 
+/* Card Grid untuk Facility */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
 /* Facility Card */
 .facility-card {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
     animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
 }
 
-/* Supaya semua card muncul bergantian (staggered effect) */
+.facility-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Staggered animation untuk facility cards */
 .facility-card:nth-child(1) { animation-delay: 0.1s; }
 .facility-card:nth-child(2) { animation-delay: 0.2s; }
 .facility-card:nth-child(3) { animation-delay: 0.3s; }
 .facility-card:nth-child(4) { animation-delay: 0.4s; }
+.facility-card:nth-child(5) { animation-delay: 0.5s; }
+.facility-card:nth-child(6) { animation-delay: 0.6s; }
+.facility-card:nth-child(7) { animation-delay: 0.7s; }
+.facility-card:nth-child(8) { animation-delay: 0.8s; }
 
 .facility-card img {
     border-radius: var(--radius-sm);
     height: 170px;
+    width: 100%;
     object-fit: cover;
     margin-bottom: 1rem;
+}
+
+.facility-card h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text);
+    line-height: 1.4;
 }
 
 /* Contact Form */
@@ -43,4 +75,100 @@
 
 .contact-form textarea {
     min-height: 150px;
+}
+
+/* ===========================
+   Pagination (sama seperti galeri)
+=========================== */
+.pagination {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-pagination {
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 50%;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0 0.25rem;
+}
+
+.btn-pagination:hover:not(.active):not(:disabled) {
+    background: var(--blue-light);
+    border-color: var(--blue-mid);
+    color: var(--blue-mid);
+    transform: translateY(-1px);
+}
+
+.btn-pagination.active {
+    background: var(--blue-mid);
+    border-color: var(--blue-mid);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-pagination:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive pagination */
+@media (max-width: 576px) {
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .btn-pagination {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+}
+
+/* Animation for pagination */
+.pagination {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+/* Responsive design untuk card grid */
+@media (max-width: 1200px) {
+    .card-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Adjust animation delays untuk 2 kolom */
+    .facility-card:nth-child(odd) { animation-delay: 0.1s; }
+    .facility-card:nth-child(even) { animation-delay: 0.2s; }
+}
+
+@media (max-width: 576px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .facility-card {
+        padding: 1.25rem;
+    }
+    
+    .facility-card:nth-child(n) { animation-delay: 0.1s; }
 }

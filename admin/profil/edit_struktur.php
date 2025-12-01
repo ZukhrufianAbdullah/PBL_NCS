@@ -30,8 +30,8 @@ if ($pageRes && pg_num_rows($pageRes) > 0) {
     $pcRes = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", [$id_page]);
     if ($pcRes && pg_num_rows($pcRes) > 0) {
         while ($row = pg_fetch_assoc($pcRes)) {
-            if ($row['content_key'] === 'judul') $judul_page = $row['content_value'];
-            if ($row['content_key'] === 'deskripsi') $deskripsi_page = $row['content_value'];
+            if ($row['content_key'] === 'section_title') $judul_page = $row['content_value'];
+            if ($row['content_key'] === 'section_description') $deskripsi_page = $row['content_value'];
         }
     }
 }
