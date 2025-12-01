@@ -144,9 +144,9 @@ if (isset($_POST['edit'])) {
 /* ===========================================================
    3) HAPUS PENGABDIAN
    =========================================================== */
-if (isset($_GET['hapus'])) {
+if (isset($_POST['hapus'])) {
 
-    $id_pengabdian = $_GET['hapus'];
+    $id_pengabdian = $_POST['id_pengabdian'];
 
     if (!ctype_digit((string)$id_pengabdian)) {
         echo "<script>alert('ID tidak valid!'); 
