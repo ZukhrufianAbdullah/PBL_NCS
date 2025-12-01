@@ -154,7 +154,7 @@ if ($result && pg_num_rows($result) > 0) {
                 <th>Waktu Kirim</th>
                 <th>Nama Pengirim</th>
                 <th>Isi Pesan Singkat</th>
-                <th class="col-aksi">Aksi</th>
+                <th style="width:300px;text-align:center;">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -295,14 +295,15 @@ function escapeHtml(unsafe) {
     border-radius: 6px;
     margin-top: 10px;
     border-left: 4px solid var(--accent-yellow);
-    white-space: pre-wrap;
+    white-space: pre-line;
     font-family: inherit;
     max-height: 400px;
     overflow-y: auto;
+    padding-bottom: 27px;
+    padding-top: 0px;
 }
 
 .col-no { width: 60px; text-align: center; }
-.col-aksi { width: 200px; text-align: center; }
 </style>
 
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

@@ -104,7 +104,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                 <th>No</th>
                 <th>Gambar</th>
                 <th>Nama Sarana</th>
-                <th style="width:150px;text-align:center;">Aksi</th>
+                <th style="width:300px;text-align:center;">Aksi</th>
             </tr>
         </thead>
 
@@ -189,7 +189,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
 
             <div class="form-group" style="margin-top:10px;">
                 <button type="submit" class="btn-primary">Simpan Perubahan</button>
-                <button type="button" class="btn-danger" onclick="closeModal()">Batal</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
             </div>
 
         </form>

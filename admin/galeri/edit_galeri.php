@@ -119,7 +119,7 @@ $qGaleri = pg_query($conn, "
                 <th>Judul</th>
                 <th>Deskripsi</th>
                 <th>Tanggal</th>
-                <th style="width:150px;text-align:center;">Aksi</th>
+                <th style="width:300px;text-align:center;">Aksi</th>
             </tr>
         </thead>
 

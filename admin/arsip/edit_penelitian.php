@@ -146,7 +146,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                 <th class="col-jabatan">Peneliti</th>
                 <th class="col-urutan">Tahun</th>
                 <th class="col-status">File</th>
-                <th class="col-aksi">Aksi</th>
+                <th style="width:300px; text-align:center;">Aksi</th>
             </tr>
         </thead>
         <tbody>
