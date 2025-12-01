@@ -21,9 +21,9 @@ if (!$conn) {
     die("Koneksi database gagal: " . pg_last_error());
 }
 
-// Ambil data settings
+// Ambil data settings - TAMBAH 'footer_description'
 $settings_data = [];
-$query_settings = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN ('site_title', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim')";
+$query_settings = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN ('site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim')";
 $result_settings = pg_query($conn, $query_settings);
 
 if ($result_settings) {
@@ -51,7 +51,7 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
 
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: settings, sosial_media)</h1>
-    <p>Kelola konten footer website termasuk judul lab, daftar developer, sosial media, dan teks copyright.</p>
+    <p>Kelola konten footer website termasuk judul lab, deskripsi footer, daftar developer, sosial media, dan teks copyright.</p>
 </div>
 
 <!-- Form untuk update footer -->
@@ -65,7 +65,15 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
                 <label for="site_title">Judul Laboratorium (setting_name: site_title)</label>
                 <input type="text" id="site_title" name="site_title" 
                        value="<?php echo htmlspecialchars($settings_data['site_title'] ?? 'Network and Cyber Security Laboratory'); ?>">
-                <span class="form-help-text">Judul ini akan muncul di footer dan bagian lain website.</span>
+                <span class="form-help-text">Judul ini akan muncul di header dan bagian lain website.</span>
+            </div>
+            
+            <!-- BARU: Field Deskripsi Footer Terpisah -->
+            <div class="form-group">
+                <label for="footer_description">Deskripsi Footer (setting_name: footer_description)</label>
+                <textarea id="footer_description" name="footer_description" rows="3" 
+                          placeholder="Masukkan deskripsi singkat laboratorium yang akan ditampilkan di bawah judul footer"><?php echo htmlspecialchars($settings_data['footer_description'] ?? 'Network and Cyber Security Laboratory'); ?></textarea>
+                <span class="form-help-text">Deskripsi ini akan muncul di bawah judul laboratorium pada footer.</span>
             </div>
         </fieldset>
 
@@ -87,7 +95,6 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
             <legend>Hak Cipta</legend>
             <div class="form-group">
                 <label for="footer_copyright">Teks Hak Cipta Lengkap (setting_name: footer_copyright)</label>
-                <!-- PERBAIKAN: Ubah default value menjadi teks lengkap -->
                 <textarea id="footer_copyright" name="footer_copyright" rows="2" placeholder="Contoh: © 2025 Network and Cyber Security Laboratory. All Rights Reserved."><?php echo htmlspecialchars($settings_data['footer_copyright'] ?? '© 2025 Network and Cyber Security Laboratory. All Rights Reserved.'); ?></textarea>
                 <span class="form-help-text">Edit keseluruhan teks hak cipta termasuk simbol ©, tahun, dan teks lengkap.</span>
             </div>

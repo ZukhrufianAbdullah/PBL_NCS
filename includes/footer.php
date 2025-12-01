@@ -5,17 +5,28 @@
 if (!function_exists('get_settings')) {
     function get_settings($conn, $setting_names) {
         $settings = [];
+        
+        if (empty($setting_names)) {
+            return $settings;
+        }
+        
+        // Buat placeholder untuk parameter
         $placeholders = implode(',', array_fill(0, count($setting_names), '?'));
         
-        $query = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN (" . implode(',', array_fill(0, count($setting_names), '?')) . ")";
+        // Bangun query dengan parameter
+        $query = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN (" . $placeholders . ")";
         
+        // Eksekusi query dengan parameter
         $result = pg_query_params($conn, $query, $setting_names);
         
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $settings[$row['setting_name']] = $row;
             }
+        } else {
+            error_log("Error in get_settings: " . pg_last_error($conn));
         }
+        
         return $settings;
     }
 }
@@ -31,7 +42,10 @@ if (!function_exists('get_social_links')) {
             while ($row = pg_fetch_assoc($result)) {
                 $social_links[] = $row;
             }
+        } else {
+            error_log("Error in get_social_links: " . pg_last_error($conn));
         }
+        
         return $social_links;
     }
 }
@@ -52,13 +66,28 @@ if (!function_exists('lab_social_icon')) {
     }
 }
 
-// Ambil data
-$defaultSiteTitle = 'Network and Cyber Security Laboratory';
-$settings = isset($conn) ? get_settings($conn, ['site_title', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim']) : [];
-$socialLinks = isset($conn) ? get_social_links($conn) : [];
+// Ambil data dari database jika koneksi tersedia
+if (isset($conn) && $conn) {
+    // Tentukan setting names yang akan diambil - TAMBAH 'footer_description'
+    $setting_names = ['site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim'];
+    $settings = get_settings($conn, $setting_names);
+    $socialLinks = get_social_links($conn);
+} else {
+    // Fallback jika tidak ada koneksi
+    $settings = [];
+    $socialLinks = [];
+}
 
-// PERBAIKAN: Ambil copyright text LENGKAP dari database
+// Default values
+$defaultSiteTitle = 'Network and Cyber Security Laboratory';
+$defaultFooterDescription = 'Network and Cyber Security Laboratory';
+
+// Ambil nilai dari settings
 $siteTitleValue = $settings['site_title']['setting_value'] ?? $defaultSiteTitle;
+
+// BARU: Ambil deskripsi footer terpisah, jika tidak ada gunakan default
+$footerDescription = $settings['footer_description']['setting_value'] ?? $defaultFooterDescription;
+
 $footerCopy = $settings['footer_copyright']['setting_value'] ?? '© 2025 Network and Cyber Security Laboratory. All Rights Reserved.';
 $developerTitle = $settings['footer_developer_title']['setting_value'] ?? 'Developed by';
 $creditTim = $settings['footer_credit_tim']['setting_value'] ?? "D4 Teknik Informatika\nAbelas Solihin\nEsatovin Ebenaezer Victoria\nMuhammad Nuril Huda\nNurfinka Lailasari\nZukhrufian Abdullah";
@@ -73,19 +102,29 @@ $creditLines = array_filter($creditLines);
     <div class="container">
         <div class="footer-top">
             <div>
+                <!-- Judul Laboratorium -->
                 <div class="footer-brand"><?php echo htmlspecialchars($siteTitleValue); ?></div>
-                <p class="mb-2"><?php echo htmlspecialchars($siteTitleValue); ?></p>
+                
+                <!-- BARU: Deskripsi Footer (Terpisah dari Judul) -->
+                <p class="mb-2"><?php echo htmlspecialchars($footerDescription); ?></p>
+                
                 <?php if (!empty($socialLinks)): ?>
                     <div class="footer-social">
                         <?php foreach ($socialLinks as $social): ?>
-                            <?php $iconClass = lab_social_icon($social['platform'] ?? ''); ?>
-                            <a href="<?php echo htmlspecialchars($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo htmlspecialchars($social['nama_sosialmedia']); ?>">
+                            <?php 
+                            $iconClass = lab_social_icon($social['platform'] ?? '');
+                            $socialName = htmlspecialchars($social['nama_sosialmedia']);
+                            $socialUrl = htmlspecialchars($social['url']);
+                            ?>
+                            <a href="<?php echo $socialUrl; ?>" target="_blank" rel="noopener noreferrer" 
+                               aria-label="<?php echo $socialName; ?>" title="<?php echo $socialName; ?>">
                                 <i class="<?php echo $iconClass; ?>"></i>
                             </a>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
             </div>
+            
             <div class="developer-list">
                 <span><?php echo htmlspecialchars($developerTitle); ?></span>
                 <?php foreach ($creditLines as $line): ?>
@@ -93,7 +132,8 @@ $creditLines = array_filter($creditLines);
                 <?php endforeach; ?>
             </div>
         </div>
-        <!-- PERBAIKAN: Tampilkan copyright text LENGKAP dari database -->
+        
+        <!-- Teks Hak Cipta -->
         <div class="footer-bottom">
             <?php echo htmlspecialchars($footerCopy); ?>
         </div>
