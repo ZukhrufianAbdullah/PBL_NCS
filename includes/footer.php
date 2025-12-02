@@ -145,5 +145,64 @@ $creditLines = array_filter($creditLines);
 
 <!-- Custom JS -->
 <script src="<?php echo $baseUrl; ?>/assets/site/js/main.js?v=<?php echo time(); ?>"></script>
+
+<script>
+    // File: assets/js/animations.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Elemen yang akan dianimasikan
+    const animateElements = document.querySelectorAll('.animate-on-scroll');
+    
+    // Function untuk mengecek apakah elemen ada di viewport
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        
+        // Trigger animasi saat elemen masuk 80% dari viewport
+        return (
+            rect.top <= windowHeight * 0.8 &&
+            rect.bottom >= 0
+        );
+    }
+    
+    // Function untuk menangani animasi scroll
+    function handleScrollAnimation() {
+        animateElements.forEach(element => {
+            if (isInViewport(element) && !element.classList.contains('animated')) {
+                // Ambil delay dari data attribute atau hitung berdasarkan posisi
+                const delay = element.getAttribute('data-delay') || 0;
+                
+                // Tambahkan class animated dengan delay
+                setTimeout(() => {
+                    element.classList.add('animated');
+                }, delay * 1000);
+            }
+        });
+    }
+    
+    // Jalankan saat halaman dimuat
+    handleScrollAnimation();
+    
+    // Jalankan saat scroll dengan debounce untuk performance
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(handleScrollAnimation, 50);
+    });
+    
+    // Tambahkan efek hover pada semua card
+    const cards = document.querySelectorAll('.card-basic, .profile-card, .logo-card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'var(--shadow)';
+        });
+    });
+});
+</script>
 </body>
 </html>

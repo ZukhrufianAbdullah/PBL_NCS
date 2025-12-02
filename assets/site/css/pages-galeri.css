@@ -13,6 +13,61 @@
 }
 
 /* ===========================
+ANIMASI UNTUK SEMUA CARD
+=========================== */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+    /* ===========================
+ANIMASI UNTUK SECTION HEADER
+=========================== */
+.section-header {
+    margin-bottom: 3rem;
+}
+
+.section-header.animate-on-scroll h2 {
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.section-header.animate-on-scroll h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary-color), var(--blue-mid));
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.5s;
+}
+
+.section-header.animate-on-scroll.animated h2::after {
+    opacity: 1;
+}
+
+.section-header.animate-on-scroll p {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+}
+
+.section-header.animate-on-scroll.animated p {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===========================
    Artikel Card - UKURAN TETAP KONSISTEN
 =========================== */
 .article-card {
@@ -195,4 +250,24 @@
     justify-content: center;
     align-items: center;
     padding: 0;
+}
+
+/* Responsive pagination */
+@media (max-width: 576px) {
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .btn-pagination {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+}
+
+/* Animation for pagination */
+.pagination {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 0.3s;
 }

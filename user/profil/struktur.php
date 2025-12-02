@@ -41,7 +41,7 @@ if ($rs && pg_num_rows($rs) > 0) {
 ?>
 <main class="section-gap">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header animate-on-scroll">
             <h2><?php echo $judul ?: 'Struktur Organisasi'; ?></h2>
             <?php if (!empty($deskripsi)): ?>
                 <p><?php echo nl2br(htmlspecialchars($deskripsi)); ?></p>

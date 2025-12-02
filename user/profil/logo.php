@@ -52,7 +52,7 @@ $logos = get_logos($conn);
 
 <main class="section-gap">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header animate-on-scroll">
             <h2><?= nl2br($judulLogo); ?></h2>
             <p><?= nl2br($deskripsiLogo); ?></p>
         </div>

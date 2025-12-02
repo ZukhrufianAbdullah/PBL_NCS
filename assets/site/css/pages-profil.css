@@ -1,4 +1,6 @@
-/* Animasi Fade In Up */
+/* ===========================
+ANIMASI FADE IN UP
+=========================== */
 @keyframes fadeInUp {
     from { 
         opacity: 0; 
@@ -10,10 +12,121 @@
     }
 }
 
-/* Animasi untuk logo-card */
+/* ===========================
+ANIMASI UNTUK SEMUA CARD
+=========================== */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===========================
+CARD VISI & MISI STYLING
+=========================== */
+.visi-card,
+.misi-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: 2rem 1.5rem;
+    transition: all 0.8s ease;
+}
+
+.visi-card:hover,
+.misi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon styling untuk visi & misi */
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-mid) 0%, var(--primary-color) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.visi-card .card-icon {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+}
+
+.misi-card .card-icon {
+    background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+}
+
+.visi-card h3,
+.misi-card h3 {
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.visi-card h3::after,
+.misi-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: var(--blue-mid);
+    border-radius: 2px;
+}
+
+.visi-card h3::after {
+    background: linear-gradient(to right, #4F46E5, #7C3AED);
+}
+
+.misi-card h3::after {
+    background: linear-gradient(to right, #059669, #10B981);
+}
+
+.visi-card p,
+.misi-card p {
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* ===========================
+ANIMASI UNTUK LOGO-CARD
+=========================== */
 .logo-card {
     animation: fadeInUp 0.7s ease-out forwards;
     opacity: 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.logo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* Stagger (muncul bergantian) */
@@ -29,9 +142,16 @@
     object-fit: cover;
     background: #d7e2ef;
     min-height: 140px;
+    transition: transform 0.3s ease;
 }
 
-/* Animasi untuk profile-card */
+.logo-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ===========================
+ANIMASI UNTUK PROFILE-CARD
+=========================== */
 .profile-card {
     text-align: center;
     box-shadow: var(--shadow);
@@ -39,9 +159,14 @@
     padding: 2rem 1.5rem;
     border: 1px solid var(--border);
     background: var(--surface);
-
-    animation: fadeInUp 0.9s ease-out forwards;
+    animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .profile-card img {
@@ -51,4 +176,88 @@
     object-fit: cover;
     margin: 0 auto 1rem;
     border: 4px solid #e9ecf7;
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover img {
+    border-color: var(--blue-mid);
+    transform: scale(1.05);
+}
+
+/* ===========================
+ANIMASI UNTUK SECTION HEADER
+=========================== */
+.section-header {
+    margin-bottom: 3rem;
+}
+
+.section-header.animate-on-scroll h2 {
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.section-header.animate-on-scroll h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary-color), var(--blue-mid));
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.5s;
+}
+
+.section-header.animate-on-scroll.animated h2::after {
+    opacity: 1;
+}
+
+.section-header.animate-on-scroll p {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+}
+
+.section-header.animate-on-scroll.animated p {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===========================
+RESPONSIVE DESIGN
+=========================== */
+@media (max-width: 992px) {
+    .visi-card,
+    .misi-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .visi-card:last-child,
+    .misi-card:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .visi-card,
+    .misi-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 1rem;
+    }
+    
+    .visi-card h3,
+    .misi-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .section-header {
+        margin-bottom: 2rem;
+    }
 }

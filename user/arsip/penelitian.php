@@ -54,7 +54,7 @@ require_once __DIR__ . '/../../includes/page-hero.php';
 
 <main class="section-gap">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header animate-on-scroll">
             <h2><?= nl2br(htmlspecialchars($judulPenelitian)); ?></h2>
             <p><?= nl2br(htmlspecialchars($deskripsiPenelitian)); ?></p>
         </div>

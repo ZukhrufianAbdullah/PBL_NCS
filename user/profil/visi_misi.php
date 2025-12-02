@@ -50,22 +50,22 @@ require_once __DIR__ . '/../../includes/page-hero.php';
 
 <main class="section-gap">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header animate-on-scroll">
             <h2><?= nl2br($judulVisiMisi); ?></h2>
             <p><?= nl2br($deskripsiVisiMisi); ?></p>  
         </div>
 
         <div class="row g-4">
             <div class="col-lg-6">
-                <div class="card-basic h-100">
-                    <h3>Visi</h3>
+                <div class="card-basic h-100 animate-on-scroll">
+                    <h3 style="text-align: center;">Visi</h3>
                     <p><?= nl2br($visi); ?></p>
                 </div>
             </div>
             
             <div class="col-lg-6">
-                <div class="card-basic h-100">
-                    <h3>Misi</h3>
+                <div class="card-basic h-100 animate-on-scroll">
+                    <h3 style="text-align: center;">Misi</h3>
                     <p><?= nl2br($misi); ?></p>
                 </div>
             </div>

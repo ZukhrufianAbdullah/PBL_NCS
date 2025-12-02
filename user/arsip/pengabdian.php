@@ -34,7 +34,7 @@ $records = get_pengabdian($conn);
 
 <main class="section-gap">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header animate-on-scroll">
             <h2><?= nl2br(htmlspecialchars($judulPengabdian)); ?></h2>
             <p><?= nl2br(htmlspecialchars($deskripsiPengabdian)); ?></p>
         </div>

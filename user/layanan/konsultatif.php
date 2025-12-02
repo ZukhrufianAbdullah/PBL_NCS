@@ -53,7 +53,7 @@ if (file_exists($config_path)) {
 
 <main class="section-gap">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header animate-on-scroll">
             <!-- PERBAIKAN: Gunakan variabel yang benar -->
             <h2><?php echo htmlspecialchars($section_title); ?></h2>
             <p><?php echo htmlspecialchars($section_description); ?></p>
