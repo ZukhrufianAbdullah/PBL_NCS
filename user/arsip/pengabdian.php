@@ -65,7 +65,7 @@ $records = get_pengabdian($conn);
                                 </td>
                                 <td>
                                     <?php if (!empty($record['ketua'])): ?>
-                                        <?php echo htmlspecialchars($record['ketua']); ?>
+                                        <?php echo htmlspecialchars($record['nama_dosen']); ?>
                                     <?php else: ?>
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
