@@ -26,7 +26,7 @@ $qDeskripsiPenelitian = pg_query($conn, "
 $deskripsiPenelitian = pg_fetch_assoc($qDeskripsiPenelitian)['content_value'] ?? 'Detailed reports and findings from our various initiatives.';
 
 // PAGINATION SETUP
-$items_per_page = 6; // 6 items total, akan tampil 3x2
+$items_per_page = 6;
 $current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($current_page - 1) * $items_per_page;
 
@@ -35,11 +35,20 @@ $qTotal = pg_query($conn, "SELECT COUNT(*) as total FROM penelitian");
 $totalData = pg_fetch_assoc($qTotal)['total'];
 $totalPages = ceil($totalData / $items_per_page);
 
-// Ambil data Penelitian dengan pagination
+// AMBIL DATA PENELITIAN DENGAN JOIN TABEL DOSEN
 $qPenelitian = pg_query($conn, "
-    SELECT * 
-    FROM penelitian
-    ORDER BY tahun DESC, id_penelitian DESC
+    SELECT 
+        p.id_penelitian,
+        p.judul_penelitian,
+        p.tahun,
+        p.deskripsi,
+        p.media_path,
+        p.id_author,
+        d.nama_dosen,
+        d.id_dosen
+    FROM penelitian p
+    LEFT JOIN dosen d ON p.id_author = d.id_dosen
+    ORDER BY p.tahun DESC, p.id_penelitian DESC
     LIMIT $items_per_page OFFSET $offset");
 
 $researches = [];
@@ -73,16 +82,23 @@ require_once __DIR__ . '/../../includes/page-hero.php';
                         $fileUrl = !empty($research['media_path'])
                             ? BASE_URL . '/uploads/penelitian/' . htmlspecialchars($research['media_path'])
                             : null;
+                        $authorName = !empty($research['nama_dosen']) ? htmlspecialchars($research['nama_dosen']) : 'Peneliti tidak diketahui';
                     ?>
                     <article class="research-card <?php echo $count % 3 == 0 ? 'last-in-row' : ''; ?>">
-                        <span class="year"><?php echo htmlspecialchars($research['tahun']); ?></span>
+                        <!-- OVAL BADGE DENGAN TAHUN DAN NAMA PENELITI -->
+                        <div class="research-badge">
+                            <div class="badge-year"><?php echo htmlspecialchars($research['tahun']); ?></div>
+                            <div class="badge-author"><?php echo $authorName; ?></div>
+                        </div>
+                        
                         <h5><?php echo htmlspecialchars($research['judul_penelitian']); ?></h5>
-                        <?php if (!empty($research['author_name'])): ?>
-                            <small class="text-muted d-block mb-2">Penulis: <?php echo htmlspecialchars($research['author_name']); ?></small>
-                        <?php endif; ?>
+                        
                         <p class="text-muted"><?php echo nl2br(htmlspecialchars($research['deskripsi'] ?? '')); ?></p>
+                        
                         <?php if ($fileUrl): ?>
                             <a class="btn btn-brand btn-sm" href="<?php echo $fileUrl; ?>" target="_blank" rel="noopener">Download PDF</a>
+                        <?php else: ?>
+                            <span class="no-file">Tidak ada file tersedia</span>
                         <?php endif; ?>
                     </article>
                 <?php endforeach; ?>

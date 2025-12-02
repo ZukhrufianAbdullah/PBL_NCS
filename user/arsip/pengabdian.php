@@ -38,10 +38,11 @@ $records = get_pengabdian($conn);
             <h2><?= nl2br(htmlspecialchars($judulPengabdian)); ?></h2>
             <p><?= nl2br(htmlspecialchars($deskripsiPengabdian)); ?></p>
         </div>
+        
         <?php if (empty($records)): ?>
-            <p class="text-center text-muted">Belum ada program pengabdian yang tercatat.</p>
+            <p class="text-center text-muted animate-on-scroll">Belum ada program pengabdian yang tercatat.</p>
         <?php else: ?>
-            <div class="table-responsive">
+            <div class="table-responsive animate-on-scroll">
                 <table class="lab-table">
                     <thead>
                         <tr>
@@ -54,10 +55,26 @@ $records = get_pengabdian($conn);
                     <tbody>
                         <?php foreach ($records as $record): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($record['tahun']); ?></td>
-                                <td><?php echo htmlspecialchars($record['judul_pengabdian']); ?></td>
-                                <td><?php echo htmlspecialchars($record['ketua'] ?? '-'); ?></td>
-                                <td><?php echo htmlspecialchars($record['skema']); ?></td>
+                                <td>
+                                    <span class="year-badge">
+                                        <?php echo htmlspecialchars($record['tahun']); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong><?php echo htmlspecialchars($record['judul_pengabdian']); ?></strong>
+                                </td>
+                                <td>
+                                    <?php if (!empty($record['ketua'])): ?>
+                                        <?php echo htmlspecialchars($record['ketua']); ?>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="scheme-badge">
+                                        <?php echo htmlspecialchars($record['skema']); ?>
+                                    </span>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -68,4 +85,3 @@ $records = get_pengabdian($conn);
 </main>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

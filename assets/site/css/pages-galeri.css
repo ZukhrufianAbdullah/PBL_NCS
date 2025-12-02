@@ -210,6 +210,205 @@ ANIMASI UNTUK SECTION HEADER
 }
 
 /* ===========================
+   TABLE STYLING (KONSISTEN DENGAN PENGABDIAN)
+=========================== */
+
+/* Table Container */
+.table-responsive {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-top: 1.5rem;
+    background: var(--surface);
+    
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+}
+
+.table-responsive.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Main Table Styling */
+.lab-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    font-size: 0.95rem;
+}
+
+.lab-table th,
+.lab-table td {
+    padding: 1.1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.lab-table th {
+    background: linear-gradient(135deg, var(--blue-mid) 0%, var(--blue-light) 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.lab-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.lab-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.lab-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Column Widths for Agenda */
+.lab-table th:nth-child(1), /* No */
+.lab-table td:nth-child(1) {
+    width: 60px;
+    text-align: center;
+}
+
+.lab-table th:nth-child(2), /* Judul */
+.lab-table td:nth-child(2) {
+    width: 25%;
+    min-width: 200px;
+}
+
+.lab-table th:nth-child(3), /* Deskripsi */
+.lab-table td:nth-child(3) {
+    width: 40%;
+    min-width: 250px;
+}
+
+.lab-table th:nth-child(4), /* Tanggal */
+.lab-table td:nth-child(4) {
+    width: 15%;
+    min-width: 120px;
+}
+
+.lab-table th:nth-child(5), /* Status */
+.lab-table td:nth-child(5) {
+    width: 15%;
+    min-width: 100px;
+}
+
+/* Date Badge */
+.date-badge {
+    display: inline-block;
+    background: #eef4ff;
+    color: var(--blue-mid);
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-badge.active {
+    background: #d1f7c4;
+    color: #0a7c00;
+    border: 1px solid #a8e6a0;
+}
+
+.status-badge.archived {
+    background: #ffeaea;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+}
+
+.status-badge i {
+    font-size: 0.8rem;
+}
+
+/* Empty State */
+.text-center.text-muted {
+    padding: 3rem;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+/* ===========================
+   RESPONSIVE TABLE
+=========================== */
+@media (max-width: 992px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .lab-table {
+        min-width: 700px; /* Minimum width untuk scroll horizontal */
+    }
+    
+    .lab-table th,
+    .lab-table td {
+        padding: 0.9rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .lab-table th,
+    .lab-table td {
+        padding: 0.75rem 0.9rem;
+        font-size: 0.9rem;
+    }
+    
+    .date-badge,
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .lab-table th,
+    .lab-table td {
+        padding: 0.65rem 0.75rem;
+    }
+    
+    .lab-table th {
+        font-size: 0.85rem;
+        padding: 0.75rem 0.75rem;
+    }
+    
+    .status-badge {
+        flex-direction: column;
+        gap: 0.2rem;
+        text-align: center;
+        padding: 0.4rem 0.5rem;
+    }
+    
+    .status-badge i {
+        margin-right: 0;
+    }
+}
+
+/* ===========================
    Pagination
 =========================== */
 .pagination {

@@ -5,7 +5,7 @@ $activePage = 'galeri-agenda';
 $pageStyles = ['galeri'];
 require_once __DIR__ . '/../../config/koneksi.php';
 
-//Ambil data judul
+// Ambil data judul
 $qJudulAgenda = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
@@ -14,7 +14,7 @@ $qJudulAgenda = pg_query($conn, "
     LIMIT 1");
 $judulAgenda = pg_fetch_assoc($qJudulAgenda)['content_value'] ?? 'AGENDA';
 
-//Ambil data deskripsi
+// Ambil data deskripsi
 $qDeskripsiAgenda = pg_query($conn, "
     SELECT pc.content_value 
     FROM page_content pc
@@ -27,26 +27,35 @@ $deskripsiAgenda = pg_fetch_assoc($qDeskripsiAgenda)['content_value'] ?? 'Deskri
 $qAgenda = pg_query($conn, "
     SELECT * 
     FROM agenda
-    ORDER BY tanggal ASC");
-
+    ORDER BY tanggal DESC");
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 require_once __DIR__ . '/../../includes/page-hero.php';
-
-
 ?>
 
 <main class="section-gap">
     <div class="container">
         <div class="section-header animate-on-scroll">
-            <h2><?= nl2br($judulAgenda); ?></h2>
-            <p><?= nl2br($deskripsiAgenda); ?></p>
-
-            <div class="card" style="margin-top:30px;">
-                <h3 style="margin-bottom:15px;">Daftar Agenda</h3>
-
-                <table class="data-table">
+            <h2><?= nl2br(htmlspecialchars($judulAgenda)); ?></h2>
+            <p><?= nl2br(htmlspecialchars($deskripsiAgenda)); ?></p>
+        </div>
+        
+        <?php 
+        $hasData = false;
+        $agendaData = [];
+        
+        while ($row = pg_fetch_assoc($qAgenda)) {
+            $hasData = true;
+            $agendaData[] = $row;
+        }
+        ?>
+        
+        <?php if (!$hasData): ?>
+            <p class="text-center text-muted animate-on-scroll">Belum ada agenda yang ditambahkan.</p>
+        <?php else: ?>
+            <div class="table-responsive animate-on-scroll">
+                <table class="lab-table">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -56,43 +65,42 @@ require_once __DIR__ . '/../../includes/page-hero.php';
                             <th>Status</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        <?php
-                        $no = 1;
-                        $hasData = false;
-
-                        while ($row = pg_fetch_assoc($qAgenda)):
-                            $hasData = true;
-                        ?>
+                        <?php foreach ($agendaData as $index => $row): ?>
                             <tr>
-                                <td><?= $no++; ?></td>
-                                <td><?= htmlspecialchars($row['judul']); ?></td>
-                                <td><?= nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
-                                <td><?= date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+                                <td><?= $index + 1; ?></td>
                                 <td>
-                                    <?= ($row['status'] === 't')
-                                        ? '<span class="badge badge-success">Aktif</span>'
-                                        : '<span class="badge badge-danger">Arsip</span>'; ?>
+                                    <strong><?= htmlspecialchars($row['judul']); ?></strong>    
+                                </td>
+                                <td>
+                                    <?php 
+                                    $deskripsi = htmlspecialchars($row['deskripsi']);
+                                        echo $deskripsi;
+                                    ?>
+                                </td>
+                                <td>
+                                    <span class="date-badge">
+                                        <?= date('d M Y', strtotime($row['tanggal'])); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php if ($row['status'] === 't'): ?>
+                                        <span class="status-badge active">
+                                            <i class="fas fa-check-circle"></i> Aktif
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="status-badge archived">
+                                            <i class="fas fa-archive"></i> Arsip
+                                        </span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                        <?php endwhile; ?>
-
-                        <?php if (!$hasData): ?>
-                            <tr>
-                                <td colspan="5" style="text-align:center; padding:15px; color:#777;">
-                                    <strong>Belum ada agenda yang ditambahkan</strong>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
-        </div>
-
+        <?php endif; ?>
     </div>
-
 </main>
-
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
