@@ -1,7 +1,7 @@
 <?php
 // File: admin/profil/edit_logo.php (Lokasi TETAP: admin/profil/edit_logo.php)
 session_start();
-$pageTitle = 'Edit Logo Website';
+$pageTitle = 'Kelola Logo';
 $currentPage = 'edit_logo';
 $adminPageStyles = ['forms'];
 include '../../config/koneksi.php';
@@ -43,8 +43,8 @@ $logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: logo)</h1>
-    <p>Kelola halaman logo di sini</p>
+    <h1><?php echo $pageTitle; ?></h1>
+    <p>Gunakan form berikut untuk mengelola logo.</p>
 </div>
 
 <div class="card">
@@ -57,6 +57,7 @@ $logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
                 <input type="text"
                        id="judul_logo"
                        name="judul_logo"
+                       placeholder="Masukkan judul utama logo"
                        value="<?php echo htmlspecialchars($judulLogo);?>"
                        required
                        data-autofocus="true">
@@ -65,7 +66,8 @@ $logo2 = pg_fetch_assoc($qLogo2)['media_path'] ?? '';
                 <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_logo"
                           name="deskripsi_logo"
-                          rows="4"><?php echo htmlspecialchars($deskripsiLogo); ?></textarea>
+                          rows="4"
+                          placeholder="Masukkan deskripsi singkat footer"><?php echo htmlspecialchars($deskripsiLogo); ?></textarea>
             </div>
         </fieldset>
 

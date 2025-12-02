@@ -60,7 +60,7 @@ $qTitle = pg_query_params($conn,
 if ($qTitle && pg_num_rows($qTitle) > 0) {
     $section_title = pg_fetch_assoc($qTitle)['content_value'];
 } else {
-    $section_title = 'Konsultatif';
+    $section_title = '';
 }
 
 // Ambil section description
@@ -71,7 +71,7 @@ $qDesc = pg_query_params($conn,
 if ($qDesc && pg_num_rows($qDesc) > 0) {
     $section_description = pg_fetch_assoc($qDesc)['content_value'];
 } else {
-    $section_description = 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
+    $section_description = '';
 }
 
 // AMBIL DATA PESAN DARI DATABASE
@@ -86,8 +86,8 @@ if ($result && pg_num_rows($result) > 0) {
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: konsultatif)</h1>
-    <p>Kelola konten halaman dan pesan konsultatif</p>
+    <h1><?php echo $pageTitle; ?></h1>
+    <p>Gunakan form berikut untuk mengelola konsultatif.</p>
 </div>
 
 <!-- Alert untuk pesan sukses/error -->
@@ -122,6 +122,7 @@ if ($result && pg_num_rows($result) > 0) {
                 <input type="text"
                        id="section_title"
                        name="section_title"
+                       placeholder="Masukkan judul utama konsultatif"
                        value="<?php echo htmlspecialchars($section_title); ?>"
                        data-autofocus="true">
             </div>
@@ -129,7 +130,8 @@ if ($result && pg_num_rows($result) > 0) {
                 <label for="section_description">Deskripsi Halaman</label>
                 <textarea id="section_description"
                           name="section_description"
-                          rows="4"><?php echo htmlspecialchars($section_description); ?></textarea>
+                          rows="4"
+                          placeholder="Masukkan deskripsi singkat konsultatif"><?php echo htmlspecialchars($section_description); ?></textarea>
             </div>
         </fieldset>
 

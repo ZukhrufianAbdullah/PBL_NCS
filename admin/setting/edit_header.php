@@ -20,8 +20,8 @@ $logoHeader = pg_fetch_assoc($qLogo)['setting_value'] ?? '';
 
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: header &amp; logo)</h1>
-    <p>Gunakan form berikut untuk memperbarui judul utama website beserta aset logo yang tampil pada header.</p>
+    <h1><?php echo $pageTitle;?></h1>
+    <p>Gunakan form berikut untuk mengelola header.</p>
 </div>
 
 <div class="card">
@@ -30,18 +30,20 @@ $logoHeader = pg_fetch_assoc($qLogo)['setting_value'] ?? '';
           enctype="multipart/form-data">
 
         <fieldset>
-            <legend>Konten Header (Judul)</legend>
+            <legend>Konten Header</legend>
             <div class="form-group">
-                <label for="title_text">Judul Utama Website (Kolom: title_text)</label>
-                <input type="text" id="title_header" name="title_header" value="<?php echo htmlspecialchars($titleHeader); ?>" data-autofocus="true">
-                <span class="form-help-text">Teks ini selalu tampil pada bagian paling atas website.</span>
+                <label for="title_text">Judul Utama Website</label>
+                <input type="text" id="title_header" name="title_header"
+                placeholder="Masukkan judul utama header"
+                value="<?php echo htmlspecialchars($titleHeader); ?>" data-autofocus="true">
+                <span class="form-help-text">Judul ini selalu tampil pada bagian paling atas website.</span>
             </div>
         </fieldset>
 
         <fieldset>
             <legend>Manajemen Logo Utama</legend>
             <div class="form-group">
-                <label for="media_path">Pilih File Logo Baru (Kolom: media_path)</label>
+                <label for="media_path">Pilih File Logo Baru</label>
                 <input type="file" id="logo_header" name="logo_header" accept="image/*">
                 <span class="form-help-text">Unggah logo bertipe PNG/JPG/JPEG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
             </div>

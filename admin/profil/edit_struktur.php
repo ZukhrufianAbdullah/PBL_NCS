@@ -3,7 +3,7 @@
 session_start();
 include '../../config/koneksi.php';
 
-$pageTitle = 'Edit Struktur Organisasi';
+$pageTitle = 'Kelola Struktur Organisasi';
 $currentPage = 'edit_struktur';
 $adminPageStyles = ['forms', 'tables'];
 
@@ -39,8 +39,8 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: dosen &amp; anggota_lab)</h1>
-    <p>Tambah atau perbarui anggota laboratorium, termasuk nama, jabatan, dan foto profil.</p>
+    <h1><?php echo $pageTitle; ?></h1>
+    <p>Gunakan form berikut untuk mengelola struktur organisasi.</p>
 </div>
 
 <div class="card">
@@ -53,6 +53,7 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                 <input type="text"
                        id="judul_page"
                        name="judul_page"
+                       placeholder="Masukkan judul utama struktur organisasi"
                        value="<?php echo htmlspecialchars($judul_page ?? ''); ?>"
                        data-autofocus="true">
             </div>
@@ -60,7 +61,8 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                 <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_page"
                           name="deskripsi_page"
-                          rows="4"><?php echo htmlspecialchars($deskripsi_page ?? ''); ?></textarea>
+                          rows="4"
+                           placeholder="Masukkan deskripsi singkat struktur organisasi"><?php echo htmlspecialchars($deskripsi_page ?? ''); ?></textarea>
             </div>
         </fieldset>
         <div class="form-group">
@@ -77,15 +79,15 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
         <fieldset>
             <legend>Tambah Anggota Tim Baru</legend>
             <div class="form-group">
-                <label for="nama_dosen_new">Nama Lengkap &amp; Gelar (Kolom: nama_dosen)</label>
-                <input type="text" id="nama_dosen_new" name="nama_dosen" required>
+                <label for="nama_dosen_new">Nama Lengkap &amp; Gelar</label>
+                <input type="text" id="nama_dosen_new" name="nama_dosen"  placeholder="Masukkan nama lengkap & gelar"required>
             </div>
             <div class="form-group">
-                <label for="jabatan_new">Jabatan / Role (Kolom: jabatan)</label>
-                <input type="text" id="jabatan_new" name="jabatan" required>
+                <label for="jabatan_new">Jabatan</label>
+                <input type="text" id="jabatan_new" name="jabatan"  placeholder="Masukkan jabatan"required>
             </div>
             <div class="form-group">
-                <label for="media_path_dosen_new">Foto Profil (Kolom: media_path)</label>
+                <label for="media_path_dosen_new">Foto Profil</label>
                 <input type="file" id="media_path_dosen_new" name="foto" accept="image/*">
             </div>
         </fieldset>

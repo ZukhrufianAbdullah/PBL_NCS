@@ -45,15 +45,15 @@ if ($result_sosmed) {
 }
 
 // Format credit tim untuk textarea
-$credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAbelas Solihin\nEsatovin Ebenaezer Victoria\nMuhammad Nuril Huda\nNurfinka Lailasari\nZukhrufian Abdullah";
+$credit_text = $settings_data['footer_credit_tim'] ?? "";
 
 // Status quick links
 $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 'true';
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: settings, sosial_media)</h1>
-    <p>Kelola konten footer website termasuk judul lab, deskripsi footer, akses cepat, daftar developer, sosial media, dan teks copyright.</p>
+    <h1><?php echo $pageTitle; ?></h1>
+    <p>Gunakan form berikut untuk mengelola footer.</p>
 </div>
 
 <!-- Form untuk update footer -->
@@ -62,18 +62,19 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
         <input type="hidden" name="update_footer" value="1">
         
         <fieldset>
-            <legend>Informasi Laboratorium</legend>
+            <legend>Konten</legend>
             <div class="form-group">
-                <label for="site_title">Judul Laboratorium (setting_name: site_title)</label>
+                <label for="site_title">Judul Laboratorium</label>
                 <input type="text" id="site_title" name="site_title" 
-                       value="<?php echo htmlspecialchars($settings_data['site_title'] ?? 'Network and Cyber Security Laboratory'); ?>">
+                        placeholder="Masukkan judul utama footer"
+                       value="<?php echo htmlspecialchars($settings_data['site_title'] ?? ''); ?>">
                 <span class="form-help-text">Judul ini akan muncul di title footer.</span>
             </div>
             
             <div class="form-group">
-                <label for="footer_description">Deskripsi Footer (setting_name: footer_description)</label>
+                <label for="footer_description">Deskripsi Footer</label>
                 <textarea id="footer_description" name="footer_description" rows="3" 
-                          placeholder="Masukkan deskripsi singkat laboratorium yang akan ditampilkan di bawah judul footer"><?php echo htmlspecialchars($settings_data['footer_description'] ?? 'Network and Cyber Security Laboratory'); ?></textarea>
+                          placeholder="Masukkan deskripsi singkat footer"><?php echo htmlspecialchars($settings_data['footer_description'] ?? ''); ?></textarea>
                 <span class="form-help-text">Deskripsi ini akan muncul di bawah judul laboratorium pada footer.</span>
             </div>
         </fieldset>
@@ -93,13 +94,15 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
         <fieldset>
             <legend>Tim Developer</legend>
             <div class="form-group">
-                <label for="footer_developer_title">Judul Kolom Developer (setting_name: footer_developer_title)</label>
+                <label for="footer_developer_title">Judul Kolom Developer</label>
                 <input type="text" id="footer_developer_title" name="footer_developer_title" 
-                       value="<?php echo htmlspecialchars($settings_data['footer_developer_title'] ?? 'Developed by'); ?>">
+                       placeholder="Masukkan judul section"
+                       value="<?php echo htmlspecialchars($settings_data['footer_developer_title'] ?? ''); ?>">
             </div>
             <div class="form-group">
-                <label for="footer_credit_tim">Daftar Nama Developer/Tim (setting_name: footer_credit_tim)</label>
-                <textarea id="footer_credit_tim" name="footer_credit_tim" rows="6"><?php echo htmlspecialchars($credit_text); ?></textarea>
+                <label for="footer_credit_tim">Daftar Nama Developer/Tim</label>
+                <textarea id="footer_credit_tim" name="footer_credit_tim" rows="6"
+                placeholder="Masukkan nama tim developed"><?php echo htmlspecialchars($credit_text); ?></textarea>
                 <span class="form-help-text">Setiap baris akan ditampilkan sebagai item terpisah di footer.</span>
             </div>
         </fieldset>
@@ -107,8 +110,9 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
         <fieldset>
             <legend>Hak Cipta</legend>
             <div class="form-group">
-                <label for="footer_copyright">Teks Hak Cipta Lengkap (setting_name: footer_copyright)</label>
-                <textarea id="footer_copyright" name="footer_copyright" rows="2" placeholder="Contoh: © 2025 Network and Cyber Security Laboratory. All Rights Reserved."><?php echo htmlspecialchars($settings_data['footer_copyright'] ?? '© 2025 Network and Cyber Security Laboratory. All Rights Reserved.'); ?></textarea>
+                <label for="footer_copyright">Teks Hak Cipta Lengkap</label>
+                <textarea id="footer_copyright" name="footer_copyright" rows="2" 
+                placeholder="Masukkan hak cipta"><?php echo htmlspecialchars($settings_data['footer_copyright'] ?? ''); ?></textarea>
                 <span class="form-help-text">Edit keseluruhan teks hak cipta termasuk simbol ©, tahun, dan teks lengkap.</span>
             </div>
         </fieldset>
@@ -127,11 +131,11 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
         <fieldset>
             <legend>Tambah Sosial Media Baru</legend>
             <div class="form-group">
-                <label for="nama_sosialmedia">Nama Sosial Media *</label>
-                <input type="text" id="nama_sosialmedia" name="nama_sosialmedia" placeholder="Contoh: Instagram Official" required>
+                <label for="nama_sosialmedia">Nama Sosial Media</label>
+                <input type="text" id="nama_sosialmedia" name="nama_sosialmedia" placeholder="Masukkan nama sosial media" required>
             </div>
             <div class="form-group">
-                <label for="platform">Platform *</label>
+                <label for="platform">Platform</label>
                 <select id="platform" name="platform" required>
                     <option value="">Pilih Platform</option>
                     <option value="linkedin">LinkedIn</option>
@@ -144,8 +148,8 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
                 </select>
             </div>
             <div class="form-group">
-                <label for="url">URL Lengkap *</label>
-                <input type="url" id="url" name="url" placeholder="https://instagram.com/labncs" required>
+                <label for="url">URL Lengkap</label>
+                <input type="url" id="url" name="url" placeholder="Masukkan link URL" required>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn-primary">Tambahkan Sosial Media</button>

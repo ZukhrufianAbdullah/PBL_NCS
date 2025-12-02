@@ -1,7 +1,7 @@
 <?php
 // File: admin/profil/edit_visi_misi.php
 session_start();
-$pageTitle = 'Edit Visi & Misi';
+$pageTitle = 'Kelola Visi & Misi';
 $currentPage = 'edit_visi_misi';
 $adminPageStyles = ['forms'];
 include '../../config/koneksi.php';
@@ -47,8 +47,8 @@ $misi = pg_fetch_assoc($qMisi)['content_value'] ?? '';
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: profil)</h1>
-    <p>Kelola halaman visi dan misi di sini</p>
+    <h1><?php echo $pageTitle; ?></h1>
+    <p>Gunakan form berikut untuk mengelola visi & misi.</p>
 </div>
 
 <div class="card">
@@ -61,6 +61,7 @@ $misi = pg_fetch_assoc($qMisi)['content_value'] ?? '';
                 <input type="text"
                        id="judul"
                        name="judul"
+                       placeholder="Masukkan judul utama visi & misi"
                        value="<?php echo htmlspecialchars($judulVisiMisi); ?>"
                        data-autofocus="true">
             </div>
@@ -68,7 +69,8 @@ $misi = pg_fetch_assoc($qMisi)['content_value'] ?? '';
                 <label for="deskripsi_page">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi"
                           name="deskripsi"
-                          rows="4"><?php echo htmlspecialchars($deskripsiVisiMisi); ?></textarea>
+                          rows="4"
+                          placeholder="Masukkan deskripsi singkat visi & misi"><?php echo htmlspecialchars($deskripsiVisiMisi); ?></textarea>
             </div>
         </fieldset>
 
@@ -83,16 +85,18 @@ $misi = pg_fetch_assoc($qMisi)['content_value'] ?? '';
         <fieldset>
             <legend>Detail Visi &amp; Misi</legend>
             <div class="form-group">
-                <label for="visi">Isi Visi (Kolom: visi)</label>
+                <label for="visi">Visi</label>
                 <textarea id="visi"
                           name="visi"
-                          rows="8"><?php echo htmlspecialchars($visi); ?></textarea>
+                          rows="8"
+                          placeholder="Masukkan visi"><?php echo htmlspecialchars($visi); ?></textarea>
             </div>
             <div class="form-group">
-                <label for="misi">Isi Misi (Kolom: misi)</label>
+                <label for="misi">Misi</label>
                 <textarea id="misi"
                           name="misi"
-                          rows="10"><?php echo htmlspecialchars($misi); ?></textarea>
+                          rows="10"
+                          placeholder="Masukkan misi"><?php echo htmlspecialchars($misi); ?></textarea>
             </div>
         </fieldset>
 
