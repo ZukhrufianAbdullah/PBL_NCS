@@ -112,11 +112,6 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="deskripsi">Deskripsi Singkat (Opsional)</label>
-                <textarea id="deskripsi" name="deskripsi" rows="4" 
-                          placeholder="Masukkan deskripsi kegiatan pengabdian masyarakat..."></textarea>
-            </div>
         </fieldset>
 
         <div class="form-group">
