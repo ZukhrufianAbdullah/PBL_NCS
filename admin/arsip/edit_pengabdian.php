@@ -40,8 +40,8 @@ if ($qPage && pg_num_rows($qPage) > 0) {
     );
     $section_description = $qDesc && pg_num_rows($qDesc) > 0 ? pg_fetch_assoc($qDesc)['content_value'] : 'Daftar kegiatan pengabdian masyarakat yang dilakukan oleh NCS Lab';
 } else {
-    $section_title = 'Pengabdian Masyarakat';
-    $section_description = 'Daftar kegiatan pengabdian masyarakat yang dilakukan oleh NCS Lab';
+    $section_title = '';
+    $section_description = '';
 }
 ?>
 
