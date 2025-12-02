@@ -10,18 +10,15 @@ $id_user = $_SESSION['id_user'] ?? 1;
 // ===========================================================================
 if (isset($_POST['update_footer'])) {
     $site_title = $_POST['site_title'] ?? '';
-    $footer_description = $_POST['footer_description'] ?? ''; // BARU: Deskripsi footer terpisah
+    $footer_description = $_POST['footer_description'] ?? '';
     $footer_developer_title = $_POST['footer_developer_title'] ?? 'Developed by';
     $footer_copyright = $_POST['footer_copyright'] ?? 'All Rights Reserved.';
     $footer_credit_tim = $_POST['footer_credit_tim'] ?? '';
 
-    // DEBUG: Untuk memastikan data yang diterima benar
-    error_log("Data received - site_title: $site_title, footer_description: $footer_description");
-
     // Update masing-masing setting secara terpisah
     $settings = [
         'site_title' => $site_title,
-        'footer_description' => $footer_description, // BARU: Setting terpisah
+        'footer_description' => $footer_description,
         'footer_developer_title' => $footer_developer_title,
         'footer_copyright' => $footer_copyright,
         'footer_credit_tim' => $footer_credit_tim
@@ -72,7 +69,6 @@ if (isset($_POST['tambah_sosmed'])) {
     $nama_sosialmedia = $_POST['nama_sosialmedia'] ?? '';
     $platform = $_POST['platform'] ?? '';
     $url = $_POST['url'] ?? '';
-    $username = $_POST['username'] ?? '';
 
     if (empty($nama_sosialmedia) || empty($platform) || empty($url)) {
         echo "<script>alert('Nama sosial media, platform, dan URL harus diisi!'); window.location.href = '../setting/edit_footer.php';</script>";
@@ -80,15 +76,14 @@ if (isset($_POST['tambah_sosmed'])) {
     }
 
     $query = "
-        INSERT INTO sosial_media (nama_sosialmedia, platform, url, username, id_user)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO sosial_media (nama_sosialmedia, platform, url, id_user)
+        VALUES ($1, $2, $3, $4)
     ";
 
     $result = pg_query_params($conn, $query, array(
         $nama_sosialmedia,
         $platform,
         $url,
-        $username,
         $id_user
     ));
 
@@ -101,7 +96,51 @@ if (isset($_POST['tambah_sosmed'])) {
 }
 
 // ===========================================================================
-// 3. HAPUS SOSIAL MEDIA
+// 3. UPDATE SOSIAL MEDIA (BARU)
+// ===========================================================================
+if (isset($_POST['update_sosmed'])) {
+    $id_sosialmedia = $_POST['id_sosialmedia'] ?? 0;
+    $nama_sosialmedia = $_POST['nama_sosialmedia'] ?? '';
+    $platform = $_POST['platform'] ?? '';
+    $url = $_POST['url'] ?? '';
+
+    if ($id_sosialmedia <= 0) {
+        echo "<script>alert('ID sosial media tidak valid!'); window.location.href = '../setting/edit_footer.php';</script>";
+        exit();
+    }
+
+    if (empty($nama_sosialmedia) || empty($platform) || empty($url)) {
+        echo "<script>alert('Nama sosial media, platform, dan URL harus diisi!'); window.location.href = '../setting/edit_footer.php';</script>";
+        exit();
+    }
+
+    $query = "
+        UPDATE sosial_media 
+        SET nama_sosialmedia = $1, 
+            platform = $2, 
+            url = $3, 
+            id_user = $4 
+        WHERE id_sosialmedia = $5
+    ";
+
+    $result = pg_query_params($conn, $query, array(
+        $nama_sosialmedia,
+        $platform,
+        $url,
+        $id_user,
+        $id_sosialmedia
+    ));
+
+    if ($result) {
+        echo "<script>alert('Sosial media berhasil diperbarui!'); window.location.href = '../setting/edit_footer.php';</script>";
+    } else {
+        echo "<script>alert('Gagal memperbarui sosial media!'); window.location.href = '../setting/edit_footer.php';</script>";
+    }
+    exit();
+}
+
+// ===========================================================================
+// 4. HAPUS SOSIAL MEDIA
 // ===========================================================================
 if (isset($_POST['hapus_sosmed'])) {
     $id_sosialmedia = $_POST['id_sosialmedia'] ?? 0;

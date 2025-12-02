@@ -5,7 +5,6 @@ $pageTitle = 'Edit Footer Details';
 $currentPage = 'edit_footer';
 $adminPageStyles = ['forms', 'tables'];
 
-
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
 // Koneksi database
@@ -21,7 +20,7 @@ if (!$conn) {
     die("Koneksi database gagal: " . pg_last_error());
 }
 
-// Ambil data settings - TAMBAH 'footer_description'
+// Ambil data settings
 $settings_data = [];
 $query_settings = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN ('site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim')";
 $result_settings = pg_query($conn, $query_settings);
@@ -65,10 +64,9 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
                 <label for="site_title">Judul Laboratorium (setting_name: site_title)</label>
                 <input type="text" id="site_title" name="site_title" 
                        value="<?php echo htmlspecialchars($settings_data['site_title'] ?? 'Network and Cyber Security Laboratory'); ?>">
-                <span class="form-help-text">Judul ini akan muncul di header dan bagian lain website.</span>
+                <span class="form-help-text">Judul ini akan muncul di title footer.</span>
             </div>
             
-            <!-- BARU: Field Deskripsi Footer Terpisah -->
             <div class="form-group">
                 <label for="footer_description">Deskripsi Footer (setting_name: footer_description)</label>
                 <textarea id="footer_description" name="footer_description" rows="3" 
@@ -164,14 +162,29 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
                         <td><?php echo htmlspecialchars($sosmed['platform']); ?></td>
                         <td><?php echo htmlspecialchars($sosmed['url']); ?></td>
                         <td>
-                            <form method="post" action="../../admin/proses/proses_footer.php" style="display:inline;">
-                                <input type="hidden" name="hapus_sosmed" value="1">
-                                <input type="hidden" name="id_sosialmedia" value="<?php echo $sosmed['id_sosialmedia']; ?>">
-                                <button type="submit" class="btn-danger btn-sm"
-                                        onclick="return confirm('Yakin hapus sosial media ini?')">
-                                    Hapus
+                            <div class="action-buttons">
+                                <!-- Tombol Edit -->
+                                <button type="button" class="btn-edit btn-sm" 
+                                        onclick="editSosmed(
+                                            <?php echo $sosmed['id_sosialmedia']; ?>,
+                                            '<?php echo htmlspecialchars(addslashes($sosmed['nama_sosialmedia'])); ?>',
+                                            '<?php echo htmlspecialchars(addslashes($sosmed['platform'])); ?>',
+                                            '<?php echo htmlspecialchars(addslashes($sosmed['url'])); ?>'
+                                        )">
+                                    Edit
                                 </button>
-                            </form>
+                                
+                                <!-- Form Hapus -->
+                                <form method="post" action="../../admin/proses/proses_footer.php" 
+                                      class="inline-form" 
+                                      onsubmit="return confirm('Yakin hapus sosial media ini?')">
+                                    <input type="hidden" name="hapus_sosmed" value="1">
+                                    <input type="hidden" name="id_sosialmedia" value="<?php echo $sosmed['id_sosialmedia']; ?>">
+                                    <button type="submit" class="btn-danger btn-sm">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -182,5 +195,148 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
     </fieldset>
 </div>
 <?php endif; ?>
+
+<!-- Modal Edit Sosial Media -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Edit Sosial Media</h2>
+        <form method="post" action="../../admin/proses/proses_footer.php" id="editForm">
+            <input type="hidden" name="update_sosmed" value="1">
+            <input type="hidden" name="id_sosialmedia" id="edit_id">
+            
+            <div class="form-group">
+                <label for="edit_nama">Nama Sosial Media *</label>
+                <input type="text" id="edit_nama" name="nama_sosialmedia" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_platform">Platform *</label>
+                <select id="edit_platform" name="platform" required>
+                    <option value="">Pilih Platform</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="sinta">SINTA</option>
+                    <option value="other">Lainnya</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_url">URL Lengkap *</label>
+                <input type="url" id="edit_url" name="url" required>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-edit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-edit:hover {
+    background-color: #45a049;
+}
+
+.inline-form {
+    display: inline;
+}
+</style>
+
+<script>
+// Fungsi untuk membuka modal edit
+function editSosmed(id, nama, platform, url) {
+    document.getElementById('edit_id').value = id;
+    document.getElementById('edit_nama').value = nama;
+    document.getElementById('edit_platform').value = platform;
+    document.getElementById('edit_url').value = url;
+    
+    // Tampilkan modal
+    document.getElementById('editModal').style.display = 'block';
+}
+
+// Fungsi untuk menutup modal
+function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Tutup modal jika klik di luar konten modal
+window.onclick = function(event) {
+    var modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Validasi form sebelum submit
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    var nama = document.getElementById('edit_nama').value;
+    var platform = document.getElementById('edit_platform').value;
+    var url = document.getElementById('edit_url').value;
+    
+    if (!nama || !platform || !url) {
+        e.preventDefault();
+        alert('Nama, platform, dan URL harus diisi!');
+        return false;
+    }
+    
+    return true;
+});
+</script>
 
 <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

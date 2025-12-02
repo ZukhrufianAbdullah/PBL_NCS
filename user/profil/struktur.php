@@ -61,7 +61,6 @@ if ($rs && pg_num_rows($rs) > 0) {
                         <img src="<?php echo $photoPath; ?>" alt="<?php echo htmlspecialchars($member['nama_dosen']); ?>">
                         <h5><?php echo htmlspecialchars($member['nama_dosen']); ?></h5>
                         <p class="text-muted mb-1"><?php echo htmlspecialchars($member['jabatan']); ?></p>
-                        <small class="text-muted">Struktur Organisasi</small>
                     </div>
                 <?php endforeach; ?>
             </div>
