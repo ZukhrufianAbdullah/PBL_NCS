@@ -23,7 +23,7 @@ $qDeskripsiPengabdian = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'arsip_pengabdian' AND pc.content_key = 'section_description'
     LIMIT 1");
-$deskripsiPengabdian = pg_fetch_assoc($qDeskripsiPengabdian)['content_value'] ?? 'Explore our commitment to community service and the impact of our projects.';
+$deskripsiPengabdian = pg_fetch_assoc($qDeskripsiPengabdian)['content_value'] ?? 'Deskripsi pengabdian belum ditambahkan.';
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';

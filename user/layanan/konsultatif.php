@@ -35,11 +35,11 @@ if (file_exists($config_path)) {
         
         // PERBAIKAN: Ambil dengan key 'section_title' dan 'section_description'
         $section_title = $content_data['section_title'] ?? 'Konsultatif';
-        $section_description = $content_data['section_description'] ?? 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
+        $section_description = $content_data['section_description'] ?? 'Deskripsi konsultatif belum ditambahkan.';
     } else {
         // Fallback jika halaman belum ada
         $section_title = 'Konsultatif';
-        $section_description = 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
+        $section_description = 'Deskripsi konsultatif belum ditambahkan.';
     }
 } else {
     // Fallback jika koneksi.php tidak ada

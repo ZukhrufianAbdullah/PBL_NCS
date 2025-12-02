@@ -11,21 +11,21 @@ require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 require_once __DIR__ . '/../../includes/page-hero.php';
 
-// Ambil judul & deskripsi dari page_content (profil_struktur)
-$id_page = null;
-$res = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1 LIMIT 1", ['profil_struktur']);
-if ($res && pg_num_rows($res) > 0) {
-    $id_page = pg_fetch_result($res, 0, 'id_page');
-}
-$judul = '';
-$deskripsi = '';
-if ($id_page) {
-    $pc = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", array($id_page));
-    while ($r = pg_fetch_assoc($pc)) {
-        if ($r['content_key'] === 'section_title') $judul = $r['content_value'];
-        if ($r['content_key'] === 'section_description') $deskripsi = $r['content_value'];
-    }
-}
+$qJudulStruktur = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_struktur' AND pc.content_key = 'section_title'
+    LIMIT 1");
+$judulStruktur = pg_fetch_assoc($qJudulStruktur)['content_value'] ?? 'Struktur Organisasi';
+
+$qDeskripsiStruktur = pg_query($conn, "
+    SELECT pc.content_value 
+    FROM page_content pc
+    JOIN pages p ON pc.id_page = p.id_page
+    WHERE p.nama = 'profil_struktur' AND pc.content_key = 'section_description'
+    LIMIT 1");
+$deskripsiStruktur = pg_fetch_assoc($qDeskripsiStruktur)['content_value'] ?? 'Deskripsi struktur organisasi belum ditambahkan.';
 
 // Ambil anggota (join)
 $members = [];
@@ -42,16 +42,12 @@ if ($rs && pg_num_rows($rs) > 0) {
 <main class="section-gap">
     <div class="container">
         <div class="section-header animate-on-scroll">
-            <h2><?php echo $judul ?: 'Struktur Organisasi'; ?></h2>
-            <?php if (!empty($deskripsi)): ?>
-                <p><?php echo nl2br(htmlspecialchars($deskripsi)); ?></p>
-            <?php else: ?>
-                <p class="text-muted">Meet the dedicated researchers and students of our laboratory.</p>
-            <?php endif; ?>
+            <h2><?= nl2br($judulStruktur); ?></h2>
+            <p><?= nl2br($deskripsiStruktur); ?></p>
         </div>
 
         <?php if (empty($members)): ?>
-            <p class="text-center text-muted">Belum ada data struktur organisasi yang tersimpan.</p>
+            <p class="text-center text-muted animate-on-scroll">Belum ada data struktur organisasi yang tersimpan.</p>
         <?php else: ?>
             <div class="card-grid sm">
                 <?php foreach ($members as $member): 

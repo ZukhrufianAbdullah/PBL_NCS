@@ -23,7 +23,7 @@ $qDeskripsiPenelitian = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'arsip_penelitian' AND pc.content_key = 'section_description'
     LIMIT 1");
-$deskripsiPenelitian = pg_fetch_assoc($qDeskripsiPenelitian)['content_value'] ?? 'Detailed reports and findings from our various initiatives.';
+$deskripsiPenelitian = pg_fetch_assoc($qDeskripsiPenelitian)['content_value'] ?? 'Deskripsi penelitian belum ditambahkan.';
 
 // PAGINATION SETUP
 $items_per_page = 6;
@@ -69,7 +69,7 @@ require_once __DIR__ . '/../../includes/page-hero.php';
         </div>
         
         <?php if (empty($researches)): ?>
-            <p class="text-center text-muted">Belum ada penelitian yang dipublikasikan.</p>
+            <p class="text-center text-muted animate-on-scroll">Belum ada penelitian yang dipublikasikan.</p>
         <?php else: ?>
             <!-- Grid Container dengan 3 kolom -->
             <div class="research-grid">

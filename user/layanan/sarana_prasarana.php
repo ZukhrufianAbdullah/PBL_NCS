@@ -21,7 +21,7 @@ $qDeskripsiSarana = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'layanan_sarana' AND pc.content_key = 'section_description'
     LIMIT 1");
-$deskripsiSarana = pg_fetch_assoc($qDeskripsiSarana)['content_value'] ?? 'Fasilitas dan infrastruktur pendukung laboratorium kami.';
+$deskripsiSarana = pg_fetch_assoc($qDeskripsiSarana)['content_value'] ?? 'Deskripsi sarana & prasarana belum ditambahkan.';
 
 // PAGINATION SETUP - sama seperti galeri
 $items_per_page = 6; // 8 item per halaman
@@ -59,7 +59,7 @@ require_once __DIR__ . '/../../includes/page-hero.php';
         </div>
         
         <?php if (empty($posts)): ?>
-            <p class="text-center text-muted">Belum ada data sarana & prasarana.</p>
+            <p class="text-center text-muted animate-on-scroll">Belum ada data sarana & prasarana.</p>
         <?php else: ?>
             <div class="card-grid">
                 <?php 

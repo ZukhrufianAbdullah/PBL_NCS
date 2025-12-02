@@ -11,7 +11,7 @@ $qJudulLogo = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'profil_logo' AND pc.content_key = 'section_title'
     LIMIT 1");
-$judulLogo = pg_fetch_assoc($qJudulLogo)['content_value'] ?? '';
+$judulLogo = pg_fetch_assoc($qJudulLogo)['content_value'] ?? 'Logo';
 
 $qDeskripsiLogo = pg_query($conn, "
     SELECT pc.content_value 
@@ -19,7 +19,7 @@ $qDeskripsiLogo = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'profil_logo' AND pc.content_key = 'section_description'
     LIMIT 1");
-$deskripsiLogo = pg_fetch_assoc($qDeskripsiLogo)['content_value'] ?? '';
+$deskripsiLogo = pg_fetch_assoc($qDeskripsiLogo)['content_value'] ?? 'Deskripsi logo belum ditambahkan.';
 
 // Ambil data Logo 1
 $qLogo1 = pg_query($conn, "

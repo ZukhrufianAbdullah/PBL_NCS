@@ -148,6 +148,14 @@ ANIMASI UNTUK SECTION HEADER
     min-height: 150px;
 }
 
+.text-center.text-muted {
+    padding: 3rem;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
 /* ===========================
    Pagination
 =========================== */

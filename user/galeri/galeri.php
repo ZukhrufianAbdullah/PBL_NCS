@@ -12,7 +12,7 @@ $qJudulGaleri = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'section_title'
     LIMIT 1");
-$judulGaleri = pg_fetch_assoc($qJudulGaleri)['content_value'] ?? '';
+$judulGaleri = pg_fetch_assoc($qJudulGaleri)['content_value'] ?? 'Galeri';
 
 // Ambil data Deskripsi
 $qDeskripsiGaleri = pg_query($conn, "
@@ -21,7 +21,7 @@ $qDeskripsiGaleri = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'galeri_galeri' AND pc.content_key = 'section_description'
     LIMIT 1");
-$deskripsiGaleri = pg_fetch_assoc($qDeskripsiGaleri)['content_value'] ?? '';
+$deskripsiGaleri = pg_fetch_assoc($qDeskripsiGaleri)['content_value'] ?? 'Deskripsi Galeri belum ditambahkan.';
 
 // PAGINATION SETUP
 $items_per_page = 8; // Sesuaikan dengan kebutuhan
@@ -58,7 +58,7 @@ require_once __DIR__ . '/../../includes/page-hero.php';
         </div>
 
         <?php if (empty($posts)): ?>
-            <p class="text-center text-muted">Belum ada dokumentasi galeri.</p>
+            <p class="text-center text-muted animate-on-scroll">Belum ada dokumentasi galeri.</p>
         <?php else: ?>
             <div class="card-grid">
                 <?php foreach ($posts as $post): ?>

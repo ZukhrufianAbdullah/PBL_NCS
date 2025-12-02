@@ -131,9 +131,7 @@ ANIMASI UNTUK LOGO-CARD
 
 /* Stagger (muncul bergantian) */
 .logo-card:nth-child(1) { animation-delay: 0.1s; }
-.logo-card:nth-child(2) { animation-delay: 0.2s; }
-.logo-card:nth-child(3) { animation-delay: 0.3s; }
-.logo-card:nth-child(4) { animation-delay: 0.4s; }
+.logo-card:nth-child(2) { animation-delay: 0.1s; }
 
 .logo-card img {
     border-radius: var(--radius-sm);
@@ -182,6 +180,14 @@ ANIMASI UNTUK PROFILE-CARD
 .profile-card:hover img {
     border-color: var(--blue-mid);
     transform: scale(1.05);
+}
+
+.text-center.text-muted {
+    padding: 3rem;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 /* ===========================
