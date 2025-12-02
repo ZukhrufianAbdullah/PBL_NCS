@@ -1,4 +1,7 @@
 <?php
+// PENTING: Tambahkan session_start() di awal file
+session_start();
+
 define('BASE_URL', '../..');
 $pageTitle = 'Layanan - Konsultatif';
 $activePage = 'layanan-konsultatif';
@@ -15,7 +18,6 @@ $config_path = $_SERVER['DOCUMENT_ROOT'] . '/PBL_NCS/config/koneksi.php';
 if (file_exists($config_path)) {
     require_once $config_path;
     
-    // PERBAIKAN: Ambil konten dengan key yang sama seperti di admin
     $id_page = null;
     $res = pg_query_params($conn, "SELECT id_page FROM pages WHERE nama = $1 LIMIT 1", ['layanan_konsultatif']);
     if ($res && pg_num_rows($res) > 0) {
@@ -26,23 +28,19 @@ if (file_exists($config_path)) {
     $section_description = '';
     
     if ($id_page) {
-        // PERBAIKAN: Gunakan key yang sama dengan admin
         $pc = pg_query_params($conn, "SELECT content_key, content_value FROM page_content WHERE id_page = $1", array($id_page));
         $content_data = [];
         while ($r = pg_fetch_assoc($pc)) {
             $content_data[$r['content_key']] = $r['content_value'];
         }
         
-        // PERBAIKAN: Ambil dengan key 'section_title' dan 'section_description'
         $section_title = $content_data['section_title'] ?? 'Konsultatif';
         $section_description = $content_data['section_description'] ?? 'Deskripsi konsultatif belum ditambahkan.';
     } else {
-        // Fallback jika halaman belum ada
         $section_title = 'Konsultatif';
         $section_description = 'Deskripsi konsultatif belum ditambahkan.';
     }
 } else {
-    // Fallback jika koneksi.php tidak ada
     $section_title = 'Konsultatif';
     $section_description = 'Leveraging academic expertise to offer specialized network and cybersecurity consulting to industry, government, and academic partners.';
 }
@@ -54,7 +52,6 @@ if (file_exists($config_path)) {
 <main class="section-gap">
     <div class="container">
         <div class="section-header animate-on-scroll">
-            <!-- PERBAIKAN: Gunakan variabel yang benar -->
             <h2><?php echo htmlspecialchars($section_title); ?></h2>
             <p><?php echo htmlspecialchars($section_description); ?></p>
         </div>
