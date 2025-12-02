@@ -10,13 +10,8 @@ if (!function_exists('get_settings')) {
             return $settings;
         }
         
-        // Buat placeholder untuk parameter
         $placeholders = implode(',', array_fill(0, count($setting_names), '?'));
-        
-        // Bangun query dengan parameter
         $query = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN (" . $placeholders . ")";
-        
-        // Eksekusi query dengan parameter
         $result = pg_query_params($conn, $query, $setting_names);
         
         if ($result) {
@@ -68,12 +63,10 @@ if (!function_exists('lab_social_icon')) {
 
 // Ambil data dari database jika koneksi tersedia
 if (isset($conn) && $conn) {
-    // Tentukan setting names yang akan diambil - TAMBAH 'footer_description'
-    $setting_names = ['site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim'];
+    $setting_names = ['site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim', 'footer_show_quick_links'];
     $settings = get_settings($conn, $setting_names);
     $socialLinks = get_social_links($conn);
 } else {
-    // Fallback jika tidak ada koneksi
     $settings = [];
     $socialLinks = [];
 }
@@ -84,28 +77,41 @@ $defaultFooterDescription = 'Network and Cyber Security Laboratory';
 
 // Ambil nilai dari settings
 $siteTitleValue = $settings['site_title']['setting_value'] ?? $defaultSiteTitle;
-
-// BARU: Ambil deskripsi footer terpisah, jika tidak ada gunakan default
 $footerDescription = $settings['footer_description']['setting_value'] ?? $defaultFooterDescription;
-
 $footerCopy = $settings['footer_copyright']['setting_value'] ?? '© 2025 Network and Cyber Security Laboratory. All Rights Reserved.';
 $developerTitle = $settings['footer_developer_title']['setting_value'] ?? 'Developed by';
 $creditTim = $settings['footer_credit_tim']['setting_value'] ?? "D4 Teknik Informatika\nAbelas Solihin\nEsatovin Ebenaezer Victoria\nMuhammad Nuril Huda\nNurfinka Lailasari\nZukhrufian Abdullah";
+$showQuickLinks = ($settings['footer_show_quick_links']['setting_value'] ?? 'true') === 'true';
 
 // Parse credit tim menjadi array
 $creditLines = explode("\n", $creditTim);
 $creditLines = array_map('trim', $creditLines);
 $creditLines = array_filter($creditLines);
+
+// Quick Links Configuration (pastikan $baseUrl sudah didefinisikan di file lain)
+$quickLinksLeft = [
+    ['text' => 'Home', 'url' => $baseUrl . '/index.php'],
+    ['text' => 'Visi Misi', 'url' => $baseUrl . '/user/profil/visi_misi.php'],
+    ['text' => 'Logo', 'url' => $baseUrl . '/user/profil/logo.php'],
+    ['text' => 'Struktur', 'url' => $baseUrl . '/user/profil/struktur.php'],
+    ['text' => 'Agenda', 'url' => $baseUrl . '/user/galeri/agenda.php'],
+];
+
+$quickLinksRight = [
+    ['text' => 'Galeri', 'url' => $baseUrl . '/user/galeri/galeri.php'],
+    ['text' => 'Penelitian', 'url' => $baseUrl . '/user/arsip/penelitian.php'],
+    ['text' => 'Pengabdian', 'url' => $baseUrl . '/user/arsip/pengabdian.php'],
+    ['text' => 'Sarana Prasarana', 'url' => $baseUrl . '/user/layanan/sarana_prasarana.php'],
+    ['text' => 'Konsultatif', 'url' => $baseUrl . '/user/layanan/konsultatif.php'],
+];
 ?>
 
 <footer class="lab-footer">
     <div class="container">
         <div class="footer-top">
-            <div>
-                <!-- Judul Laboratorium -->
+            <!-- BAGIAN KIRI: Info Lab + Sosmed -->
+            <div class="footer-section">
                 <div class="footer-brand"><?php echo htmlspecialchars($siteTitleValue); ?></div>
-                
-                <!-- BARU: Deskripsi Footer (Terpisah dari Judul) -->
                 <p class="mb-2"><?php echo htmlspecialchars($footerDescription); ?></p>
                 
                 <?php if (!empty($socialLinks)): ?>
@@ -125,7 +131,30 @@ $creditLines = array_filter($creditLines);
                 <?php endif; ?>
             </div>
             
-            <div class="developer-list">
+            <!-- BAGIAN TENGAH: Quick Links (jika aktif) -->
+            <?php if ($showQuickLinks): ?>
+            <div class="footer-section footer-quick-links">
+                <div class="quick-links-columns">
+                    <div class="quick-links-column" style="text-align: center;">
+                        <?php foreach ($quickLinksLeft as $link): ?>
+                            <a href="<?php echo htmlspecialchars($link['url']); ?>">
+                                <?php echo htmlspecialchars($link['text']); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="quick-links-column" style="text-align: center;">
+                        <?php foreach ($quickLinksRight as $link): ?>
+                            <a href="<?php echo htmlspecialchars($link['url']); ?>">
+                                <?php echo htmlspecialchars($link['text']); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <!-- BAGIAN KANAN: Developer List -->
+            <div class="footer-section developer-list">
                 <span><?php echo htmlspecialchars($developerTitle); ?></span>
                 <?php foreach ($creditLines as $line): ?>
                     <span><?php echo htmlspecialchars($line); ?></span>
@@ -157,7 +186,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const rect = element.getBoundingClientRect();
         const windowHeight = window.innerHeight || document.documentElement.clientHeight;
         
-        // Trigger animasi saat elemen masuk 80% dari viewport
         return (
             rect.top <= windowHeight * 0.8 &&
             rect.bottom >= 0
@@ -168,10 +196,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleScrollAnimation() {
         animateElements.forEach(element => {
             if (isInViewport(element) && !element.classList.contains('animated')) {
-                // Ambil delay dari data attribute atau hitung berdasarkan posisi
                 const delay = element.getAttribute('data-delay') || 0;
                 
-                // Tambahkan class animated dengan delay
                 setTimeout(() => {
                     element.classList.add('animated');
                 }, delay * 1000);

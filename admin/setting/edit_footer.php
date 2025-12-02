@@ -22,7 +22,7 @@ if (!$conn) {
 
 // Ambil data settings
 $settings_data = [];
-$query_settings = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN ('site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim')";
+$query_settings = "SELECT setting_name, setting_value FROM settings WHERE setting_name IN ('site_title', 'footer_description', 'footer_copyright', 'footer_developer_title', 'footer_credit_tim', 'footer_show_quick_links')";
 $result_settings = pg_query($conn, $query_settings);
 
 if ($result_settings) {
@@ -46,11 +46,14 @@ if ($result_sosmed) {
 
 // Format credit tim untuk textarea
 $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAbelas Solihin\nEsatovin Ebenaezer Victoria\nMuhammad Nuril Huda\nNurfinka Lailasari\nZukhrufian Abdullah";
+
+// Status quick links
+$show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 'true';
 ?>
 
 <div class="admin-header">
     <h1><?php echo $pageTitle; ?> (Tabel: settings, sosial_media)</h1>
-    <p>Kelola konten footer website termasuk judul lab, deskripsi footer, daftar developer, sosial media, dan teks copyright.</p>
+    <p>Kelola konten footer website termasuk judul lab, deskripsi footer, akses cepat, daftar developer, sosial media, dan teks copyright.</p>
 </div>
 
 <!-- Form untuk update footer -->
@@ -72,6 +75,18 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
                 <textarea id="footer_description" name="footer_description" rows="3" 
                           placeholder="Masukkan deskripsi singkat laboratorium yang akan ditampilkan di bawah judul footer"><?php echo htmlspecialchars($settings_data['footer_description'] ?? 'Network and Cyber Security Laboratory'); ?></textarea>
                 <span class="form-help-text">Deskripsi ini akan muncul di bawah judul laboratorium pada footer.</span>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Akses Cepat (Quick Links)</legend>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="footer_show_quick_links" value="true" 
+                           <?php echo $show_quick_links ? 'checked' : ''; ?>>
+                    <span>Tampilkan Akses Cepat di Footer</span>
+                </label>
+                <span class="form-help-text">Jika dicentang, menu navigasi cepat akan muncul di bagian tengah footer antara informasi lab dan tim developer.</span>
             </div>
         </fieldset>
 
@@ -163,7 +178,6 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
                         <td><?php echo htmlspecialchars($sosmed['url']); ?></td>
                         <td>
                             <div class="action-buttons">
-                                <!-- Tombol Edit -->
                                 <button type="button" class="btn-edit btn-sm" 
                                         onclick="editSosmed(
                                             <?php echo $sosmed['id_sosialmedia']; ?>,
@@ -174,7 +188,6 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
                                     Edit
                                 </button>
                                 
-                                <!-- Form Hapus -->
                                 <form method="post" action="../../admin/proses/proses_footer.php" 
                                       class="inline-form" 
                                       onsubmit="return confirm('Yakin hapus sosial media ini?')">
@@ -296,6 +309,25 @@ $credit_text = $settings_data['footer_credit_tim'] ?? "D4 Teknik Informatika\nAb
 .inline-form {
     display: inline;
 }
+
+/* Checkbox Styling */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    user-select: none;
+}
 </style>
 
 <script>
@@ -306,7 +338,6 @@ function editSosmed(id, nama, platform, url) {
     document.getElementById('edit_platform').value = platform;
     document.getElementById('edit_url').value = url;
     
-    // Tampilkan modal
     document.getElementById('editModal').style.display = 'block';
 }
 

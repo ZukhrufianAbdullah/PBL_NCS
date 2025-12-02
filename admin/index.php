@@ -69,7 +69,7 @@ $total_pesan = pg_fetch_assoc($qTotalPesan)['total'];
     <div class="action-grid">
         <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri.php" class="btn-primary">+ Tambah Galeri</a>
         <a href="<?php echo $adminBasePath; ?>galeri/edit_agenda.php" class="btn-primary">+ Tambah Agenda</a>
-        <a href="<?php echo $adminBasePath; ?>arsip/tambah_penelitian.php" class="btn-primary">+ Tambah Penelitian</a>
+        <a href="<?php echo $adminBasePath; ?>arsip/edit_penelitian.php" class="btn-primary">+ Tambah Penelitian</a>
         <a href="<?php echo $adminBasePath; ?>layanan/lihat_pesan.php" class="btn-success">📧 Lihat Pesan</a>
     </div>
 </div>

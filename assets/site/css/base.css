@@ -217,53 +217,288 @@ a {
     border-color: var(--blue-mid);
 }
 
-/* ---------------- Footer ---------------- */
+/* =============== FOOTER DENGAN KONTROL PENUH =============== */
 
 .lab-footer {
     background: var(--blue-mid);
     color: rgba(255, 255, 255, 0.92);
-    padding: 2rem 0;
+    padding: 2.5rem 0 1.5rem;
 }
 
 .lab-footer .footer-top {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
-@media (min-width: 768px) {
+/* DESKTOP: Flexbox layout */
+@media (min-width: 992px) {
     .lab-footer .footer-top {
-        flex-direction: row;
+        display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
+        gap: 2rem;
+        position: relative;
     }
+    
+    /* ===== KONTROL UTAMA ===== */
+    
+    /* Bagian Kiri - FIXED WIDTH */
+    .footer-section:first-child {
+        flex: 0 0 250px; /* Fixed width 250px, tidak grow/shrink */
+        max-width: 250px;
+    }
+    
+    /* Bagian Tengah - QUICK LINKS (DYNAMIC) */
+    .footer-quick-links {
+        /* FLEX PROPERTIES - SESUAIKAN DI SINI */
+        flex: 1 1 auto;     /* Grow dan shrink */
+        order: 2;           /* 1=pertama, 2=tengah, 3=terakhir */
+        align-self: center; /* flex-start | center | flex-end */
+        margin: 0 auto;     /* auto untuk center, 0 untuk kiri/kanan */
+        padding: 0 1rem;
+        
+        /* WIDTH CONTROL - pilih salah satu */
+        width: auto;        /* auto (sesuai konten) */
+        /* width: 100%; */  /* full width available */
+        /* min-width: 400px; max-width: 500px; */ /* batasan width */
+    }
+    
+    /* Bagian Kanan - FIXED WIDTH */
+    .developer-list {
+        flex: 0 0 250px; /* Fixed width 250px */
+        max-width: 250px;
+        order: 3; /* Selalu terakhir */
+        text-align: right;
+        align-self: flex-start;
+    }
+    
+    /* ===== VARIASI POSISI QUICK LINKS ===== */
+    
+    /* Quick Links Center (default) */
+    .footer-quick-links.center {
+        order: 2;
+        align-self: center;
+        margin: 0 auto;
+    }
+    
+    /* Quick Links Left */
+    .footer-quick-links.left {
+        order: 2;
+        align-self: flex-start;
+        margin: 0;
+        flex: 0 1 400px; /* Lebih kecil dari center */
+    }
+    
+    /* Quick Links Right */
+    .footer-quick-links.right {
+        order: 3; /* Swap dengan developer list */
+        align-self: flex-end;
+        margin: 0;
+        flex: 0 1 400px;
+    }
+    
+    .footer-quick-links.right + .developer-list {
+        order: 2; /* Developer list pindah ke tengah */
+    }
+    
+    /* Quick Links Full Width */
+    .footer-quick-links.full {
+        order: 1;
+        flex: 1 1 100%;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+}
+
+/* TABLET LAYOUT */
+@media (min-width: 768px) and (max-width: 991px) {
+    .lab-footer .footer-top {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+    
+    .footer-quick-links {
+        flex: 1 1 100%;
+        order: 1;
+        margin-bottom: 1.5rem;
+    }
+    
+    .footer-section:first-child,
+    .developer-list {
+        flex: 0 1 calc(50% - 1rem);
+    }
+    
+    .developer-list {
+        text-align: left;
+    }
+}
+
+/* MOBILE LAYOUT */
+@media (max-width: 767px) {
+    .lab-footer .footer-top {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .footer-quick-links {
+        order: 2;
+    }
+    
+    .footer-section:first-child {
+        order: 1;
+    }
+    
+    .developer-list {
+        order: 3;
+        text-align: left;
+    }
+}
+
+/* ===== QUICK LINKS INTERNAL STYLING ===== */
+.quick-links-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    min-width: 300px; /* Minimum width */
+}
+
+@media (max-width: 576px) {
+    .quick-links-columns {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.quick-links-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.quick-links-column a {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease;
+    padding-left: 0;
+    display: inline-block;
+    white-space: nowrap; /* Mencegah text wrap */
+}
+
+.quick-links-column a:hover {
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* Footer Section Styling */
+.footer-section {
+    min-width: 0; /* Prevent overflow */
 }
 
 .footer-brand {
     font-weight: 700;
-    margin-bottom: 0.35rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.footer-section p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.footer-social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .footer-social a {
     color: #fff;
     font-size: 1.3rem;
-    margin-right: 0.75rem;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
+.footer-social a:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+/* Quick Links Styling */
+.footer-quick-links {
+    padding: 0 1rem;
+}
+
+.quick-links-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 576px) {
+    .quick-links-columns {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.quick-links-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Di file base.css, perbaiki bagian quick links */
+
+.quick-links-column a {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease; /* Ganti padding-left dengan transform */
+    padding-left: 0;
+    display: inline-block; /* Penting untuk transform */
+}
+
+.quick-links-column a:hover {
+    color: #fff;
+    transform: translateX(5px); /* Gunakan transform sebagai ganti padding */
+    padding-left: 0; /* Pastikan tidak ada perubahan padding */
+}
+
+/* Developer List Styling */
 .developer-list {
     text-align: right;
-    line-height: 1.5;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 991px) {
+    .developer-list {
+        text-align: left;
+    }
 }
 
 .developer-list span {
     display: block;
 }
 
-.footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    font-size: 0.9rem;
-    text-align: center;
+.developer-list span:first-child {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #fff;
 }
 
+/* Footer Bottom */
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1.25rem;
+    font-size: 0.9rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.85);
+}

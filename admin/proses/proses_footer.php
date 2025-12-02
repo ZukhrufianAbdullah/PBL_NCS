@@ -6,7 +6,7 @@ include '../../config/koneksi.php';
 $id_user = $_SESSION['id_user'] ?? 1;
 
 // ===========================================================================
-// 1. UPDATE DATA FOOTER (settings table) - DIPERBAIKI
+// 1. UPDATE DATA FOOTER (settings table) - DENGAN QUICK LINKS
 // ===========================================================================
 if (isset($_POST['update_footer'])) {
     $site_title = $_POST['site_title'] ?? '';
@@ -14,6 +14,9 @@ if (isset($_POST['update_footer'])) {
     $footer_developer_title = $_POST['footer_developer_title'] ?? 'Developed by';
     $footer_copyright = $_POST['footer_copyright'] ?? 'All Rights Reserved.';
     $footer_credit_tim = $_POST['footer_credit_tim'] ?? '';
+    
+    // Handle checkbox - jika tidak dicentang, tidak ada di $_POST
+    $footer_show_quick_links = isset($_POST['footer_show_quick_links']) ? 'true' : 'false';
 
     // Update masing-masing setting secara terpisah
     $settings = [
@@ -21,7 +24,8 @@ if (isset($_POST['update_footer'])) {
         'footer_description' => $footer_description,
         'footer_developer_title' => $footer_developer_title,
         'footer_copyright' => $footer_copyright,
-        'footer_credit_tim' => $footer_credit_tim
+        'footer_credit_tim' => $footer_credit_tim,
+        'footer_show_quick_links' => $footer_show_quick_links
     ];
 
     $all_success = true;
@@ -40,9 +44,10 @@ if (isset($_POST['update_footer'])) {
             );
         } else {
             // Insert jika belum ada
+            $setting_type = ($setting_name === 'footer_show_quick_links') ? 'boolean' : 'text';
             $result = pg_query_params(
                 $conn,
-                "INSERT INTO settings (setting_name, setting_type, setting_value, id_user) VALUES ('$setting_name', 'text', $1, $2)",
+                "INSERT INTO settings (setting_name, setting_type, setting_value, id_user) VALUES ('$setting_name', '$setting_type', $1, $2)",
                 array($setting_value, $id_user)
             );
         }
@@ -96,7 +101,7 @@ if (isset($_POST['tambah_sosmed'])) {
 }
 
 // ===========================================================================
-// 3. UPDATE SOSIAL MEDIA (BARU)
+// 3. UPDATE SOSIAL MEDIA
 // ===========================================================================
 if (isset($_POST['update_sosmed'])) {
     $id_sosialmedia = $_POST['id_sosialmedia'] ?? 0;
