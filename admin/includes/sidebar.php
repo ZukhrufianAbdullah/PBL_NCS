@@ -134,7 +134,21 @@ $matchesPage = function ($keys) use ($currentPage) {
         </div>
     </div>
 
-    <a href="<?php echo $projectBasePath; ?>user/index.php" class="sidebar-link" data-page="logout">
-        Logout
-    </a>
+        <a href="#" class="sidebar-link" data-page="logout" onclick="return confirmLogout('<?php echo $projectBasePath; ?>user/index.php')">
+            Logout
+        </a>
+
+        <script>
+        function confirmLogout(logoutUrl) {
+            // Tampilkan dialog konfirmasi
+            var confirmation = confirm("Apakah Anda yakin ingin logout?");
+
+            if (confirmation) {
+                window.location.href = logoutUrl;
+                return true;
+            }
+
+            return false;
+        }
+        </script>
 </aside>
