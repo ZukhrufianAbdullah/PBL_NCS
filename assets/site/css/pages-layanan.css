@@ -24,7 +24,7 @@ ANIMASI UNTUK SEMUA CARD
     transform: translateY(0);
 }
 
-    /* ===========================
+/* ===========================
 ANIMASI UNTUK SECTION HEADER
 =========================== */
 .section-header {
@@ -73,22 +73,26 @@ ANIMASI UNTUK SECTION HEADER
     margin-bottom: 2rem;
 }
 
-/* Facility Card */
+/* Facility Card - DENGAN HOVER EFFECT */
 .facility-card {
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     background: var(--surface);
     padding: 1.5rem;
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
     animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
+    
+    /* TAMBAHAN: Efek hover mengambang */
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
+/* HOVER EFFECT - Mengambang seperti Visi Misi */
 .facility-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(10, 38, 102, 0.18);
 }
 
 /* Staggered animation untuk facility cards */
@@ -107,6 +111,12 @@ ANIMASI UNTUK SECTION HEADER
     width: 100%;
     object-fit: cover;
     margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+/* HOVER EFFECT - Gambar zoom subtle */
+.facility-card:hover img {
+    transform: scale(1.05);
 }
 
 .facility-card h5 {
@@ -114,6 +124,12 @@ ANIMASI UNTUK SECTION HEADER
     font-size: 1.1rem;
     color: var(--text);
     line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+/* HOVER EFFECT - Title berubah warna */
+.facility-card:hover h5 {
+    color: var(--blue-mid);
 }
 
 /* Contact Form */
@@ -154,7 +170,7 @@ ANIMASI UNTUK SECTION HEADER
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0; /* reset padding agar bulat sempurna */
+    padding: 0;
 }
 
 .btn-pagination:hover {
@@ -164,7 +180,7 @@ ANIMASI UNTUK SECTION HEADER
 
 .btn-pagination.active {
     background: var(--blue-mid);
-    color: white !important; /* memastikan angka terlihat */
+    color: white !important;
     border-color: var(--blue-mid);
     border-radius: 50%;
     width: 38px;
@@ -223,4 +239,9 @@ ANIMASI UNTUK SECTION HEADER
     }
     
     .facility-card:nth-child(n) { animation-delay: 0.1s; }
+    
+    /* Hover effect lebih subtle di mobile */
+    .facility-card:hover {
+        transform: translateY(-5px);
+    }
 }

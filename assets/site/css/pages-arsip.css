@@ -26,7 +26,7 @@ ANIMASI UNTUK SEMUA CARD
     transform: translateY(0);
 }
 
-    /* ===========================
+/* ===========================
 ANIMASI UNTUK SECTION HEADER
 =========================== */
 .section-header {
@@ -68,30 +68,21 @@ ANIMASI UNTUK SECTION HEADER
 }
 
 /* ===========================
-   Research Grid Container (3 kolom)
-=========================== */
-.research-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-/* ===========================
    RESEARCH BADGE (TAHUN + PENELITI)
 =========================== */
 .research-badge {
     display: flex;
     align-items: center;
     background: linear-gradient(90deg, #eef4ff 0%, #e0e9ff 100%);
-    border-radius: 50px; /* Oval shape */
+    border-radius: 50px;
     padding: 0.25rem 0.5rem 0.25rem 0.25rem;
     margin-bottom: 1rem;
     width: 100%;
-    max-width: calc(100% - 1rem); /* Beri sedikit ruang di kanan */
+    max-width: calc(100% - 1rem);
     overflow: hidden;
     border: 1px solid rgba(59, 130, 246, 0.2);
     position: relative;
+    transition: all 0.3s ease;
 }
 
 /* Bagian tahun (kiri) */
@@ -107,6 +98,7 @@ ANIMASI UNTUK SECTION HEADER
     flex-shrink: 0;
     z-index: 2;
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
 }
 
 /* Bagian nama peneliti (kanan) */
@@ -120,37 +112,11 @@ ANIMASI UNTUK SECTION HEADER
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-left: -10px; /* Overlap sedikit dengan tahun */
-    padding-left: 20px; /* Kompensasi untuk margin */
+    margin-left: -10px;
+    padding-left: 20px;
     background: linear-gradient(90deg, rgba(238, 244, 255, 0.8) 0%, #eef4ff 100%);
     border-radius: 0 50px 50px 0;
-}
-
-/* Alternatif styling tanpa gradient */
-.research-badge.simple {
-    background: #eef4ff;
-    border: 1px solid #c7d8ff;
-}
-
-.research-badge.simple .badge-year {
-    background: var(--blue-mid);
-}
-
-.research-badge.simple .badge-author {
-    background: transparent;
-    color: var(--text);
-}
-
-/* Efek hover pada badge */
-.research-card:hover .research-badge {
-    background: linear-gradient(90deg, #e0e9ff 0%, #d4e0ff 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.15);
-}
-
-.research-card:hover .badge-year {
-    background: var(--blue-light);
-    box-shadow: 0 3px 6px rgba(59, 130, 246, 0.4);
+    transition: all 0.3s ease;
 }
 
 /* ===========================
@@ -164,7 +130,7 @@ ANIMASI UNTUK SECTION HEADER
 }
 
 /* ===========================
-   Research Card
+   Research Card - DENGAN HOVER EFFECT
 =========================== */
 .research-card {
     border-radius: var(--radius-md);
@@ -172,7 +138,6 @@ ANIMASI UNTUK SECTION HEADER
     padding: 1.75rem;
     background: var(--surface);
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -181,11 +146,31 @@ ANIMASI UNTUK SECTION HEADER
 
     opacity: 0;
     animation: fadeInUp 0.8s ease-out forwards;
+    
+    /* TAMBAHAN: Efek hover mengambang */
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
+/* HOVER EFFECT - Mengambang seperti Visi Misi */
 .research-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(10, 38, 102, 0.18);
+}
+
+/* HOVER EFFECT - Badge berubah */
+.research-card:hover .research-badge {
+    background: linear-gradient(90deg, #d4e0ff 0%, #c7d8ff 100%);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.research-card:hover .badge-year {
+    background: var(--blue-light);
+    box-shadow: 0 3px 6px rgba(59, 130, 246, 0.5);
+}
+
+.research-card:hover .badge-author {
+    color: var(--blue-light);
 }
 
 /* Stagger effect untuk multiple research cards */
@@ -203,6 +188,12 @@ ANIMASI UNTUK SECTION HEADER
     line-height: 1.4;
     color: var(--text);
     flex-grow: 0;
+    transition: color 0.3s ease;
+}
+
+/* HOVER EFFECT - Title berubah warna */
+.research-card:hover h5 {
+    color: var(--blue-mid);
 }
 
 .research-card .text-muted {
@@ -223,6 +214,13 @@ ANIMASI UNTUK SECTION HEADER
     margin-top: auto;
     padding: 0.5rem 1.25rem;
     font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+/* HOVER EFFECT - Button lebih menonjol */
+.research-card:hover .btn-brand {
+    background-color: var(--blue-light);
+    transform: translateX(3px);
 }
 
 .research-card .no-file {
@@ -292,6 +290,11 @@ ANIMASI UNTUK SECTION HEADER
         margin-left: 0;
         padding-left: 0.5rem;
         border-radius: var(--radius-sm);
+    }
+    
+    /* Hover effect lebih subtle di mobile */
+    .research-card:hover {
+        transform: translateY(-5px);
     }
 }
 
@@ -513,7 +516,7 @@ ANIMASI UNTUK SECTION HEADER
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0; /* reset padding agar bulat sempurna */
+    padding: 0;
 }
 
 .btn-pagination:hover {
@@ -523,7 +526,7 @@ ANIMASI UNTUK SECTION HEADER
 
 .btn-pagination.active {
     background: var(--blue-mid);
-    color: white !important; /* memastikan angka terlihat */
+    color: white !important;
     border-color: var(--blue-mid);
     border-radius: 50%;
     width: 38px;

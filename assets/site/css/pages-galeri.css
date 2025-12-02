@@ -26,7 +26,7 @@ ANIMASI UNTUK SEMUA CARD
     transform: translateY(0);
 }
 
-    /* ===========================
+/* ===========================
 ANIMASI UNTUK SECTION HEADER
 =========================== */
 .section-header {
@@ -76,11 +76,21 @@ ANIMASI UNTUK SECTION HEADER
     background: var(--surface);
     box-shadow: var(--shadow);
     overflow: hidden;
-    width: 100%; /* Pastikan lebar mengikuti parent */
-    min-width: 0; /* Mencegah card melebar berlebihan */
+    width: 100%;
+    min-width: 0;
     
     opacity: 0;
     animation: fadeInUp 0.8s ease-out forwards;
+    
+    /* SMOOTH FLOATING EFFECT - sama seperti Visi Misi */
+    transition: all 0.8s ease;
+    cursor: pointer;
+}
+
+/* HOVER EFFECT - Smooth floating ke atas seperti Visi Misi */
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* Stagger effect untuk artikel */
@@ -99,6 +109,12 @@ ANIMASI UNTUK SECTION HEADER
     width: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
+}
+
+/* HOVER EFFECT - Gambar zoom subtle */
+.article-card:hover img {
+    transform: scale(1.05);
 }
 
 /* Body artikel */
@@ -113,6 +129,21 @@ ANIMASI UNTUK SECTION HEADER
     text-transform: uppercase;
     color: var(--text-muted);
     margin-bottom: 0.35rem;
+    transition: color 0.3s ease;
+}
+
+/* HOVER EFFECT - Date label berubah warna */
+.article-card:hover .card-body span {
+    color: var(--blue-mid);
+}
+
+.article-card .card-body h5 {
+    transition: color 0.3s ease;
+}
+
+/* HOVER EFFECT - Title berubah warna */
+.article-card:hover .card-body h5 {
+    color: var(--blue-mid);
 }
 
 /* ===========================
@@ -168,15 +199,13 @@ ANIMASI UNTUK SECTION HEADER
     }
     
     .article-card:nth-child(n) { animation-delay: 0.1s; }
+    
+    /* Hover effect sedikit lebih kecil di mobile tapi tetap terangkat */
+    .article-card:hover {
+        transform: translateY(-7px) !important;
+        box-shadow: 0 10px 25px rgba(10, 38, 102, 0.15);
+    }
 }
-
-/* Solusi alternatif: Grid container dengan jumlah kolom tetap */
-.alternative-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-}
-
 
 /* ===========================
    Agenda Card
@@ -362,7 +391,7 @@ ANIMASI UNTUK SECTION HEADER
     }
     
     .lab-table {
-        min-width: 700px; /* Minimum width untuk scroll horizontal */
+        min-width: 700px;
     }
     
     .lab-table th,
@@ -430,7 +459,7 @@ ANIMASI UNTUK SECTION HEADER
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0; /* reset padding agar bulat sempurna */
+    padding: 0;
 }
 
 .btn-pagination:hover {
@@ -440,7 +469,7 @@ ANIMASI UNTUK SECTION HEADER
 
 .btn-pagination.active {
     background: var(--blue-mid);
-    color: white !important; /* memastikan angka terlihat */
+    color: white !important;
     border-color: var(--blue-mid);
     border-radius: 50%;
     width: 38px;
