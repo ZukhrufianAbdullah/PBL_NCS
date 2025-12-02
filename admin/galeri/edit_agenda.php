@@ -2,7 +2,7 @@
 // File: admin/galeri/edit_agenda.php
 session_start();
 
-$page_title = "EDIT AGENDA";
+$page_title = "Kelola Agenda";
 $current_page = "edit_agenda";
 $adminPageStyles = ['forms', 'tables'];
 include '../../config/koneksi.php';
@@ -35,7 +35,7 @@ $qAgenda = pg_query($conn, "
 
 
 <div class="admin-header">
-    <h1><?php echo $page_title; ?> (Tabel: page_content)</h1>
+    <h1><?php echo $page_title; ?> </h1>
     <p>Kelola halaman agenda di sini</p>
 </div>
 <div class="card">
@@ -48,6 +48,7 @@ $qAgenda = pg_query($conn, "
                 <input type="text"
                        id="judul_agenda"
                        name="judul_agenda"
+                       placeholder="Masukkan judul halaman agenda"
                        value="<?php echo htmlspecialchars($judulAgenda);?>"
                        data-autofocus ="true">
             </div>
@@ -55,6 +56,7 @@ $qAgenda = pg_query($conn, "
                 <label for="deskripsi_agenda">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_agenda"
                           name="deskripsi_agenda"
+                          placeholder="Masukkan deskripsi singkat halaman agenda"
                           rows="4"><?php echo htmlspecialchars($deskripsiAgenda); ?></textarea> 
             </div>
         </fieldset>
@@ -76,12 +78,12 @@ $qAgenda = pg_query($conn, "
 
             <div class="form-group">
                 <label for="judul_agenda_baru">Judul Agenda</label>
-                <input type="text" id="judul_agenda_baru" name="judul" required>
+                <input type="text" id="judul_agenda_baru" name="judul" required placeholder="Masukkan judul agenda">
             </div>
 
             <div class="form-group">
                 <label for="deskripsi_baru">Deskripsi</label>
-                <textarea id="deskripsi_baru" name="deskripsi" rows="3"></textarea>
+                <textarea id="deskripsi_baru" name="deskripsi" rows="3" placeholder="Masukkan deskripsi agenda"></textarea>
             </div>
 
             <div class="form-group">
@@ -186,7 +188,7 @@ $qAgenda = pg_query($conn, "
     background:rgba(0,0,0,0.5); justify-content:center; align-items:center;
 ">
     <div class="modal-content" style="background:#fff; padding:20px; width:400px; border-radius:8px;">
-        <h3>Edit Agenda</h3>
+        <h3>Kelola Agenda</h3>
         <form method="post" action="../proses/proses_agenda.php">
 
             <input type="hidden" name="edit_agenda" value="1">

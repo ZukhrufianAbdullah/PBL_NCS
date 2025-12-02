@@ -2,7 +2,7 @@
 // File: admin/arsip/edit_pengabdian.php
 session_start();
 
-$page_title = "KELOLA PENGABDIAN MASYARAKAT";
+$page_title = "Kelola Pengabdian";
 $current_page = "edit_pengabdian";
 $adminPageStyles = ['forms', 'tables'];
 include '../../config/koneksi.php';
@@ -46,7 +46,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $page_title; ?> (Tabel: pengabdian)</h1>
+    <h1><?php echo $page_title; ?> </h1>
     <p>Kelola data pengabdian masyarakat di sini</p>
 </div>
 
@@ -60,13 +60,13 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <legend>Judul dan Deskripsi Halaman Pengabdian</legend>
             <div class="form-group">
                 <label for="judul_page">Judul Halaman</label>
-                <input type="text" id="judul_page" name="judul_page" 
+                <input type="text" id="judul_page" name="judul_page" placeholder="Masukkan judul halaman pengabdian"
                        value="<?php echo htmlspecialchars($section_title); ?>"
                        data-autofocus="true">
             </div>
             <div class="form-group">
                 <label for="deskripsi_page">Deskripsi Halaman</label>
-                <textarea id="deskripsi_page" name="deskripsi_page" rows="4"><?php echo htmlspecialchars($section_description); ?></textarea>
+                <textarea id="deskripsi_page" name="deskripsi_page" rows="4" placeholder="Masukkan deskripsi halaman pengabdian"><?php echo htmlspecialchars($section_description);      ?></textarea>
             </div>
         </fieldset>
         <div class="form-group">
@@ -87,12 +87,12 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             
             <div class="form-group">
                 <label for="judul_pengabdian">Judul Pengabdian</label>
-                <input type="text" id="judul_pengabdian" name="judul_pengabdian" required>
+                <input type="text" id="judul_pengabdian" name="judul_pengabdian" placeholder="Masukkan judul pengabdian" required>
             </div>
             
             <div class="form-group">
                 <label for="skema">Skema</label>
-                <input type="text" id="skema" name="skema" placeholder="Contoh: PKM, PPM, HIB, dll" required>
+                <input type="text" id="skema" name="skema" placeholder="Masukkan skema pengabdian" required>
             </div>
             
             <div class="form-group">
@@ -115,7 +115,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <div class="form-group">
                 <label for="deskripsi">Deskripsi Singkat (Opsional)</label>
                 <textarea id="deskripsi" name="deskripsi" rows="4" 
-                          placeholder="Deskripsi kegiatan pengabdian masyarakat..."></textarea>
+                          placeholder="Masukkan deskripsi kegiatan pengabdian masyarakat..."></textarea>
             </div>
         </fieldset>
 

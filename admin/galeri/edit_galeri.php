@@ -2,7 +2,7 @@
 // File: admin/galeri/edit_galeri.php
 session_start();
 
-$pageTitle = 'Kelola Galeri Foto';
+$pageTitle = 'Kelola Galeri';
 $currentPage = 'edit_galeri';
 $adminPageStyles = ['tables', 'dashboard', 'forms'];
 include_once '../../config/koneksi.php';
@@ -34,8 +34,8 @@ $qGaleri = pg_query($conn, "
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: galeri)</h1>
-    <p>Kelola halaman agenda di sini</p>
+    <h1><?php echo $pageTitle; ?> </h1>
+    <p>Kelola halaman galeri di sini</p>
 </div>
 <div class="card">
     <form method="post" action="../proses/proses_galeri.php">
@@ -47,6 +47,7 @@ $qGaleri = pg_query($conn, "
                 <input type="text"
                     id="judul_galeri"
                     name="judul_galeri"
+                    placeholder="Masukkan judul halaman galeri" 
                     value="<?php echo htmlspecialchars($judulGaleri); ?>"
                     data-autofocus="true">
             </div>
@@ -54,6 +55,7 @@ $qGaleri = pg_query($conn, "
                 <label for="deskripsi_galeri">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_galeri"
                     name="deskripsi_galeri"
+                    placeholder="Masukkan deskripsi singkat halaman galeri"
                     rows="4"><?php echo htmlspecialchars($deskripsiGaleri); ?></textarea>
             </div>
         </fieldset>
@@ -74,12 +76,12 @@ $qGaleri = pg_query($conn, "
 
             <div class="form-group">
                 <label>Judul</label>
-                <input type="text" name="judul" required>
+                <input type="text" name="judul" required placeholder="Masukkan judul galeri">
             </div>
 
             <div class="form-group">
                 <label>Deskripsi</label>
-                <textarea name="deskripsi" rows="3"></textarea>
+                <textarea name="deskripsi" rows="3" placeholder="Masukkan deskripsi galeri"></textarea>
             </div>
 
             <div class="form-group">

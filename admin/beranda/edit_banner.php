@@ -22,8 +22,8 @@ $backgroundBanner = pg_fetch_assoc($qBackgroundBanner)['setting_value'] ?? '';
 
 
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: banner)</h1>
-    <p>Gunakan form ini untuk mengubah teks dan latar belakang visual di bagian paling atas halaman utama (hero section).</p>
+    <h1><?php echo $pageTitle; ?> </h1>
+    <p>Gunakan form ini untuk mengubah teks dan latar belakang visual di bagian paling atas halaman utama.</p>
 </div>
 
 <div class="card">
@@ -34,20 +34,20 @@ $backgroundBanner = pg_fetch_assoc($qBackgroundBanner)['setting_value'] ?? '';
             <legend>Konten Teks Banner</legend>
 
             <div class="form-group">
-                <label for="header_banner">Judul Utama Banner (Kolom: header)</label>
-                <input type="text" id="title_banner" name="title_banner" value="<?php echo htmlspecialchars($titleBanner); ?>" data-autofocus="true">
+                <label for="header_banner">Judul Utama Banner</label>
+                <input type="text" id="title_banner" name="title_banner" value="<?php echo htmlspecialchars($titleBanner); ?>" data-autofocus="true" placeholder="Masukkan judul utama banner">
             </div>
 
             <div class="form-group">
-                <label for="subheadline">Sub Judul / Tagline (Kolom: subheadline)</label>
-                <input type="text" id="subheadline_banner" name="subheadline_banner" value="<?php echo htmlspecialchars($subheadlineBanner); ?>" data-autofocus="true">
+                <label for="subheadline">Sub Judul / Tagline</label>
+                <input type="text" id="subheadline_banner" name="subheadline_banner" value="<?php echo htmlspecialchars($subheadlineBanner); ?>" data-autofocus="true" placeholder="Masukkan sub judul atau tagline banner">
             </div>
         </fieldset>
 
         <fieldset>
             <legend>Background Banner</legend>
             <div class="form-group">
-                <label for="media_path">Upload Latar Belakang Baru (Kolom: media_path)</label>
+                <label for="media_path">Upload Latar Belakang Baru</label>
                 <input type="file" id="image_banner" name="image_banner" accept="image/*">
                 <span class="form-help-text">Unggah logo bertipe PNG/JPG/JPEG/SVG. Biarkan kosong jika tidak ingin mengubah.</span>
             </div>

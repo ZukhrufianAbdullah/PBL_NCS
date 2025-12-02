@@ -1,7 +1,7 @@
 <?php
 // File: admin/layanan/edit_sarana_prasarana.php
 session_start();
-$pageTitle = 'Manajemen Sarana & Prasarana';
+$pageTitle = 'Kelola Sarana & Prasarana';
 $currentPage = 'edit_sarana';
 $adminPageStyles = ['forms', 'tables'];
 include_once '../../config/koneksi.php';
@@ -32,7 +32,7 @@ $qSarana = pg_query($conn, "
     ORDER BY nama_sarana ASC");
 ?>
 <div class="admin-header">
-    <h1><?php echo $pageTitle; ?> (Tabel: sarana)</h1>
+    <h1><?php echo $pageTitle; ?> </h1>
     <p>Kelola halaman sarana dan prasarana di sini</p>
 </div>
 
@@ -46,6 +46,7 @@ $qSarana = pg_query($conn, "
                 <input type="text"
                     id="judul_sarana"
                     name="judul_sarana"
+                    placeholder="Masukkan judul halaman sarana dan prasarana"
                     value="<?php echo htmlspecialchars($judulSarana); ?>"
                     data-autofocus="true">
             </div>
@@ -53,6 +54,7 @@ $qSarana = pg_query($conn, "
                 <label for="deskripsi_sarana">Deskripsi Singkat Halaman</label>
                 <textarea id="deskripsi_sarana"
                     name="deskripsi_sarana"
+                    placeholder="Masukkan deskripsi singkat halaman sarana dan prasarana"
                     rows="4"><?php echo htmlspecialchars($deskripsiSarana); ?></textarea>
             </div>
         </fieldset>
@@ -70,7 +72,7 @@ $qSarana = pg_query($conn, "
             
             <div class="form-group">
                 <label>Nama</label>
-                <input type="text" name="nama_sarana" required>
+                <input type="text" name="nama_sarana" placeholder="Masukkan nama sarana atau prasarana" required>
             </div>
 
             <div class="form-group">

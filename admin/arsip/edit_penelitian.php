@@ -2,7 +2,7 @@
 // File: admin/arsip/edit_penelitian.php
 session_start();
 
-$page_title = "KELOLA PENELITIAN";
+$page_title = "Kelola Penelitian";
 $current_page = "edit_penelitian";
 $adminPageStyles = ['forms', 'tables'];
 include '../../config/koneksi.php';
@@ -40,13 +40,13 @@ if ($qPage && pg_num_rows($qPage) > 0) {
     );
     $section_description = $qDesc && pg_num_rows($qDesc) > 0 ? pg_fetch_assoc($qDesc)['content_value'] : 'Daftar penelitian yang dilakukan oleh NCS Lab';
 } else {
-    $section_title = 'Penelitian';
+    $section_title = '';
     $section_description = 'Daftar penelitian yang dilakukan oleh NCS Lab';
 }
 ?>
 
 <div class="admin-header">
-    <h1><?php echo $page_title; ?> (Tabel: penelitian)</h1>
+    <h1><?php echo $page_title; ?> </h1>
     <p>Kelola data penelitian dan publikasi di sini</p>
 </div>
 
@@ -60,13 +60,13 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <legend>Judul dan Deskripsi Halaman Penelitian</legend>
             <div class="form-group">
                 <label for="judul_page">Judul Halaman</label>
-                <input type="text" id="judul_page" name="judul_page" 
+                <input type="text" id="judul_page" name="judul_page" placeholder="Masukkan judul halaman penelitian"
                        value="<?php echo htmlspecialchars($section_title); ?>"
                        data-autofocus="true">
             </div>
             <div class="form-group">
                 <label for="deskripsi_page">Deskripsi Halaman</label>
-                <textarea id="deskripsi_page" name="deskripsi_page" rows="4"><?php echo htmlspecialchars($section_description); ?></textarea>
+                <textarea id="deskripsi_page" name="deskripsi_page" rows="4" placeholder="Masukkan deskripsi halaman penelitian"><?php echo htmlspecialchars($section_description); ?></textarea>
             </div>
         </fieldset>
         <div class="form-group">
@@ -87,12 +87,12 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             
             <div class="form-group">
                 <label for="judul_penelitian">Judul Penelitian</label>
-                <input type="text" id="judul_penelitian" name="judul_penelitian" required>
+                <input type="text" id="judul_penelitian" name="judul_penelitian" required placeholder="Masukkan judul penelitian">
             </div>
             
             <div class="form-group">
                 <label for="deskripsi">Deskripsi Singkat</label>
-                <textarea id="deskripsi" name="deskripsi" rows="6"></textarea>
+                <textarea id="deskripsi" name="deskripsi" rows="6" placeholder="Masukkan deskripsi singkat penelitian"></textarea>
             </div>
             
             <div class="form-group">

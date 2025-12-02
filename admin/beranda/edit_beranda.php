@@ -27,8 +27,8 @@ $deskripsi = pg_fetch_assoc($qDeskripsi)['content_value'] ?? '';
         <fieldset>
             <legend>Konten Halaman Utama</legend>
             <div class="form-group">
-                <label for="deskripsi">Deskripsi Halaman Utama (Kolom: deskripsi)</label>
-                <textarea id="deskripsi" name="deskripsi" rows="8"><?php 
+                <label for="deskripsi">Deskripsi Halaman Utama</label>
+                <textarea id="deskripsi" name="deskripsi" rows="8" placeholder="Masukkan deskripsi halaman utama"><?php 
                     echo htmlspecialchars($deskripsi, ENT_QUOTES, 'UTF-8'); 
                 ?></textarea>
             </div>
