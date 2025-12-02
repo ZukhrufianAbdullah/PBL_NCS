@@ -125,7 +125,6 @@ $loginStyles = ['/css/base.css', '/css/pages-auth.css'];
                                 <i class="fa-solid fa-eye" id="eyeIcon"></i>
                             </button>
                         </div>
-                        <a href="#" class="forgot-password">Lupa Password</a>
                     </div>
                     <button type="submit" class="btn-login">Log In</button>
                 </form>
