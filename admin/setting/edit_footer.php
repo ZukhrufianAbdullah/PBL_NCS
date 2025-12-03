@@ -64,7 +64,7 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
         <fieldset>
             <legend>Konten</legend>
             <div class="form-group">
-                <label for="site_title">Judul Laboratorium</label>
+                <label for="site_title">Judul Footer</label>
                 <input type="text" id="site_title" name="site_title" 
                         placeholder="Masukkan judul utama footer"
                        value="<?php echo htmlspecialchars($settings_data['site_title'] ?? ''); ?>">

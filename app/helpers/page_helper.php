@@ -61,4 +61,58 @@ function upsert_page_content($conn, $page_id, $content_key, $content_value, $use
             array($page_id, $content_key, $content_value, $user_id));
     }
 }
+
+/**
+ * Fungsi untuk menginisialisasi halaman home dan pengaturan section
+ * Ini akan otomatis dipanggil jika belum ada data
+ */
+function init_home_page_and_sections($conn, $user_id = 1) {
+    // 1. Buat halaman 'home' jika belum ada
+    $home_page_id = ensure_page_exists($conn, 'home');
+    
+    if ($home_page_id === 0) {
+        return false; // Gagal membuat halaman
+    }
+    
+    // 2. Tambahkan deskripsi default jika belum ada
+    $check_desc = pg_query($conn, 
+        "SELECT id_page_content FROM page_content 
+         WHERE id_page = $home_page_id AND content_key = 'deskripsi'");
+    
+    if (pg_num_rows($check_desc) == 0) {
+        $default_desc = "Selamat datang di Laboratorium Network & Cyber Security. Laboratorium ini merupakan pusat penelitian dan pengembangan di bidang keamanan jaringan dan siber. Kami berkomitmen untuk menciptakan solusi inovatif dan mendidik generasi ahli keamanan siber masa depan.";
+        
+        pg_query_params($conn, 
+            "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) 
+             VALUES ($1, 'deskripsi', 'text', $2, $3)",
+            array($home_page_id, $default_desc, $user_id));
+    }
+    
+    // 3. Tambahkan pengaturan visibility untuk setiap section
+    $sections = [
+        'show_visi_misi' => ['value' => 'true', 'label' => 'Visi & Misi'],
+        'show_logo' => ['value' => 'true', 'label' => 'Logo'],
+        'show_struktur' => ['value' => 'true', 'label' => 'Struktur Organisasi'],
+        'show_agenda' => ['value' => 'true', 'label' => 'Agenda'],
+        'show_galeri' => ['value' => 'true', 'label' => 'Galeri'],
+        'show_penelitian' => ['value' => 'true', 'label' => 'Penelitian'],
+        'show_pengabdian' => ['value' => 'true', 'label' => 'Pengabdian kepada Masyarakat'],
+        'show_sarana' => ['value' => 'true', 'label' => 'Sarana & Prasarana']
+    ];
+    
+    foreach ($sections as $key => $data) {
+        $check = pg_query($conn, 
+            "SELECT id_page_content FROM page_content 
+             WHERE id_page = $home_page_id AND content_key = '$key'");
+        
+        if (pg_num_rows($check) == 0) {
+            pg_query_params($conn, 
+                "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) 
+                 VALUES ($1, $2, 'boolean', $3, $4)",
+                array($home_page_id, $key, $data['value'], $user_id));
+        }
+    }
+    
+    return $home_page_id;
+}
 ?>

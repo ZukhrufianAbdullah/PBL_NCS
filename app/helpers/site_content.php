@@ -185,3 +185,29 @@ function save_konsultatif_message($conn, string $nama, string $pesan): bool
     return (bool) pg_query_params($conn, $sql, array($nama, $pesan));
 }
 
+/**
+ * Ambil visibility settings untuk home page
+ */
+
+if (!function_exists('get_home_visibility')) {
+    function get_home_visibility($conn) {
+        $query = "
+            SELECT pc.content_key, pc.content_value 
+            FROM page_content pc
+            JOIN pages p ON pc.id_page = p.id_page
+            WHERE p.nama = 'home' AND pc.content_key LIKE 'show_%'
+        ";
+        
+        $result = pg_query($conn, $query);
+        $visibility = [];
+        
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $visibility[$row['content_key']] = ($row['content_value'] === 'true');
+            }
+        }
+        
+        return $visibility;
+    }
+}
+?>
