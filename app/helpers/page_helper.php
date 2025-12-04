@@ -80,7 +80,7 @@ function init_home_page_and_sections($conn, $user_id = 1) {
          WHERE id_page = $home_page_id AND content_key = 'deskripsi'");
     
     if (pg_num_rows($check_desc) == 0) {
-        $default_desc = "Selamat datang di Laboratorium Network & Cyber Security. Laboratorium ini merupakan pusat penelitian dan pengembangan di bidang keamanan jaringan dan siber. Kami berkomitmen untuk menciptakan solusi inovatif dan mendidik generasi ahli keamanan siber masa depan.";
+        $default_desc = "";
         
         pg_query_params($conn, 
             "INSERT INTO page_content (id_page, content_key, content_type, content_value, id_user) 

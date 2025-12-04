@@ -171,7 +171,7 @@ require_once __DIR__ . '/../includes/page-hero.php';
                 <?php foreach ($members as $member): 
                     $photoPath = !empty($member['media_path']) 
                         ? BASE_URL . '/uploads/dosen/' . htmlspecialchars($member['media_path'])
-                        : BASE_URL . '/uploads/dosen/default.png';
+                        : BASE_URL . '/assets/site/img/struktur/default.jpg';
                 ?>
                 <div class="profile-card">
                     <img src="<?= $photoPath ?>" alt="<?= htmlspecialchars($member['nama_dosen']) ?>">
