@@ -57,7 +57,7 @@ $sections = [
     'show_agenda' => 'Agenda',
     'show_galeri' => 'Galeri',
     'show_penelitian' => 'Penelitian',
-    'show_pengabdian' => 'Pengabdian kepada Masyarakat',
+    'show_pengabdian' => 'Pengabdian',
     'show_sarana' => 'Sarana & Prasarana'
 ];
 
@@ -94,7 +94,7 @@ foreach ($sections as $key => $label) {
                 <textarea id="deskripsi" name="deskripsi" rows="5" 
                           placeholder="Masukkan deskripsi singkat yang akan ditampilkan di bagian atas halaman beranda"><?php echo htmlspecialchars($deskripsi); ?></textarea>
                 <span class="form-help-text">Deskripsi ini akan muncul di intro card pada halaman beranda.</span>
-            </div>
+            </div>  
         </fieldset>
 
         <div class="form-group">

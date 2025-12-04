@@ -74,11 +74,4 @@ $total_pesan = pg_fetch_assoc($qTotalPesan)['total'];
     </div>
 </div>
 
-<div class="card card-info">
-    <div class="card-header">
-        <h3>📋 Aktivitas Terakhir</h3>
-    </div>
-    <p class="text-gray">Belum ada aktivitas terbaru.</p>
-</div>
-
 <?php require_once __DIR__ . '/includes/admin_footer.php'; ?>
