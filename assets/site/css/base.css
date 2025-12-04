@@ -125,7 +125,6 @@ a {
     content: "";
     position: absolute;
     inset: 0;
-    background: url("../img/beranda/grid.svg") center/contain repeat;
     opacity: 0.35;
 }
 

@@ -112,13 +112,11 @@ foreach ($sections as $key => $label) {
             <legend>Kontrol Tampilan Section di Home Page</legend>
             <p class="form-help-text mb-3">
                 Centang section yang ingin ditampilkan di halaman beranda. 
-                Setiap section akan menampilkan preview (3 item) dengan tombol "View More" 
-                yang mengarah ke halaman lengkap.
             </p>
             
             <div class="checkbox-grid">
                 <?php foreach ($sections as $key => $label): ?>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 0;">
                         <label class="checkbox-label">
                             <input type="checkbox" 
                                    name="<?php echo $key; ?>" 
@@ -140,86 +138,6 @@ foreach ($sections as $key => $label) {
             <button type="submit" class="btn-primary">Simpan Pengaturan Visibilitas</button>
         </div>
     </form>
-</div>
-
-<!-- Info Preview Content -->
-<div class="card">
-    <fieldset>
-        <legend>Informasi Preview Content</legend>
-        <div class="info-table">
-            <table class="my-table">
-                <thead>
-                    <tr>
-                        <th>Section</th>
-                        <th>Preview</th>
-                        <th>Link Halaman Lengkap</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Visi & Misi</strong></td>
-                        <td>2 card (Visi + Misi), terpotong 250 karakter</td>
-                        <td>/user/profil/visi_misi.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Logo</strong></td>
-                        <td>1 logo utama</td>
-                        <td>/user/profil/logo.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Struktur Organisasi</strong></td>
-                        <td>3 anggota pertama</td>
-                        <td>/user/profil/struktur.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Agenda</strong></td>
-                        <td>Tabel 3 baris terbaru</td>
-                        <td>/user/galeri/agenda.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Galeri</strong></td>
-                        <td>3 card gambar terbaru</td>
-                        <td>/user/galeri/galeri.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Penelitian</strong></td>
-                        <td>3 card penelitian terbaru</td>
-                        <td>/user/arsip/penelitian.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Pengabdian</strong></td>
-                        <td>Tabel 3 baris terbaru</td>
-                        <td>/user/arsip/pengabdian.php</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Sarana & Prasarana</strong></td>
-                        <td>3 card fasilitas</td>
-                        <td>/user/layanan/sarana_prasarana.php</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </fieldset>
-</div>
-
-<!-- Tambahkan kotak informasi tentang inisialisasi otomatis -->
-<div class="card mt-4">
-    <fieldset>
-        <legend>Informasi Sistem</legend>
-        <div class="system-info">
-            <p><strong>Sistem Inisialisasi Otomatis:</strong></p>
-            <ul>
-                <li>Sistem akan otomatis membuat halaman 'home' jika belum ada</li>
-                <li>Semua pengaturan section akan dibuat dengan nilai default 'true'</li>
-                <li>Deskripsi default akan ditambahkan jika kosong</li>
-                <li>Tidak perlu menjalankan query SQL manual di DBeaver</li>
-            </ul>
-            <div class="alert alert-success mt-2">
-                <strong>Status:</strong> Sistem berhasil diinisialisasi. 
-                Halaman home ID: <?php echo $homePageId; ?>
-            </div>
-        </div>
-    </fieldset>
 </div>
 
     <style>
