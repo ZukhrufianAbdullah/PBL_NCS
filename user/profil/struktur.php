@@ -51,7 +51,7 @@ if ($rs && pg_num_rows($rs) > 0) {
         <?php else: ?>
             <div class="card-grid sm">
                 <?php foreach ($members as $member): 
-                    $photoPath = !empty($member['media_path']) ? BASE_URL . '/uploads/dosen/' . htmlspecialchars($member['media_path']) : BASE_URL . '/uploads/dosen/default.png';
+                    $photoPath = !empty($member['media_path']) ? BASE_URL . '/uploads/dosen/' . htmlspecialchars($member['media_path']) : BASE_URL . '/assets/site/img/struktur/default.jpg';
                 ?>
                     <div class="profile-card">
                         <img src="<?php echo $photoPath; ?>" alt="<?php echo htmlspecialchars($member['nama_dosen']); ?>">

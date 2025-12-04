@@ -1,10 +1,10 @@
 <?php
 // Konfigurasi koneksi database PostgreSQL
 $host       = "localhost";             
-$port       = "5432";                  
-$dbname     = "pbl2";  
+$port       = "5433";                  
+$dbname     = "pbl";  
 $user       = "postgres";              
-$password   = "555111";                
+$password   = "16092005";                
 
 // Gunakan koneksi pgsql prosedural agar kompatibel dengan module legacy
 $conn_string = "host={$host} port={$port} dbname={$dbname} user={$user} password={$password}";

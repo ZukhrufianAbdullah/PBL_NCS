@@ -109,7 +109,11 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
         </thead>
         <tbody>
             <?php if (empty($members)): ?>
-                <tr><td colspan="4" class="text-muted">Belum ada anggota.</td></tr>
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:15px;color:#777;">
+                        <strong>Belum ada anggota yang ditambahkan</strong>
+                    </td>
+                </tr>
             <?php else: ?>
                 <?php foreach ($members as $m): ?>
                     <tr>
@@ -119,7 +123,7 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
                             <?php
                             $img = !empty($m['media_path'])
                                 ? $projectBasePath . 'uploads/dosen/' . $m['media_path']
-                                : $projectBasePath . 'uploads/dosen/default.png';
+                                : $projectBasePath . 'assets/site/img/struktur/default.jpg';
                             ?>
                             <img src="<?php echo $img; ?>" alt="" class="table-img">
                         </td>
@@ -209,12 +213,12 @@ function openEditModal(id_anggota, id_dosen, nama, jabatan, media_path) {
     const currentPhoto = document.getElementById('modal_current_photo');
     const currentPhotoName = document.getElementById('currentPhotoName');
     
-    if (media_path && media_path !== 'default.png') {
+    if (media_path && media_path !== 'default.jpg') {
         currentPhoto.src = '<?php echo $projectBasePath; ?>uploads/dosen/' + media_path;
         currentPhotoName.textContent = media_path;
     } else {
-        currentPhoto.src = '<?php echo $projectBasePath; ?>uploads/dosen/default.png';
-        currentPhotoName.textContent = 'default.png';
+        currentPhoto.src = '<?php echo $projectBasePath; ?>assets/site/img/struktur/default.jpg';
+        currentPhotoName.textContent = 'default.jpg';
     }
     
     modal.style.display = "block";
