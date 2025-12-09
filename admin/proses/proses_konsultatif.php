@@ -1,43 +1,14 @@
 <?php
+// File: admin/proses/proses_konsultatif.php
 session_start();
 include '../../config/koneksi.php';
 // Include helper
 include __DIR__ . "/../../app/helpers/page_helper.php";
 
-// Ambil id_user dari session (fallback 1 jika belum login)
+// Ambil id_user dari session
 $id_user = $_SESSION['id_user'] ?? 1;
 
-// PROSES PENGIRIMAN PESAN KONSULTATIF DARI USER
-if (isset($_POST['nama_pengirim']) && isset($_POST['isi_pesan'])) {
-    $nama_pengirim = trim($_POST['nama_pengirim']);
-    $isi_pesan = trim($_POST['isi_pesan']);
-    
-    // Validasi input
-    if (empty($nama_pengirim) || empty($isi_pesan)) {
-        $_SESSION['alert_type'] = 'warning';
-        $_SESSION['alert_message'] = 'Nama dan pesan tidak boleh kosong!';
-        header("Location: ../layanan/konsultatif.php");
-        exit();
-    }
-    
-    // Insert pesan ke database
-    $query = "INSERT INTO pesan_konsultatif (nama_pengirim, isi_pesan, id_user, tanggal_kirim, status) 
-              VALUES ($1, $2, $3, NOW(), 'pending')";
-    $result = pg_query_params($conn, $query, array($nama_pengirim, $isi_pesan, $id_user));
-    
-    if ($result) {
-        $_SESSION['alert_type'] = 'success';
-        $_SESSION['alert_message'] = 'Pesan berhasil dikirim!';
-    } else {
-        $_SESSION['alert_type'] = 'error';
-        $_SESSION['alert_message'] = 'Gagal mengirim pesan. Silakan coba lagi.';
-    }
-    
-    header("Location: ../layanan/konsultatif.php");
-    exit();
-}
-
-// PROSES EDIT SECTION CONTENT KONSULTATIF (untuk admin)
+// PROSES EDIT SECTION CONTENT KONSULTATIF
 if (isset($_POST['submit_section_content'])) {
     $section_title = trim($_POST['section_title'] ?? '');
     $section_description = trim($_POST['section_description'] ?? '');
@@ -46,8 +17,7 @@ if (isset($_POST['submit_section_content'])) {
     $id_page = ensure_page_exists($conn, 'layanan_konsultatif');
     
     if (!$id_page) {
-        $_SESSION['alert_type'] = 'error';
-        $_SESSION['alert_message'] = 'Gagal membuat atau mendapatkan halaman Konsultatif!';
+        $_SESSION['error'] = 'Gagal membuat atau mendapatkan halaman Konsultatif!';
         header("Location: ../layanan/lihat_pesan.php");
         exit();
     }
@@ -57,11 +27,48 @@ if (isset($_POST['submit_section_content'])) {
     $resultDeskripsi = upsert_page_content($conn, $id_page, 'section_description', $section_description, $id_user);
 
     if ($resultJudul && $resultDeskripsi) {
-        $_SESSION['alert_type'] = 'success';
-        $_SESSION['alert_message'] = 'Konten halaman Konsultatif berhasil diperbarui!';
+        $_SESSION['success'] = 'Konten halaman Konsultatif berhasil diperbarui!';
     } else {
-        $_SESSION['alert_type'] = 'error';
-        $_SESSION['alert_message'] = 'Gagal memperbarui konten halaman Konsultatif!';
+        $_SESSION['error'] = 'Gagal memperbarui konten halaman Konsultatif!';
+    }
+    
+    header("Location: ../layanan/lihat_pesan.php");
+    exit();
+}
+
+// PROSES KIRIM EMAIL BALASAN (OPSIONAL)
+if (isset($_POST['balas_email'])) {
+    $id_pesan = (int)($_POST['id_pesan'] ?? 0);
+    $email_tujuan = $_POST['email_tujuan'] ?? '';
+    $subjek = $_POST['subjek'] ?? '';
+    $isi_balasan = $_POST['isi_balasan'] ?? '';
+    
+    if (!empty($email_tujuan) && !empty($isi_balasan)) {
+        // Kirim email
+        $headers = "From: admin@laboratory.com\r\n";
+        $headers .= "Reply-To: admin@laboratory.com\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+        
+        $message = "<html><body>";
+        $message .= "<h2>Balasan dari Laboratorium Network & Cyber Security</h2>";
+        $message .= "<p>" . nl2br(htmlspecialchars($isi_balasan)) . "</p>";
+        $message .= "<hr>";
+        $message .= "<p><small>Email ini dikirim sebagai balasan atas pesan konsultatif Anda.</small></p>";
+        $message .= "</body></html>";
+        
+        if (mail($email_tujuan, $subjek, $message, $headers)) {
+            // Update status menjadi replied
+            pg_query_params($conn, 
+                "UPDATE konsultatif SET status = 'replied' WHERE id_konsultatif = $1",
+                array($id_pesan)
+            );
+            
+            $_SESSION['success'] = 'Email balasan berhasil dikirim!';
+        } else {
+            $_SESSION['error'] = 'Gagal mengirim email balasan!';
+        }
+    } else {
+        $_SESSION['error'] = 'Email tujuan dan isi balasan harus diisi!';
     }
     
     header("Location: ../layanan/lihat_pesan.php");
@@ -69,8 +76,7 @@ if (isset($_POST['submit_section_content'])) {
 }
 
 // Jika tidak ada aksi yang valid
-$_SESSION['alert_type'] = 'error';
-$_SESSION['alert_message'] = 'Akses tidak valid!';
-header("Location: ../layanan/konsultatif.php");
+$_SESSION['error'] = 'Akses tidak valid!';
+header("Location: ../layanan/lihat_pesan.php");
 exit();
 ?>
