@@ -57,12 +57,20 @@ if (file_exists($config_path)) {
         </div>
         <form class="card-basic contact-form" method="POST" action="<?php echo BASE_URL; ?>/user/proses/proses_konsultatif.php" id="konsultasiForm">
             <div class="mb-3">
-                <label for="nama" class="form-label">Nama</label>
-                <input type="text" id="nama" name="nama_pengirim" class="form-control" placeholder="Nama lengkap" required>
+                <label for="nama" class="form-label">Nama Lengkap *</label>
+                <input type="text" id="nama" name="nama_pengirim" class="form-control" placeholder="Nama lengkap Anda" required>
             </div>
             <div class="mb-3">
-                <label for="pesan" class="form-label">Pesan</label>
-                <textarea id="pesan" name="isi_pesan" class="form-control" placeholder="Tuliskan kebutuhan dan pertanyaan Anda" rows="5" required></textarea>
+                <label for="email" class="form-label">Email *</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="email@anda.com" required>
+                <small class="text-muted">Email ini akan digunakan untuk membalas pesan Anda</small>
+            </div>
+            <div class="mb-3">
+                <label for="pesan" class="form-label">Pesan *</label>
+                <textarea id="pesan" name="isi_pesan" class="form-control" placeholder="Tuliskan kebutuhan dan pertanyaan Anda secara detail" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+                <small class="text-muted">* Wajib diisi</small>
             </div>
             <button type="submit" class="btn btn-brand w-auto">Kirim Pesan</button>
         </form>
@@ -106,11 +114,21 @@ function showAlert(type, message) {
 // Validasi form sebelum submit
 document.getElementById('konsultasiForm').addEventListener('submit', function(e) {
     const nama = document.getElementById('nama').value.trim();
+    const email = document.getElementById('email').value.trim();
     const pesan = document.getElementById('pesan').value.trim();
     
-    if (!nama || !pesan) {
+    // Validasi email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!nama || !email || !pesan) {
         e.preventDefault();
         showAlert('warning', 'Harap lengkapi semua field yang diperlukan.');
+        return;
+    }
+    
+    if (!emailPattern.test(email)) {
+        e.preventDefault();
+        showAlert('error', 'Format email tidak valid.');
         return;
     }
     

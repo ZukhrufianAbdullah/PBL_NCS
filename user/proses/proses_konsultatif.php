@@ -14,20 +14,29 @@ require_once $config_path;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama_pengirim = $_POST['nama_pengirim'] ?? '';
+    $email = $_POST['email'] ?? '';
     $isi_pesan = $_POST['isi_pesan'] ?? '';
 
-    if (!empty($nama_pengirim) && !empty($isi_pesan)) {
+    if (!empty($nama_pengirim) && !empty($email) && !empty($isi_pesan)) {
+        // Validasi email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['alert_type'] = 'error';
+            $_SESSION['alert_message'] = "Format email tidak valid.";
+            header("Location: " . BASE_URL . "/user/layanan/konsultatif.php");
+            exit();
+        }
+        
         // Simpan ke database - PostgreSQL version
-        $sql = "INSERT INTO konsultatif (nama_pengirim, isi_pesan) VALUES ($1, $2)";
-        $result = pg_query_params($conn, $sql, array($nama_pengirim, $isi_pesan));
+        $sql = "INSERT INTO konsultatif (nama_pengirim, email, isi_pesan, status) VALUES ($1, $2, $3, 'pending')";
+        $result = pg_query_params($conn, $sql, array($nama_pengirim, $email, $isi_pesan));
 
         if ($result) {
             // Set session untuk notifikasi sukses
             $_SESSION['alert_type'] = 'success';
-            $_SESSION['alert_message'] = "Pesan berhasil dikirim. Kami akan menghubungi Anda segera.";
+            $_SESSION['alert_message'] = "Pesan berhasil dikirim. Kami akan menghubungi Anda melalui email.";
             
-            // OPSIONAL: Kirim notifikasi ke admin (bisa dikembangkan dengan email/websocket)
-            // notifyAdminNewMessage($nama_pengirim, $isi_pesan);
+            // Kirim notifikasi email ke admin (opsional)
+            sendAdminNotification($nama_pengirim, $email, $isi_pesan);
             
         } else {
             $_SESSION['alert_type'] = 'error';
@@ -35,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         $_SESSION['alert_type'] = 'error';
-        $_SESSION['alert_message'] = "Nama dan pesan harus diisi.";
+        $_SESSION['alert_message'] = "Semua field harus diisi.";
     }
 
     // Redirect kembali ke halaman konsultatif
@@ -47,10 +56,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 
-// Fungsi untuk notifikasi admin (opsional - bisa dikembangkan)
-function notifyAdminNewMessage($nama_pengirim, $isi_pesan) {
-    // Contoh: Simpan notifikasi di database atau kirim email
-    // Ini adalah placeholder untuk pengembangan lebih lanjut
-    error_log("Pesan baru dari: $nama_pengirim - " . substr($isi_pesan, 0, 50) . "...");
+// Fungsi untuk notifikasi admin via email (opsional)
+function sendAdminNotification($nama, $email, $pesan) {
+    // Ganti dengan email admin yang sebenarnya
+    $admin_email = "admin@laboratory.com"; 
+    $subject = "Pesan Konsultatif Baru dari $nama";
+    $message = "Halo Admin,\n\n";
+    $message .= "Ada pesan konsultatif baru:\n\n";
+    $message .= "Nama: $nama\n";
+    $message .= "Email: $email\n";
+    $message .= "Pesan:\n$pesan\n\n";
+    $message .= "Silakan balas melalui dashboard admin.\n";
+    $message .= "Waktu: " . date('Y-m-d H:i:s') . "\n";
+    
+    // Uncomment jika ingin mengirim email
+    // mail($admin_email, $subject, $message, "From: no-reply@laboratory.com");
+    
+    error_log("Notifikasi admin: Pesan baru dari $nama ($email)");
 }
 ?>
