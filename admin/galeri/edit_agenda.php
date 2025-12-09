@@ -30,7 +30,7 @@ $deskripsiAgenda = pg_fetch_assoc($qDeskripsiAgenda)['content_value'] ?? '';
 $qAgenda = pg_query($conn, "
     SELECT * 
     FROM agenda
-    ORDER BY tanggal ASC");
+    ORDER BY tanggal DESC");
 ?>
 
 

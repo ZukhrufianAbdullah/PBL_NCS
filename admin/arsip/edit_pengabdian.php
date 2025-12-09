@@ -228,11 +228,6 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Deskripsi</label>
-                <textarea name="deskripsi" id="edit_deskripsi" rows="4"></textarea>
-            </div>
-
             <div class="form-group" style="margin-top: 20px; display: flex; gap: 10px;">
                 <button type="submit" class="btn-primary">Simpan Perubahan</button>
                 <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
@@ -251,7 +246,6 @@ function openEditModal(row) {
     document.getElementById("edit_skema").value = row.skema || '';
     document.getElementById("edit_tahun").value = row.tahun;
     document.getElementById("edit_ketua").value = row.id_ketua || '';
-    document.getElementById("edit_deskripsi").value = row.deskripsi || '';
 
     document.getElementById("editModal").style.display = "block";
 }
