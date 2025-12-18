@@ -215,14 +215,14 @@ require_once __DIR__ . '/../includes/page-hero.php';
 
         if (!empty($members)):
     ?>
-            <section class="section-gap">
+            <section class="section-gap section-alt">
                 <div class="container">
                     <div class="section-header animate-on-scroll">
                         <h2><?= nl2br(htmlspecialchars($judulStruktur)) ?></h2>
                         <p><?= nl2br(htmlspecialchars($deskripsiStruktur)) ?></p>
                     </div>
 
-                    <div class="struktur-section ketua-section">
+                    <div class="struktur-section ketua-section animate-on-scroll">
                         <?php foreach ($members as $member):
                             $photoPath = !empty($member['media_path'])
                                 ? BASE_URL . '/uploads/dosen/' . htmlspecialchars($member['media_path'])
