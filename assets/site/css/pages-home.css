@@ -100,10 +100,6 @@
     transition: opacity 0.8s ease 0.5s;
 }
 
-.section-header.animate-on-scroll.animated h2::after {
-    opacity: 1;
-}
-
 .section-header.animate-on-scroll p {
     opacity: 0;
     transform: translateY(10px);
