@@ -111,6 +111,288 @@ a {
     background-color: var(--surface-alt);
 }
 
+/* =======================================================
+   NAVBAR RESPONSIVE 
+======================================================= */
+
+/* Wrapper untuk brand dan toggle */
+.navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Brand container */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    min-width: 0;
+    flex-grow: 1;
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* Logo */
+.brand-logo {
+    flex-shrink: 0;
+}
+
+.logo-img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Judul teks */
+.brand-text {
+    font-weight: 700;
+    color: var(--text-dark);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    min-width: 0;
+    line-height: 1.2;
+}
+
+/* =============== BREAKPOINT PERUBAHAN =============== */
+/* UBAH SEMUA 992px MENJADI 1200px (karena pakai navbar-expand-xl) */
+
+/* Desktop (≥ 1200px) - Tampilan normal inline */
+@media (min-width: 1200px) {
+    .navbar-brand {
+        flex-wrap: nowrap;
+    }
+    
+    .brand-text {
+        white-space: nowrap;
+        overflow: visible;
+    }
+    
+    .navbar-toggler {
+        display: none;
+    }
+}
+
+/* Large Tablet & Laptop kecil (992px - 1199px) - iPad Pro masuk sini */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .navbar-brand-wrapper {
+        flex-wrap: wrap;
+    }
+    
+    .navbar-brand {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .brand-text {
+        font-size: 0.95em;
+        line-height: 1.3;
+        /* Biarkan wrap jika perlu */
+    }
+    
+    .logo-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .navbar-toggler {
+        width: 40px;
+        height: 40px;
+        padding: 0.25rem;
+        border: none;
+        background: transparent;
+        order: 3;
+        margin-left: auto;
+    }
+    
+    /* Menu collapse untuk iPad Pro */
+    .navbar-collapse {
+        margin-top: 0.5rem;
+        padding: 1rem;
+        background: var(--surface);
+        border-radius: var(--radius-md);
+        box-shadow: 0 10px 25px rgba(13, 23, 44, 0.08);
+    }
+    
+    .ms-lg-3 {
+        margin-left: 0 !important;
+    }
+    
+    .mt-3.mt-lg-0 {
+        margin-top: 1rem !important;
+    }
+    
+    .btn-brand {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .brand-text {
+        font-size: 0.9em;
+        line-height: 1.3;
+    }
+    
+    .logo-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .navbar-toggler {
+        width: 40px;
+        height: 40px;
+        padding: 0.25rem;
+        border: none;
+        background: transparent;
+    }
+}
+
+/* Mobile (576px - 767px) */
+@media (max-width: 767.98px) {
+    .navbar-brand-wrapper {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .navbar-brand {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    
+    .brand-text {
+        font-size: 0.9em;
+        line-height: 1.4;
+        word-break: break-word;
+        -webkit-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
+    }
+    
+    .logo-img {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .navbar-toggler {
+        order: 3;
+        margin-left: auto;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .lab-navbar {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+}
+
+/* Mobile kecil (< 576px) */
+@media (max-width: 575.98px) {
+    .navbar-brand-wrapper {
+        gap: 0.25rem;
+    }
+    
+    .brand-text {
+        font-size: 0.85em;
+        line-height: 1.5;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    
+    .logo-img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .navbar-toggler {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+    
+    .lab-navbar {
+        padding-top: 0.625rem !important;
+        padding-bottom: 0.625rem !important;
+    }
+    
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Untuk kasus judul sangat panjang */
+@media (max-width: 400px) {
+    .brand-text {
+        font-size: 0.8em;
+        line-height: 1.6;
+        word-break: break-all;
+        overflow-wrap: anywhere;
+    }
+}
+
+/* Pastikan tidak ada horizontal scroll */
+body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Fix untuk navbar collapse di mobile & tablet */
+@media (max-width: 1199.98px) {
+    .navbar-collapse {
+        margin-top: 0.5rem;
+        padding: 1rem;
+        background: var(--surface);
+        border-radius: var(--radius-md);
+        box-shadow: 0 10px 25px rgba(13, 23, 44, 0.08);
+    }
+    
+    .ms-lg-3 {
+        margin-left: 0 !important;
+    }
+    
+    .mt-3.mt-lg-0 {
+        margin-top: 1rem !important;
+    }
+    
+    .btn-brand {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Desktop XL tetap normal */
+@media (min-width: 1200px) {
+    .navbar-brand-wrapper {
+        width: auto;
+        flex-grow: 0;
+    }
+    
+    .navbar-collapse {
+        margin-top: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+}
+
 /* ---------------- Hero Banner ---------------- */
 
 .page-hero {

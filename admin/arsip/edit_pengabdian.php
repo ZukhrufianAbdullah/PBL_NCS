@@ -128,66 +128,75 @@ if ($qPage && pg_num_rows($qPage) > 0) {
 <div class="card">
     <div class="card-header">
         <h3>Daftar Pengabdian Masyarakat</h3>
+        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
+            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
+        </small>
     </div>
 
-    <table class="data-table" id="pengabdianTable">
-        <thead>
-            <tr>
-                <th class="col-no">No</th>
-                <th>Judul Pengabdian</th>
-                <th class="col-jabatan">Ketua Tim</th>
-                <th class="col-urutan">Skema</th>
-                <th class="col-urutan">Tahun</th>
-                <th style="width:300px;text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php 
-            $no = 1;
-            $hasData = false;
+    <div class="table-responsive">
+        <table class="data-table" id="pengabdianTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Judul Pengabdian</th>
+                    <th class="col-jabatan">Ketua Tim</th>
+                    <th class="col-urutan">Skema</th>
+                    <th class="col-urutan">Tahun</th>
+                    <th class="col-actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $no = 1;
+                $hasData = false;
 
-            while ($row = pg_fetch_assoc($qPengabdian)): 
-                $hasData = true;
-            ?>
-            <tr>
-                <td><?php echo $no++; ?></td>
-                <td>
-                    <strong><?php echo htmlspecialchars($row['judul_pengabdian']); ?></strong>
-                    <?php if (!empty($row['deskripsi'])): ?>
-                    <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
-                    <?php endif; ?>
-                </td>
-                <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
-                <td style="text-align: center;">
-                    <span class="badge badge-info"><?php echo htmlspecialchars($row['skema']); ?></span>
-                </td>
-                <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
-                <td style="text-align: center;">
-                    <button class="btn-warning" 
-                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                        Edit
-                    </button>
+                while ($row = pg_fetch_assoc($qPengabdian)): 
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars(substr($row['judul_pengabdian'], 0, 80)); ?><?php echo strlen($row['judul_pengabdian']) > 80 ? '...' : ''; ?></strong>
+                        <?php if (!empty($row['deskripsi'])): ?>
+                        <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars(substr($row['deskripsi'], 0, 60))); ?><?php echo strlen($row['deskripsi']) > 60 ? '...' : ''; ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
+                    <td style="text-align: center;">
+                        <span class="badge badge-info"><?php echo htmlspecialchars($row['skema']); ?></span>
+                    </td>
+                    <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
+                    <td class="action-cell">
+                        <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button class="btn-warning btn-sm" 
+                                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
 
-                    <form method="post" action="../proses/proses_pengabdian.php" 
-                          style="display:inline;" 
-                          onsubmit="return confirm('Yakin ingin menghapus pengabdian ini?');">
-                        <input type="hidden" name="hapus" value="1">
-                        <input type="hidden" name="id_pengabdian" value="<?php echo $row['id_pengabdian']; ?>">
-                        <button type="submit" class="btn-danger">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-            <?php endwhile; ?>
+                            <form method="post" action="../proses/proses_pengabdian.php" 
+                                  style="display:inline;" 
+                                  onsubmit="return confirm('Yakin ingin menghapus pengabdian ini?');">
+                                <input type="hidden" name="hapus" value="1">
+                                <input type="hidden" name="id_pengabdian" value="<?php echo $row['id_pengabdian']; ?>">
+                                <button type="submit" class="btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-            <?php if (!$hasData): ?>
-            <tr>
-                <td colspan="6" style="text-align:center; padding:15px; color:#777;">
-                    <strong>Belum ada pengabdian masyarakat yang ditambahkan</strong>
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                        <strong>Belum ada pengabdian masyarakat yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- ============================

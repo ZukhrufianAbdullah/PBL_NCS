@@ -119,64 +119,72 @@ $qAgenda = pg_query($conn, "
 <div class="card">
     <div class="card-header">
         <h3>Daftar Agenda</h3>
+        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
+            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
+        </small>
     </div>
 
-    <table class="data-table" id="agendaTable">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Judul Agenda</th>
-                <th>Deskripsi</th>
-                <th>Tanggal</th>
-                <th>Status</th>
-                <th style="width: 300px; text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-    <?php 
-    $no = 1;
-    $hasData = false;
+    <div class="table-responsive">
+        <table class="data-table" id="agendaTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Judul Agenda</th>
+                    <th>Deskripsi</th>
+                    <th class="col-urutan">Tanggal</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $no = 1;
+                $hasData = false;
 
-    while ($row = pg_fetch_assoc($qAgenda)): 
-        $hasData = true;
-    ?>
-    <tr>
-        <td><?php echo $no++; ?></td>
-        <td><?php echo htmlspecialchars($row['judul']); ?></td>
-        <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
-        <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
-        <td>
-            <?php echo ($row['status'] === 't')
-                ? '<span class="badge badge-success">Aktif</span>'
-                : '<span class="badge badge-danger">Arsip</span>'; ?>
-        </td>
-        <td style="text-align:center;">
-            <button class="btn-warning" 
-                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                Edit
-            </button>
+                while ($row = pg_fetch_assoc($qAgenda)): 
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td><?php echo htmlspecialchars($row['judul']); ?></td>
+                    <td><?php echo nl2br(htmlspecialchars(substr($row['deskripsi'], 0, 100))); ?><?php echo strlen($row['deskripsi']) > 100 ? '...' : ''; ?></td>
+                    <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+                    <td>
+                        <?php echo ($row['status'] === 't')
+                            ? '<span class="badge badge-success">Aktif</span>'
+                            : '<span class="badge badge-danger">Arsip</span>'; ?>
+                    </td>
+                    <td class="action-cell">
+                        <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button class="btn-warning btn-sm" 
+                                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
 
-            <form method="post" action="../proses/proses_agenda.php" 
-                  style="display:inline;" 
-                  onsubmit="return confirm('Yakin ingin menghapus agenda ini?');">
-                <input type="hidden" name="hapus" value="1">
-                <input type="hidden" name="id_agenda" value="<?php echo $row['id_agenda']; ?>">
-                <button type="submit" class="btn-danger">Hapus</button>
-            </form>
-        </td>
-    </tr>
-    <?php endwhile; ?>
+                            <form method="post" action="../proses/proses_agenda.php" 
+                                  style="display:inline;" 
+                                  onsubmit="return confirm('Yakin ingin menghapus agenda ini?');">
+                                <input type="hidden" name="hapus" value="1">
+                                <input type="hidden" name="id_agenda" value="<?php echo $row['id_agenda']; ?>">
+                                <button type="submit" class="btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-    <?php if (!$hasData): ?>
-    <tr>
-        <td colspan="6" style="text-align:center; padding:15px; color:#777;">
-            <strong>Belum ada agenda yang ditambahkan</strong>
-        </td>
-    </tr>
-    <?php endif; ?>
-</tbody>
-
-    </table>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                        <strong>Belum ada agenda yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 

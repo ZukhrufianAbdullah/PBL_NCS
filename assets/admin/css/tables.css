@@ -1,3 +1,18 @@
+/* ===========================
+   RESPONSIVE TABLE CONTAINER (ADMIN)
+=========================== */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-left: auto;
+}
+
+/* ===========================
+   TABLE BASE STYLING
+=========================== */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -5,6 +20,7 @@ table {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     border-radius: 10px;
     overflow: hidden;
+    min-width: 600px; /* Minimum width untuk memaksa scroll di mobile */
 }
 
 thead {
@@ -40,6 +56,9 @@ tbody tr:last-child {
     border-bottom: none;
 }
 
+/* ===========================
+   COLUMN WIDTHS
+=========================== */
 .col-no { width: 60px; text-align: center; }
 .col-foto { width: 110px; }
 .col-jabatan { width: 160px; }
@@ -51,6 +70,9 @@ tbody tr:last-child {
 .col-status { width: 100px; text-align: center; }
 .col-actions { width: 200px; text-align: center; }
 
+/* ===========================
+   TABLE ELEMENTS
+=========================== */
 .action-cell,
 .action-column {
     text-align: center !important;
@@ -64,6 +86,9 @@ tbody tr:last-child {
     border: 2px solid var(--border-gray);
 }
 
+/* ===========================
+   PAGINATION
+=========================== */
 .pagination {
     display: flex;
     justify-content: center;
@@ -96,3 +121,141 @@ tbody tr:last-child {
     border-color: var(--primary-color);
 }
 
+/* ===========================
+   RESPONSIVE DESIGN FOR MOBILE
+=========================== */
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        margin: 0 -1rem;
+        width: calc(100% + 2rem);
+        position: relative;
+        left: -1rem;
+        margin-left: auto;
+    }
+    
+    /* Optional: Add visual hint for scrolling */
+    .table-responsive::after {
+        content: '← Geser →';
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        z-index: 1;
+        animation: pulseHint 2s infinite;
+    }
+    
+    @keyframes pulseHint {
+        0%, 100% { opacity: 0.7; }
+        50% { opacity: 1; }
+    }
+    
+    /* Adjust table elements for mobile */
+    thead th {
+        padding: 12px 10px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+    
+    tbody td {
+        padding: 12px 10px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    
+    /* Make table images smaller on mobile */
+    .table-img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    /* Adjust button sizes and layout for mobile */
+    .btn-sm {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+        margin-bottom: 5px;
+        display: block;
+        width: 100%;
+    }
+    
+    .action-form {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    /* Card header adjustment */
+    .card-header {
+        padding: 1rem;
+    }
+    
+    .card-header h3 {
+        font-size: 1.2rem;
+    }
+}
+
+/* ===========================
+   VERY SMALL SCREENS
+=========================== */
+@media (max-width: 480px) {
+    .table-responsive {
+        margin: 0 -0.75rem;
+        width: calc(100% + 1.5rem);
+        left: -0.75rem;
+        margin-left: auto;
+    }
+    
+    .table-img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    thead th,
+    tbody td {
+        padding: 10px 8px;
+        font-size: 0.85rem;
+    }
+    
+    /* Stack buttons vertically */
+    .action-cell,
+    .action-column {
+        min-width: 120px;
+    }
+    
+    /* Hide scroll hint on very small screens */
+    .table-responsive::after {
+        display: none;
+    }
+}
+
+/* ===========================
+   SCROLLBAR STYLING
+=========================== */
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+    margin: 0 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Firefox scrollbar */
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}

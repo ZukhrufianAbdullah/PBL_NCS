@@ -111,72 +111,79 @@ $qGaleri = pg_query($conn, "
 <div class="card">
     <div class="card-header">
         <h3>Daftar Galeri</h3>
+        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
+            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
+        </small>
     </div>
 
-    <table class="data-table" id="galeriTable">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Gambar</th>
-                <th>Judul</th>
-                <th>Deskripsi</th>
-                <th>Tanggal</th>
-                <th style="width:300px;text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <?php
-            $no = 1;
-            $hasData = false;
-            while ($row = pg_fetch_assoc($qGaleri)):
-                $hasData = true;
-            ?>
+    <div class="table-responsive">
+        <table class="data-table" id="galeriTable">
+            <thead>
                 <tr>
-                    <td><?php echo $no++; ?></td>
-
-                    <td>
-                        <img src="../../uploads/galeri/<?php echo htmlspecialchars($row['media_path']); ?>"
-                            style="width:70px;border-radius:4px;">
-                    </td>
-
-                    <td><?php echo htmlspecialchars($row['judul']); ?></td>
-
-                    <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
-
-                    <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
-
-                    <td style="text-align:center;">
-
-                        <!-- Tombol Edit -->
-                        <button class="btn-warning"
-                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                            Edit
-                        </button>
-
-                        <!-- Tombol Hapus -->
-                        <form method="post" action="../proses/proses_galeri.php"
-                            style="display:inline;"
-                            onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                            <input type="hidden" name="hapus" value="1">
-                            <input type="hidden" name="id_galeri" value="<?php echo $row['id_galeri']; ?>">
-                            <button type="submit" class="btn-danger">Hapus</button>
-                        </form>
-
-                    </td>
+                    <th>No</th>
+                    <th>Gambar</th>
+                    <th>Judul</th>
+                    <th>Deskripsi</th>
+                    <th>Tanggal</th>
+                    <th class="col-actions">Aksi</th>
                 </tr>
-            <?php endwhile; ?>
+            </thead>
 
-            <?php if (!$hasData): ?>
-                <tr>
-                    <td colspan="6" style="text-align:center;padding:15px;color:#777;">
-                        <strong>Belum ada galeri yang ditambahkan</strong>
-                    </td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
+            <tbody>
+                <?php
+                $no = 1;
+                $hasData = false;
+                while ($row = pg_fetch_assoc($qGaleri)):
+                    $hasData = true;
+                ?>
+                    <tr>
+                        <td><?php echo $no++; ?></td>
 
-    </table>
+                        <td>
+                            <img src="../../uploads/galeri/<?php echo htmlspecialchars($row['media_path']); ?>"
+                                style="width:70px;border-radius:4px;">
+                        </td>
+
+                        <td><?php echo htmlspecialchars($row['judul']); ?></td>
+
+                        <td><?php echo nl2br(htmlspecialchars(substr($row['deskripsi'], 0, 100))); ?><?php echo strlen($row['deskripsi']) > 100 ? '...' : ''; ?></td>
+
+                        <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+
+                        <td class="action-cell">
+                            <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <!-- Tombol Edit -->
+                                <button class="btn-warning btn-sm"
+                                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+
+                                <!-- Tombol Hapus -->
+                                <form method="post" action="../proses/proses_galeri.php"
+                                    style="display:inline;"
+                                    onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                    <input type="hidden" name="hapus" value="1">
+                                    <input type="hidden" name="id_galeri" value="<?php echo $row['id_galeri']; ?>">
+                                    <button type="submit" class="btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+
+                <?php if (!$hasData): ?>
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:15px;color:#777;">
+                            <strong>Belum ada galeri yang ditambahkan</strong>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+
+        </table>
+    </div>
 </div>
 
 

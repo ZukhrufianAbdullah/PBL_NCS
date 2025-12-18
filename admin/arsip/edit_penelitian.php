@@ -135,68 +135,70 @@ if ($qPage && pg_num_rows($qPage) > 0) {
         <h3>Daftar Penelitian</h3>
     </div>
 
-    <table class="data-table" id="penelitianTable">
-        <thead>
-            <tr>
-                <th class="col-no">No</th>
-                <th>Judul Penelitian</th>
-                <th class="col-jabatan">Peneliti</th>
-                <th class="col-urutan">Tahun</th>
-                <th class="col-status">File</th>
-                <th style="width:300px; text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php 
-            $no = 1;
-            $hasData = false;
+    <div class="table-responsive">
+        <table class="data-table" id="penelitianTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Judul Penelitian</th>
+                    <th class="col-jabatan">Peneliti</th>
+                    <th class="col-urutan">Tahun</th>
+                    <th class="col-status">File</th>
+                    <th style="width:300px; text-align:center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $no = 1;
+                $hasData = false;
 
-            while ($row = pg_fetch_assoc($qPenelitian)): 
-                $hasData = true;
-            ?>
-            <tr>
-                <td><?php echo $no++; ?></td>
-                <td>
-                    <strong><?php echo htmlspecialchars($row['judul_penelitian']); ?></strong>
-                    <?php if (!empty($row['deskripsi'])): ?>
-                    <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
-                    <?php endif; ?>
-                </td>
-                <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
-                <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
-                <td style="text-align: center;">
-                    <?php if (!empty($row['media_path'])): ?>
-                        <span class="badge badge-success">PDF</span>
-                    <?php else: ?>
-                        <span class="badge badge-danger">Tidak Ada</span>
-                    <?php endif; ?>
-                </td>
-                <td style="text-align: center;">
-                    <button class="btn-warning" 
-                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                        Edit
-                    </button>
+                while ($row = pg_fetch_assoc($qPenelitian)): 
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars($row['judul_penelitian']); ?></strong>
+                        <?php if (!empty($row['deskripsi'])): ?>
+                        <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
+                    <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
+                    <td style="text-align: center;">
+                        <?php if (!empty($row['media_path'])): ?>
+                            <span class="badge badge-success">PDF</span>
+                        <?php else: ?>
+                            <span class="badge badge-danger">Tidak Ada</span>
+                        <?php endif; ?>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-warning" 
+                                onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                            Edit
+                        </button>
 
-                    <form method="post" action="../proses/proses_penelitian.php" 
-                          style="display:inline;" 
-                          onsubmit="return confirm('Yakin ingin menghapus penelitian ini?');">
-                        <input type="hidden" name="hapus" value="1">
-                        <input type="hidden" name="id_penelitian" value="<?php echo $row['id_penelitian']; ?>">
-                        <button type="submit" class="btn-danger">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-            <?php endwhile; ?>
+                        <form method="post" action="../proses/proses_penelitian.php" 
+                            style="display:inline;" 
+                            onsubmit="return confirm('Yakin ingin menghapus penelitian ini?');">
+                            <input type="hidden" name="hapus" value="1">
+                            <input type="hidden" name="id_penelitian" value="<?php echo $row['id_penelitian']; ?>">
+                            <button type="submit" class="btn-danger">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-            <?php if (!$hasData): ?>
-            <tr>
-                <td colspan="6" style="text-align:center; padding:15px; color:#777;">
-                    <strong>Belum ada penelitian yang ditambahkan</strong>
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                        <strong>Belum ada penelitian yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- ============================

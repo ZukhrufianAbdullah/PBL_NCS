@@ -140,15 +140,107 @@ foreach ($sections as $key => $label) {
     </form>
 </div>
 
-    <style>
-    /* Checkbox Grid Layout */
+    <!-- Tambahkan CSS responsif di bagian style -->
+<style>
+    /* =======================================================
+       CHECKBOX GRID RESPONSIVE FIX
+    ======================================================== */
+
+    /* Checkbox Grid Layout - PERBAIKAN UTAMA */
     .checkbox-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-bottom: 1rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
+    /* Untuk mobile kecil: 1 kolom */
+    @media (max-width: 480px) {
+        .checkbox-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+    }
+
+    /* Untuk tablet: 2 kolom */
+    @media (min-width: 481px) and (max-width: 768px) {
+        .checkbox-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Untuk desktop: 3 kolom */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .checkbox-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* Untuk desktop besar: 4 kolom */
+    @media (min-width: 1025px) {
+        .checkbox-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    /* Card container - PERBAIKAN PENTING */
+    .card {
+        background: var(--white);
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+        margin-bottom: 24px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden; /* Mencegah overflow */
+    }
+
+    /* Form container fix */
+    form {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Fieldset fix */
+    fieldset {
+        border: none;
+        background-color: var(--white);
+        padding: 24px;
+        margin-bottom: 0;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Legend fix untuk responsif */
+    legend {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--accent-yellow);
+        padding: 10px 15px;
+        /* margin-bottom: 20px; */
+        width: 100%;
+        max-width: calc(100% + 48px);
+        margin-left: -24px;
+        margin-right: -24px;
+        margin-top: -24px;
+        display: block;
+        background-color: #ffffff;
+        border-radius: 10px 10px 0 0;
+        box-sizing: border-box;
+        position: relative;
+        left: 0;
+        right: 0;
+    }
+
+    /* Checkbox label yang lebih responsif */
     .checkbox-label {
         display: flex;
         align-items: center;
@@ -160,6 +252,10 @@ foreach ($sections as $key => $label) {
         border-radius: 8px;
         border: 2px solid #e9ecef;
         transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+        word-break: break-word; /* Untuk text panjang */
+        hyphens: auto; /* Tambah hyphen jika perlu */
     }
 
     .checkbox-label:hover {
@@ -171,6 +267,7 @@ foreach ($sections as $key => $label) {
         width: 20px;
         height: 20px;
         cursor: pointer;
+        flex-shrink: 0; /* Mencegah checkbox menyusut */
     }
 
     .checkbox-label input[type="checkbox"]:checked + span {
@@ -181,6 +278,9 @@ foreach ($sections as $key => $label) {
     .checkbox-label span {
         user-select: none;
         flex: 1;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.4;
     }
 
     /* Alert Styling */
@@ -188,6 +288,9 @@ foreach ($sections as $key => $label) {
         padding: 1rem;
         border-radius: 8px;
         border-left: 4px solid;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .alert-info {
@@ -200,39 +303,40 @@ foreach ($sections as $key => $label) {
         font-weight: 600;
     }
 
-    /* Info Table */
-    .info-table {
-        overflow-x: auto;
-    }
-
-    .my-table {
+    /* Admin header */
+    .admin-header {
+        margin-bottom: 2rem;
         width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
-    .my-table th,
-    .my-table td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid #e9ecef;
+    .admin-header h1 {
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
     }
 
-    .my-table th {
-        background: #f8f9fa;
-        font-weight: 600;
-        color: #495057;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .admin-header p {
+        color: var(--text-gray);
+        font-size: 0.95rem;
     }
 
-    .my-table tbody tr:hover {
-        background: #f8f9fa;
+    /* Form group fix */
+    .form-group {
+        margin-bottom: 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
-    .my-table tbody tr:last-child td {
-        border-bottom: none;
+    /* Help text */
+    .form-help-text {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        margin-top: 6px;
+        font-style: italic;
+        line-height: 1.4;
     }
 
     .mb-3 {
@@ -242,37 +346,93 @@ foreach ($sections as $key => $label) {
     .mt-3 {
         margin-top: 1rem;
     }
-    
-    .system-info {
-    padding: 1rem;
+
+    /* Responsive textarea */
+    textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.6;
     }
 
-    .system-info ul {
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .system-info li {
-        margin-bottom: 0.5rem;
-        line-height: 1.5;
-    }
-
-    .alert-success {
-        background: #d4edda;
-        border-color: #28a745;
-        color: #155724;
-        padding: 0.75rem;
+    /* Button fix */
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 24px;
         border-radius: 6px;
-        margin-top: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: auto;
+        min-width: 150px;
     }
 
-    .mt-2 {
-        margin-top: 0.5rem;
+    .btn-primary:hover {
+        background-color: #0a2666;
     }
 
-    .mt-4 {
-        margin-top: 1.5rem;
+    /* Mobile-specific fixes */
+    @media (max-width: 768px) {
+        .card {
+            padding: 16px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        fieldset {
+            padding: 16px;
+        }
+        
+        legend {
+            font-size: 1.1rem;
+            padding: 8px 12px;
+            margin-left: -16px;
+            margin-right: -16px;
+            margin-top: -16px;
+            max-width: calc(100% + 32px);
+        }
+        
+        .checkbox-label {
+            padding: 0.6rem;
+            font-size: 0.9rem;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .alert {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            width: 100%; /* Full width di mobile */
+            text-align: center;
+        }
     }
-    </style>
+
+    /* Very small mobile */
+    @media (max-width: 360px) {
+        .checkbox-grid {
+            gap: 0.5rem;
+        }
+        
+        .checkbox-label {
+            padding: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+    }
+</style>
 
     <?php require_once dirname(__DIR__) . '/includes/admin_footer.php'; ?>

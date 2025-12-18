@@ -98,62 +98,77 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
 </div>
 
 <div class="card">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Nama</th>
-                <th>Jabatan</th>
-                <th>Foto</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($members)): ?>
-                <tr>
-                    <td colspan="6" style="text-align:center;padding:15px;color:#777;">
-                        <strong>Belum ada anggota yang ditambahkan</strong>
-                    </td>
-                </tr>
-            <?php else: ?>
-                <?php foreach ($members as $m): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($m['nama_dosen']); ?></td>
-                        <td><?php echo htmlspecialchars($m['jabatan']); ?></td>
-                        <td>
-                            <?php
-                            $img = !empty($m['media_path'])
-                                ? $projectBasePath . 'uploads/dosen/' . $m['media_path']
-                                : $projectBasePath . 'assets/site/img/struktur/default.jpg';
-                            ?>
-                            <img src="<?php echo $img; ?>" alt="" class="table-img">
-                        </td>
-                        <td>
-                            <button type="button" 
-                                    class="btn-warning btn-sm" 
-                                    onclick="openEditModal(
-                                        <?php echo $m['id_anggota']; ?>, 
-                                        <?php echo $m['id_dosen']; ?>, 
-                                        '<?php echo htmlspecialchars($m['nama_dosen']); ?>', 
-                                        '<?php echo htmlspecialchars($m['jabatan']); ?>',
-                                        '<?php echo $m['media_path']; ?>'
-                                    )">
-                                Edit
-                            </button>
+    <div class="card-header">
+        <h3>Daftar Anggota Organisasi</h3>
+        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
+            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
+        </small>
+    </div>
 
-                            <form class="action-form"
-                                  method="post"
-                                  action="<?php echo $adminBasePath; ?>proses/proses_struktur.php"
-                                  onsubmit="return confirm('Yakin ingin menghapus anggota ini?');">
-                                <input type="hidden" name="hapus" value="1">
-                                <input type="hidden" name="id_anggota" value="<?php echo $m['id_anggota']; ?>">
-                                <button type="submit" class="btn-danger btn-sm">Hapus</button>
-                            </form>
+    <!-- ADD THIS WRAPPER -->
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Jabatan</th>
+                    <th>Foto</th>
+                    <th class="col-actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($members)): ?>
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding:15px;color:#777;">
+                            <strong>Belum ada anggota yang ditambahkan</strong>
                         </td>
                     </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                <?php else: ?>
+                    <?php foreach ($members as $m): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($m['nama_dosen']); ?></td>
+                            <td><?php echo htmlspecialchars($m['jabatan']); ?></td>
+                            <td>
+                                <?php
+                                $img = !empty($m['media_path'])
+                                    ? $projectBasePath . 'uploads/dosen/' . $m['media_path']
+                                    : $projectBasePath . 'assets/site/img/struktur/default.jpg';
+                                ?>
+                                <img src="<?php echo $img; ?>" alt="<?php echo htmlspecialchars($m['nama_dosen']); ?>" class="table-img">
+                            </td>
+                            <td class="action-cell">
+                                <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                    <button type="button" 
+                                            class="btn-warning btn-sm" 
+                                            onclick="openEditModal(
+                                                <?php echo $m['id_anggota']; ?>, 
+                                                <?php echo $m['id_dosen']; ?>, 
+                                                '<?php echo htmlspecialchars($m['nama_dosen']); ?>', 
+                                                '<?php echo htmlspecialchars($m['jabatan']); ?>',
+                                                '<?php echo $m['media_path']; ?>'
+                                            )">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+
+                                    <form class="action-form"
+                                          method="post"
+                                          action="<?php echo $adminBasePath; ?>proses/proses_struktur.php"
+                                          onsubmit="return confirm('Yakin ingin menghapus anggota ini?');">
+                                        <input type="hidden" name="hapus" value="1">
+                                        <input type="hidden" name="id_anggota" value="<?php echo $m['id_anggota']; ?>">
+                                        <button type="submit" class="btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    <!-- END WRAPPER -->
 </div>
 
 <!-- Modal Edit Anggota -->

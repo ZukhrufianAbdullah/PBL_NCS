@@ -167,6 +167,7 @@ if ($result && pg_num_rows($result) > 0) {
         </div>
     </div>
 
+    <div class="table-responsive">
     <table class="data-table" id="pesanTable">
         <thead>
             <tr>
@@ -298,6 +299,7 @@ if ($result && pg_num_rows($result) > 0) {
         * Klik "Detail" untuk membaca pesan lengkap. <br>
         * Klik "Balas" untuk membuka email client dan membalas pesan.
     </p>
+    </div>
 </div>
 
 <!-- ============================
