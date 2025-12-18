@@ -1,9 +1,5 @@
 <?php
 $activePage = $activePage ?? 'home';
-
-// Gunakan variabel dari header.php:
-// $titleHeader → judul dari DB
-// $logoHeader  → URL logo dari DB
 ?>
 
 <header class="sticky-top">
@@ -11,21 +7,28 @@ $activePage = $activePage ?? 'home';
         <div class="container">
 
             <!-- Logo + Judul -->
-            <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo $baseUrl; ?>/user/index.php">
-                <img src="<?php echo htmlspecialchars($logoHeader); ?>" 
-                     alt="Logo" 
-                     width="44" 
-                     height="44"
-                     style="object-fit: contain;">
-                <span><?php echo htmlspecialchars($titleHeader); ?></span>
-            </a>
-
-            <!-- Mobile Toggle -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#mainNavbar" aria-controls="mainNavbar"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="navbar-brand-wrapper d-flex flex-grow-1">
+                <a class="navbar-brand d-flex align-items-center flex-wrap" href="<?php echo $baseUrl; ?>/user/index.php">
+                    <!-- Logo -->
+                    <div class="brand-logo flex-shrink-0 me-2">
+                        <img src="<?php echo htmlspecialchars($logoHeader); ?>" 
+                             alt="Logo" 
+                             class="logo-img">
+                    </div>
+                    
+                    <!-- Judul - akan wrap ke bawah di mobile -->
+                    <div class="brand-text flex-grow-1">
+                        <?php echo htmlspecialchars($titleHeader); ?>
+                    </div>
+                </a>
+                
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
 
             <!-- Menu -->
             <div class="collapse navbar-collapse" id="mainNavbar">

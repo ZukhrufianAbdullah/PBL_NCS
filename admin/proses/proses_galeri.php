@@ -1,15 +1,20 @@
 <?php
 session_start();
-include '../../config/koneksi.php';
-// Include helper
+include '../../config/koneksi.php';// dihubungkan dengan database
+
+// dihungkan dengan page helper
 include __DIR__ . "/../../app/helpers/page_helper.php";
 
 // ID user (fallback ke 1 jika tidak login)
 $id_user = $_SESSION['id_user'] ?? 1;
 
-// Direktori upload
+// Folder penyimpanan banner
 $uploadDir = '../../uploads/galeri/';
-if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+// Pastikan folder upload ada, jika tidak ada membuat folder baru
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0777, true);
+}
 
 // GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
 $id_page = ensure_page_exists($conn, 'galeri_galeri');
@@ -22,7 +27,7 @@ if (!$id_page) {
     exit();
 }
 
-//Kelola konten halaman Galeri
+//jika form submit_judul_desripsi_dikirim
 if (isset($_POST['submit_judul_deskripsi_galeri'])) {
     //Ambil input dari form
     $judul_galeri   = ($_POST['judul_galeri']);
@@ -55,14 +60,16 @@ elseif (isset($_POST['tambah_galeri'])) {
 
     // Proses upload gambar
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
+        //Validasi Extensions
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
         $allowedMime = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'];
         
-        $fileName = $_FILES['gambar']['name'];
-        $tmpFile  = $_FILES['gambar']['tmp_name'];
-        $fileType = mime_content_type($tmpFile);
-        $fileSize = $_FILES['gambar']['size'];
-
+        $fileName = $_FILES['gambar']['name'];// Mengambil nama file asli
+        $tmpFile  = $_FILES['gambar']['tmp_name'];  //mengambil lokasi sementara file yang di-upload oleh user di server
+        $fileType = mime_content_type($tmpFile); // Mengetahui jenis asli file berdasarkan isinya
+        $fileSize = $_FILES['gambar']['size']; // untuk mengetahui ukuran file
+        
+        //mengambil ekstensi file dari nama file dan mengubahnya menjadi huruf kecil agar memudahkan proses validasi jenis file yang di-upload
         $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         // Validasi ekstensi file
@@ -83,6 +90,7 @@ elseif (isset($_POST['tambah_galeri'])) {
             exit();
         }
 
+        //membuat nama file baru yang unik sebelum file disimpan ke server.
         $newName = time() . "_" . $fileName;
 
         // Upload file
@@ -141,6 +149,7 @@ elseif (isset($_POST['edit_galeri'])) {
 
     // Jika upload gambar baru
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === UPLOAD_ERR_OK) {
+
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
         $allowedMime = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'];
         
@@ -149,6 +158,7 @@ elseif (isset($_POST['edit_galeri'])) {
         $fileType = mime_content_type($tmpFile);
         $fileSize = $_FILES['gambar']['size'];
 
+        //mengambil ekstensi file dari nama file dan mengubahnya menjadi huruf kecil agar memudahkan proses validasi jenis file yang di-upload
         $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (!in_array($fileExt, $allowedExtensions)) {

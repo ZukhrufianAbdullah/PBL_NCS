@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../../config/koneksi.php";
+include "../../config/koneksi.php";// dihubungkan dengan database
 // Include helper
 include __DIR__ . "/../../app/helpers/page_helper.php";
 

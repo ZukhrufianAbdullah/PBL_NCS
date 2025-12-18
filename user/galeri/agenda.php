@@ -23,11 +23,22 @@ $qDeskripsiAgenda = pg_query($conn, "
     LIMIT 1");
 $deskripsiAgenda = pg_fetch_assoc($qDeskripsiAgenda)['content_value'] ?? 'Deskripsi agenda belum ditambahkan.';
 
-// Ambil data agenda
+// PAGINATION SETUP
+$items_per_page = 10; // 10 konten per page
+$current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($current_page - 1) * $items_per_page;
+
+// Hitung total data
+$qTotal = pg_query($conn, "SELECT COUNT(*) as total FROM agenda");
+$totalData = pg_fetch_assoc($qTotal)['total'];
+$totalPages = ceil($totalData / $items_per_page);
+
+// Ambil data agenda dengan pagination
 $qAgenda = pg_query($conn, "
     SELECT * 
     FROM agenda
-    ORDER BY tanggal DESC");
+    ORDER BY tanggal DESC
+    LIMIT $items_per_page OFFSET $offset");
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -66,9 +77,12 @@ require_once __DIR__ . '/../../includes/page-hero.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($agendaData as $index => $row): ?>
+                        <?php 
+                        $startNumber = ($current_page - 1) * $items_per_page + 1;
+                        foreach ($agendaData as $index => $row): 
+                        ?>
                             <tr>
-                                <td><?= $index + 1; ?></td>
+                                <td><?= $startNumber + $index; ?></td>
                                 <td>
                                     <strong><?= htmlspecialchars($row['judul']); ?></strong>    
                                 </td>
@@ -99,6 +113,29 @@ require_once __DIR__ . '/../../includes/page-hero.php';
                     </tbody>
                 </table>
             </div>
+            
+            <!-- PAGINATION -->
+            <?php if ($totalPages > 1): ?>
+            <div class="pagination">
+                <?php if ($current_page > 1): ?>
+                    <a href="?page=<?= $current_page - 1 ?>" class="btn-pagination">&lt;</a>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <?php if ($i == 1 || $i == $totalPages || ($i >= $current_page - 2 && $i <= $current_page + 2)): ?>
+                        <a href="?page=<?= $i ?>" class="btn-pagination <?= $i == $current_page ? 'active' : '' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php elseif ($i == $current_page - 3 || $i == $current_page + 3): ?>
+                        <span class="btn-pagination">...</span>
+                    <?php endif; ?>
+                <?php endfor; ?>
+
+                <?php if ($current_page < $totalPages): ?>
+                    <a href="?page=<?= $current_page + 1 ?>" class="btn-pagination">&gt;</a>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </main>

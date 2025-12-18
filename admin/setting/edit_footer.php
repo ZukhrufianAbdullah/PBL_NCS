@@ -131,11 +131,11 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
         <fieldset>
             <legend>Tambah Sosial Media Baru</legend>
             <div class="form-group">
-                <label for="nama_sosialmedia">Nama Sosial Media</label>
+                <label for="nama_sosialmedia">Nama Sosial Media *</label>
                 <input type="text" id="nama_sosialmedia" name="nama_sosialmedia" placeholder="Masukkan nama sosial media" required>
             </div>
             <div class="form-group">
-                <label for="platform">Platform</label>
+                <label for="platform">Platform *</label>
                 <select id="platform" name="platform" required>
                     <option value="">Pilih Platform</option>
                     <option value="linkedin">LinkedIn</option>
@@ -148,8 +148,9 @@ $show_quick_links = ($settings_data['footer_show_quick_links'] ?? 'true') === 't
                 </select>
             </div>
             <div class="form-group">
-                <label for="url">URL Lengkap</label>
+                <label for="url">URL Lengkap *</label>
                 <input type="url" id="url" name="url" placeholder="Masukkan link URL" required>
+                <span class="form-help-text">* harus diisi</span>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn-primary">Tambahkan Sosial Media</button>

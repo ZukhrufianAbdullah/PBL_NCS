@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../../config/koneksi.php";
+include "../../config/koneksi.php"; // dihubungkan dengan database
 // Include helper
 include __DIR__ . "/../../app/helpers/page_helper.php";
 
@@ -20,6 +20,7 @@ if (!$id_page) {
 
 if (isset($_POST['submit_judul_deskripsi_logo'])) {
     //Ambil input dari form
+
     $judul_logo   = ($_POST['judul_logo']);
     $deskripsi_logo = ($_POST['deskripsi_logo']);
 
@@ -63,12 +64,12 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
         // LOGO 1
         if (!empty($_FILES['file_logo1']['name'])) {
 
-            $file1 = $_FILES['file_logo1']['name'];
-            $tmp1  = $_FILES['file_logo1']['tmp_name'];
-            $fileType1 = mime_content_type($tmp1);
-            $size1 = $_FILES['file_logo1']['size'];
+            $file1 = $_FILES['file_logo1']['name']; // Mengambil nama file asli
+            $tmp1  = $_FILES['file_logo1']['tmp_name']; //mengambil lokasi sementara file yang di-upload oleh user di server
+            $fileType1 = mime_content_type($tmp1); // Mengetahui jenis asli file berdasarkan isinya
+            $size1 = $_FILES['file_logo1']['size']; // untuk mengetahui ukuran file
 
-            // Ambil Ekstensi
+            //mengambil ekstensi file dari nama file dan mengubahnya menjadi huruf kecil agar memudahkan proses validasi jenis file yang di-upload
             $fileExt1 = strtolower(pathinfo($file1, PATHINFO_EXTENSION));
 
             // Validasi ekstensi dan MIME
@@ -89,14 +90,15 @@ if (isset($_POST['submit_judul_deskripsi_logo'])) {
             $checkLogo1 = pg_query($conn,
                 "SELECT id_logo, media_path FROM logo WHERE nama_logo = 'logo_utama' LIMIT 1"
             );
-
             $rowLogo1 = pg_fetch_assoc($checkLogo1);
+
+            //membuat nama file baru yang unik sebelum file disimpan ke server.
             $newFile1 = time() . "_" . $file1;
 
-            // Upload file baru
+            // memindahkan file yang di-upload dari folder sementara tmp ke folder tujuan yang sebenarnya dengan nama file baru.
             move_uploaded_file($tmp1, $uploadDir . $newFile1);
 
-            //jika ada data lama → hapus file lama
+            // mengecek apakah data lama sudah ada, jika sudah ada maka data lama dihapus
             if ($rowLogo1) {
                 $oldFile1 = $rowLogo1['media_path'];
                 if (!empty($oldFile1) && file_exists($uploadDir . $oldFile1)) {

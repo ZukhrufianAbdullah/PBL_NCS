@@ -86,22 +86,22 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <legend>Tambah Pengabdian Baru</legend>
             
             <div class="form-group">
-                <label for="judul_pengabdian">Judul Pengabdian</label>
+                <label for="judul_pengabdian">Judul Pengabdian *</label>
                 <input type="text" id="judul_pengabdian" name="judul_pengabdian" placeholder="Masukkan judul pengabdian" required>
             </div>
             
             <div class="form-group">
-                <label for="skema">Skema</label>
+                <label for="skema">Skema *</label>
                 <input type="text" id="skema" name="skema" placeholder="Masukkan skema pengabdian" required>
             </div>
             
             <div class="form-group">
-                <label for="tahun">Tahun Pelaksanaan</label>
+                <label for="tahun">Tahun Pelaksanaan *</label>
                 <input type="number" id="tahun" name="tahun" value="<?php echo date('Y'); ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="id_ketua">Ketua Tim</label>
+                <label for="id_ketua">Ketua Tim *</label>
                 <select id="id_ketua" name="id_ketua" required>
                     <option value="">Pilih Ketua</option>
                     <?php foreach ($dosenOptions as $dosen): ?>
@@ -111,7 +111,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                     <?php endforeach; ?>
                 </select>
             </div>
-
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -130,64 +130,70 @@ if ($qPage && pg_num_rows($qPage) > 0) {
         <h3>Daftar Pengabdian Masyarakat</h3>
     </div>
 
-    <table class="data-table" id="pengabdianTable">
-        <thead>
-            <tr>
-                <th class="col-no">No</th>
-                <th>Judul Pengabdian</th>
-                <th class="col-jabatan">Ketua Tim</th>
-                <th class="col-urutan">Skema</th>
-                <th class="col-urutan">Tahun</th>
-                <th style="width:300px;text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php 
-            $no = 1;
-            $hasData = false;
+    <div class="table-responsive">
+        <table class="data-table" id="pengabdianTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Judul Pengabdian</th>
+                    <th class="col-jabatan">Ketua Tim</th>
+                    <th class="col-urutan">Skema</th>
+                    <th class="col-urutan">Tahun</th>
+                    <th class="col-actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $no = 1;
+                $hasData = false;
 
-            while ($row = pg_fetch_assoc($qPengabdian)): 
-                $hasData = true;
-            ?>
-            <tr>
-                <td><?php echo $no++; ?></td>
-                <td>
-                    <strong><?php echo htmlspecialchars($row['judul_pengabdian']); ?></strong>
-                    <?php if (!empty($row['deskripsi'])): ?>
-                    <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
-                    <?php endif; ?>
-                </td>
-                <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
-                <td style="text-align: center;">
-                    <span class="badge badge-info"><?php echo htmlspecialchars($row['skema']); ?></span>
-                </td>
-                <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
-                <td style="text-align: center;">
-                    <button class="btn-warning" 
-                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                        Edit
-                    </button>
+                while ($row = pg_fetch_assoc($qPengabdian)): 
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars(substr($row['judul_pengabdian'], 0, 80)); ?><?php echo strlen($row['judul_pengabdian']) > 80 ? '...' : ''; ?></strong>
+                        <?php if (!empty($row['deskripsi'])): ?>
+                        <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars(substr($row['deskripsi'], 0, 60))); ?><?php echo strlen($row['deskripsi']) > 60 ? '...' : ''; ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
+                    <td style="text-align: center;">
+                        <span class="badge badge-info"><?php echo htmlspecialchars($row['skema']); ?></span>
+                    </td>
+                    <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
+                    <td class="action-cell">
+                        <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button class="btn-warning btn-sm" 
+                                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
 
-                    <form method="post" action="../proses/proses_pengabdian.php" 
-                          style="display:inline;" 
-                          onsubmit="return confirm('Yakin ingin menghapus pengabdian ini?');">
-                        <input type="hidden" name="hapus" value="1">
-                        <input type="hidden" name="id_pengabdian" value="<?php echo $row['id_pengabdian']; ?>">
-                        <button type="submit" class="btn-danger">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-            <?php endwhile; ?>
+                            <form method="post" action="../proses/proses_pengabdian.php" 
+                                  style="display:inline;" 
+                                  onsubmit="return confirm('Yakin ingin menghapus pengabdian ini?');">
+                                <input type="hidden" name="hapus" value="1">
+                                <input type="hidden" name="id_pengabdian" value="<?php echo $row['id_pengabdian']; ?>">
+                                <button type="submit" class="btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-            <?php if (!$hasData): ?>
-            <tr>
-                <td colspan="6" style="text-align:center; padding:15px; color:#777;">
-                    <strong>Belum ada pengabdian masyarakat yang ditambahkan</strong>
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                        <strong>Belum ada pengabdian masyarakat yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- ============================
@@ -202,22 +208,22 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <input type="hidden" name="id_pengabdian" id="edit_id">
 
             <div class="form-group">
-                <label>Judul Pengabdian</label>
+                <label>Judul Pengabdian *</label>
                 <input type="text" name="judul_pengabdian" id="edit_judul" required>
             </div>
 
             <div class="form-group">
-                <label>Skema</label>
+                <label>Skema *</label>
                 <input type="text" name="skema" id="edit_skema" required>
             </div>
 
             <div class="form-group">
-                <label>Tahun</label>
+                <label>Tahun *</label>
                 <input type="number" name="tahun" id="edit_tahun" required>
             </div>
 
             <div class="form-group">
-                <label>Ketua Tim</label>
+                <label>Ketua Tim *</label>
                 <select name="id_ketua" id="edit_ketua" required>
                     <option value="">Pilih Ketua</option>
                     <?php foreach ($dosenOptions as $dosen): ?>
@@ -226,11 +232,6 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                         </option>
                     <?php endforeach; ?>
                 </select>
-            </div>
-
-            <div class="form-group">
-                <label>Deskripsi</label>
-                <textarea name="deskripsi" id="edit_deskripsi" rows="4"></textarea>
             </div>
 
             <div class="form-group" style="margin-top: 20px; display: flex; gap: 10px;">
@@ -251,7 +252,6 @@ function openEditModal(row) {
     document.getElementById("edit_skema").value = row.skema || '';
     document.getElementById("edit_tahun").value = row.tahun;
     document.getElementById("edit_ketua").value = row.id_ketua || '';
-    document.getElementById("edit_deskripsi").value = row.deskripsi || '';
 
     document.getElementById("editModal").style.display = "block";
 }

@@ -86,7 +86,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <legend>Tambah Penelitian Baru</legend>
             
             <div class="form-group">
-                <label for="judul_penelitian">Judul Penelitian</label>
+                <label for="judul_penelitian">Judul Penelitian *</label>
                 <input type="text" id="judul_penelitian" name="judul_penelitian" required placeholder="Masukkan judul penelitian">
             </div>
             
@@ -96,13 +96,13 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             </div>
             
             <div class="form-group">
-                <label for="tahun">Tahun Publikasi</label>
+                <label for="tahun">Tahun Publikasi *</label>
                 <input type="number" id="tahun" name="tahun" value="<?php echo date('Y'); ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="id_author">Penulis</label>
-                <select id="id_author" name="id_author">
+                <label for="id_author">Penulis *</label>
+                <select id="id_author" name="id_author" required>
                     <option value="">Pilih Penulis</option>
                     <?php foreach ($dosenOptions as $dosen): ?>
                         <option value="<?php echo $dosen['id_dosen']; ?>">
@@ -113,10 +113,11 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             </div>
             
             <div class="form-group">
-                <label for="pdf">Upload File PDF</label>
-                <input type="file" id="pdf" name="pdf" accept=".pdf">
+                <label for="pdf">Upload File PDF *</label>
+                <input type="file" id="pdf" name="pdf" accept=".pdf" required>
                 <span class="form-help-text">Unggah file PDF hasil penelitian.</span>
             </div>
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -135,68 +136,70 @@ if ($qPage && pg_num_rows($qPage) > 0) {
         <h3>Daftar Penelitian</h3>
     </div>
 
-    <table class="data-table" id="penelitianTable">
-        <thead>
-            <tr>
-                <th class="col-no">No</th>
-                <th>Judul Penelitian</th>
-                <th class="col-jabatan">Peneliti</th>
-                <th class="col-urutan">Tahun</th>
-                <th class="col-status">File</th>
-                <th style="width:300px; text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php 
-            $no = 1;
-            $hasData = false;
+    <div class="table-responsive">
+        <table class="data-table" id="penelitianTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Judul Penelitian</th>
+                    <th class="col-jabatan">Peneliti</th>
+                    <th class="col-urutan">Tahun</th>
+                    <th class="col-status">File</th>
+                    <th style="width:300px; text-align:center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $no = 1;
+                $hasData = false;
 
-            while ($row = pg_fetch_assoc($qPenelitian)): 
-                $hasData = true;
-            ?>
-            <tr>
-                <td><?php echo $no++; ?></td>
-                <td>
-                    <strong><?php echo htmlspecialchars($row['judul_penelitian']); ?></strong>
-                    <?php if (!empty($row['deskripsi'])): ?>
-                    <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
-                    <?php endif; ?>
-                </td>
-                <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
-                <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
-                <td style="text-align: center;">
-                    <?php if (!empty($row['media_path'])): ?>
-                        <span class="badge badge-success">PDF</span>
-                    <?php else: ?>
-                        <span class="badge badge-danger">Tidak Ada</span>
-                    <?php endif; ?>
-                </td>
-                <td style="text-align: center;">
-                    <button class="btn-warning" 
-                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                        Edit
-                    </button>
+                while ($row = pg_fetch_assoc($qPenelitian)): 
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars($row['judul_penelitian']); ?></strong>
+                        <?php if (!empty($row['deskripsi'])): ?>
+                        <br><small style="color: #666;"><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($row['nama_dosen'] ?? '-'); ?></td>
+                    <td style="text-align: center;"><?php echo $row['tahun']; ?></td>
+                    <td style="text-align: center;">
+                        <?php if (!empty($row['media_path'])): ?>
+                            <span class="badge badge-success">PDF</span>
+                        <?php else: ?>
+                            <span class="badge badge-danger">Tidak Ada</span>
+                        <?php endif; ?>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-warning" 
+                                onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                            Edit
+                        </button>
 
-                    <form method="post" action="../proses/proses_penelitian.php" 
-                          style="display:inline;" 
-                          onsubmit="return confirm('Yakin ingin menghapus penelitian ini?');">
-                        <input type="hidden" name="hapus" value="1">
-                        <input type="hidden" name="id_penelitian" value="<?php echo $row['id_penelitian']; ?>">
-                        <button type="submit" class="btn-danger">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-            <?php endwhile; ?>
+                        <form method="post" action="../proses/proses_penelitian.php" 
+                            style="display:inline;" 
+                            onsubmit="return confirm('Yakin ingin menghapus penelitian ini?');">
+                            <input type="hidden" name="hapus" value="1">
+                            <input type="hidden" name="id_penelitian" value="<?php echo $row['id_penelitian']; ?>">
+                            <button type="submit" class="btn-danger">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-            <?php if (!$hasData): ?>
-            <tr>
-                <td colspan="6" style="text-align:center; padding:15px; color:#777;">
-                    <strong>Belum ada penelitian yang ditambahkan</strong>
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                        <strong>Belum ada penelitian yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- ============================
@@ -211,7 +214,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <input type="hidden" name="id_penelitian" id="edit_id">
 
             <div class="form-group">
-                <label>Judul Penelitian</label>
+                <label>Judul Penelitian *</label>
                 <input type="text" name="judul_penelitian" id="edit_judul" required>
             </div>
 
@@ -221,12 +224,12 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             </div>
 
             <div class="form-group">
-                <label>Tahun</label>
+                <label>Tahun *</label>
                 <input type="number" name="tahun" id="edit_tahun" required>
             </div>
 
             <div class="form-group">
-                <label>Penulis</label>
+                <label>Penulis *</label>
                 <select name="id_author" id="edit_author">
                     <option value="">Pilih Penulis</option>
                     <?php foreach ($dosenOptions as $dosen): ?>

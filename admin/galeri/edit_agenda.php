@@ -30,7 +30,7 @@ $deskripsiAgenda = pg_fetch_assoc($qDeskripsiAgenda)['content_value'] ?? '';
 $qAgenda = pg_query($conn, "
     SELECT * 
     FROM agenda
-    ORDER BY tanggal ASC");
+    ORDER BY tanggal DESC");
 ?>
 
 
@@ -77,7 +77,7 @@ $qAgenda = pg_query($conn, "
             <legend>Tambah Agenda Baru</legend>
 
             <div class="form-group">
-                <label for="judul_agenda_baru">Judul Agenda</label>
+                <label for="judul_agenda_baru">Judul Agenda *</label>
                 <input type="text" id="judul_agenda_baru" name="judul" required placeholder="Masukkan judul agenda">
             </div>
 
@@ -87,7 +87,7 @@ $qAgenda = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label for="tanggal_baru">Tanggal Agenda</label>
+                <label for="tanggal_baru">Tanggal Agenda *</label>
                 <input type="date" id="tanggal_baru" name="tanggal" required
                        value="<?php echo date('Y-m-d'); ?>">
             </div>
@@ -99,7 +99,7 @@ $qAgenda = pg_query($conn, "
                     <option value="0">Arsip</option>
                 </select>
             </div>
-
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -121,62 +121,67 @@ $qAgenda = pg_query($conn, "
         <h3>Daftar Agenda</h3>
     </div>
 
-    <table class="data-table" id="agendaTable">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Judul Agenda</th>
-                <th>Deskripsi</th>
-                <th>Tanggal</th>
-                <th>Status</th>
-                <th style="width: 300px; text-align:center;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-    <?php 
-    $no = 1;
-    $hasData = false;
+    <div class="table-responsive">
+        <table class="data-table" id="agendaTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Judul Agenda</th>
+                    <th>Deskripsi</th>
+                    <th class="col-urutan">Tanggal</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $no = 1;
+                $hasData = false;
 
-    while ($row = pg_fetch_assoc($qAgenda)): 
-        $hasData = true;
-    ?>
-    <tr>
-        <td><?php echo $no++; ?></td>
-        <td><?php echo htmlspecialchars($row['judul']); ?></td>
-        <td><?php echo nl2br(htmlspecialchars($row['deskripsi'])); ?></td>
-        <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
-        <td>
-            <?php echo ($row['status'] === 't')
-                ? '<span class="badge badge-success">Aktif</span>'
-                : '<span class="badge badge-danger">Arsip</span>'; ?>
-        </td>
-        <td style="text-align:center;">
-            <button class="btn-warning" 
-                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                Edit
-            </button>
+                while ($row = pg_fetch_assoc($qAgenda)): 
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td><?php echo htmlspecialchars($row['judul']); ?></td>
+                    <td><?php echo nl2br(htmlspecialchars(substr($row['deskripsi'], 0, 100))); ?><?php echo strlen($row['deskripsi']) > 100 ? '...' : ''; ?></td>
+                    <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+                    <td>
+                        <?php echo ($row['status'] === 't')
+                            ? '<span class="badge badge-success">Aktif</span>'
+                            : '<span class="badge badge-danger">Arsip</span>'; ?>
+                    </td>
+                    <td class="action-cell">
+                        <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button class="btn-warning btn-sm" 
+                                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
 
-            <form method="post" action="../proses/proses_agenda.php" 
-                  style="display:inline;" 
-                  onsubmit="return confirm('Yakin ingin menghapus agenda ini?');">
-                <input type="hidden" name="hapus" value="1">
-                <input type="hidden" name="id_agenda" value="<?php echo $row['id_agenda']; ?>">
-                <button type="submit" class="btn-danger">Hapus</button>
-            </form>
-        </td>
-    </tr>
-    <?php endwhile; ?>
+                            <form method="post" action="../proses/proses_agenda.php" 
+                                  style="display:inline;" 
+                                  onsubmit="return confirm('Yakin ingin menghapus agenda ini?');">
+                                <input type="hidden" name="hapus" value="1">
+                                <input type="hidden" name="id_agenda" value="<?php echo $row['id_agenda']; ?>">
+                                <button type="submit" class="btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-    <?php if (!$hasData): ?>
-    <tr>
-        <td colspan="6" style="text-align:center; padding:15px; color:#777;">
-            <strong>Belum ada agenda yang ditambahkan</strong>
-        </td>
-    </tr>
-    <?php endif; ?>
-</tbody>
-
-    </table>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:15px; color:#777;">
+                        <strong>Belum ada agenda yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 
@@ -195,7 +200,7 @@ $qAgenda = pg_query($conn, "
             <input type="hidden" name="id_agenda" id="edit_id">
 
             <div class="form-group">
-                <label>Judul</label>
+                <label>Judul *</label>
                 <input type="text" name="judul" id="edit_judul" required>
             </div>
 
@@ -205,7 +210,7 @@ $qAgenda = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label>Tanggal</label>
+                <label>Tanggal *</label>
                 <input type="date" name="tanggal" id="edit_tanggal" required>
             </div>
 

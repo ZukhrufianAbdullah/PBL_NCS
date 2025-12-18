@@ -1,13 +1,14 @@
 <?php
 session_start();
-include '../../config/koneksi.php';
-// Include helper
-include __DIR__ . "/../../app/helpers/page_helper.php";
+include '../../config/koneksi.php'; // dihubungkan dengan database
+
+// dihungkan dengan page helper
+include __DIR__ . "/../../app/helpers/page_helper.php"; 
 
 // Ambil id_user dari session (fallback 1 jika belum login)
 $id_user = $_SESSION['id_user'] ?? 1;
 
-// GUNAKAN HELPER FUNCTION untuk mendapatkan/membuat halaman
+// menggunakan helper function untuk mendapatkan/membuat halaman
 $id_page = ensure_page_exists($conn, 'profil_visi_misi');
 
 if (!$id_page) {

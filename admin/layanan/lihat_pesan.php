@@ -3,7 +3,7 @@
 session_start();
 $pageTitle = 'Kelola Konsultatif';
 $currentPage = 'lihat_pesan';
-$adminPageStyles = ['forms', 'tables', 'modal'];
+$adminPageStyles = ['forms', 'tables'];
 include '../../config/koneksi.php';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
@@ -159,14 +159,19 @@ if ($result && pg_num_rows($result) > 0) {
 <div class="card">
     <div class="card-header">
         <h3>Pesan Masuk Konsultatif</h3>
+    </div>
+    
+    <div class="card-filter">
         <div class="status-filter">
             <button class="btn-secondary btn-sm" onclick="filterMessages('all')">Semua</button>
             <button class="btn-warning btn-sm" onclick="filterMessages('pending')">Pending</button>
             <button class="btn-success btn-sm" onclick="filterMessages('replied')">Sudah Dibalas</button>
             <button class="btn-danger btn-sm" onclick="filterMessages('archived')">Diarsipkan</button>
         </div>
+
     </div>
 
+    <div class="table-responsive">
     <table class="data-table" id="pesanTable">
         <thead>
             <tr>
@@ -175,8 +180,8 @@ if ($result && pg_num_rows($result) > 0) {
                 <th>Nama Pengirim</th>
                 <th>Email</th>
                 <th>Status</th>
-                <th>Isi Pesan Singkat</th>
-                <th style="width:350px;text-align:center;">Aksi</th>
+                <th style="width: 25%;text-align:center;">Isi Pesan Singkat</th>
+                <th style="width: 100;text-align:center;">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -272,14 +277,6 @@ if ($result && pg_num_rows($result) > 0) {
                             <i class="fas fa-eye"></i> Detail
                         </button>
 
-                        <?php if (!empty($email_display)): ?>
-                        <button type="button" class="btn-primary btn-sm" 
-                                onclick="balasEmail('<?php echo $email_js; ?>', '<?php echo $nama_clean; ?>')"
-                                title="Balas via Email">
-                            <i class="fas fa-reply"></i> Balas
-                        </button>
-                        <?php endif; ?>
-
                         <form method="POST" action="lihat_pesan.php" style="display:inline;">
                             <input type="hidden" name="hapus_pesan" value="1">
                             <input type="hidden" name="hapus_id" value="<?php echo $pesan['id_konsultatif']; ?>">
@@ -294,10 +291,11 @@ if ($result && pg_num_rows($result) > 0) {
         </tbody>
     </table>
     
-    <p class="mt-20 text-gray">
-        * Klik "Detail" untuk membaca pesan lengkap. <br>
-        * Klik "Balas" untuk membuka email client dan membalas pesan.
-    </p>
+</div>
+<p class="mt-20 text-gray">
+    * Klik "Detail" untuk membaca pesan lengkap. <br>
+    * Klik "Balas" untuk membuka email client dan membalas pesan.
+</p>
 </div>
 
 <!-- ============================
@@ -315,7 +313,7 @@ if ($result && pg_num_rows($result) > 0) {
                 <button type="button" id="btnBalas" class="btn-primary" onclick="balasFromModal()">
                     <i class="fas fa-reply"></i> Balas via Email
                 </button>
-                <form method="POST" action="lihat_pesan.php" style="display:inline;">
+                <form method="POST" action="lihat_pesan.php" style="display:inline; margin-right: 20px;">
                     <input type="hidden" name="update_status" value="1">
                     <input type="hidden" name="pesan_id" id="pesanId" value="">
                     <select name="status" id="statusSelect" onchange="this.form.submit()" style="margin: 0 10px; padding: 8px 12px; border-radius: 4px;">
@@ -515,99 +513,17 @@ window.onclick = function(event) {
 </script>
 
 <style>
-/* Style tambahan untuk konsultatif */
+/* ===============================
+   FILTER STATUS KONSULTATIF
+================================ */
+
+/* Container */
 .status-filter {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
+    gap: 12px;
+    margin: 15px 0;
     flex-wrap: wrap;
-}
-
-.status-filter button {
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-sm {
-    padding: 5px 10px;
-    font-size: 0.85rem;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
-}
-
-.message-detail {
-    line-height: 1.6;
-}
-
-.detail-item {
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
-}
-
-.detail-item:last-child {
-    border-bottom: none;
-}
-
-.detail-item strong {
-    display: inline-block;
-    width: 140px;
-    color: #333;
-}
-
-.message-content {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 6px;
-    margin-top: 10px;
-    border-left: 4px solid var(--accent-yellow);
-    white-space: pre-line;
-    font-family: inherit;
-    max-height: 400px;
-    overflow-y: auto;
-    line-height: 1.6;
-}
-
-.badge {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.badge-success { background-color: #28a745; color: white; }
-.badge-warning { background-color: #ffc107; color: #333; }
-.badge-secondary { background-color: #6c757d; color: white; }
-
-.col-no { width: 60px; text-align: center; }
-
-.close-alert {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: inherit;
-    cursor: pointer;
-    float: right;
-    margin-left: 15px;
-}
-
-.alert-success, .alert-danger {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-}
-
-.alert-success i, .alert-danger i {
-    margin-right: 10px;
 }
 </style>
 

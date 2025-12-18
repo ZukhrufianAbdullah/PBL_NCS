@@ -71,14 +71,15 @@ $qSarana = pg_query($conn, "
             <legend>Tambah Sarana dan Prasarana Baru</legend>
             
             <div class="form-group">
-                <label>Nama</label>
+                <label>Nama *</label>
                 <input type="text" name="nama_sarana" placeholder="Masukkan nama sarana atau prasarana" required>
             </div>
 
             <div class="form-group">
-                <label>Upload Gambar</label>
+                <label>Upload Gambar *</label>
                 <input type="file" name="gambar" accept=".png,.jpg,.jpeg,.svg" required>
             </div>
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
         <div class="form-group">
             <button type="submit" class="btn-primary">Tambah Sarana dan Prasarana</button>
@@ -94,63 +95,67 @@ $qSarana = pg_query($conn, "
         <h3>Daftar Sarana dan Prasarana</h3>
     </div>
 
-    <table class="data-table" id="saranaTable">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Gambar</th>
-                <th>Nama Sarana</th>
-                <th style="width:300px;text-align:center;">Aksi</th>
-            </tr>
-        </thead>
+    <div class="table-responsive">
+        <table class="data-table" id="saranaTable">
+            <thead>
+                <tr>
+                    <th class="col-no">No</th>
+                    <th>Gambar</th>
+                    <th>Nama Sarana</th>
+                    <th class="col-actions">Aksi</th>
+                </tr>
+            </thead>
 
-        <tbody>
-            <?php 
-            $no = 1; $hasData = false;
-            while ($row = pg_fetch_assoc($qSarana)):
-                $hasData = true;
-            ?>
-            <tr>
-                <td><?php echo $no++; ?></td>
+            <tbody>
+                <?php 
+                $no = 1; $hasData = false;
+                while ($row = pg_fetch_assoc($qSarana)):
+                    $hasData = true;
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
 
-                <td>
-                    <img src="../../uploads/sarana/<?php echo htmlspecialchars($row['media_path']); ?>"
-                         style="width:70px;border-radius:4px;">
-                </td>
+                    <td>
+                        <img src="../../uploads/sarana/<?php echo htmlspecialchars($row['media_path']); ?>"
+                             style="width:70px;border-radius:4px;">
+                    </td>
 
-                <td><?php echo htmlspecialchars($row['nama_sarana']); ?></td>
+                    <td><?php echo htmlspecialchars($row['nama_sarana']); ?></td>
 
-                <td style="text-align:center;">
+                    <td class="action-cell">
+                        <div class="action-buttons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <!-- Tombol Edit -->
+                            <button class="btn-warning btn-sm"
+                                    onclick='openEditModal(<?php echo json_encode($row); ?>)'>
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
 
-                    <!-- Tombol Edit -->
-                    <button class="btn-warning"
-                            onclick='openEditModal(<?php echo json_encode($row); ?>)'>
-                        Edit
-                    </button>
+                            <!-- Tombol Hapus -->
+                            <form method="post" action="../proses/proses_sarana_prasarana.php"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                <input type="hidden" name="hapus_sarana" value="1">
+                                <input type="hidden" name="id_sarana" value="<?php echo $row['id_sarana']; ?>">
+                                <button type="submit" class="btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
 
-                    <!-- Tombol Hapus -->
-                    <form method="post" action="../proses/proses_sarana_prasarana.php"
-                          style="display:inline;"
-                          onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                        <input type="hidden" name="hapus_sarana" value="1">
-                        <input type="hidden" name="id_sarana" value="<?php echo $row['id_sarana']; ?>">
-                        <button type="submit" class="btn-danger">Hapus</button>
-                    </form>
+                <?php if (!$hasData): ?>
+                <tr>
+                    <td colspan="4" style="text-align:center;padding:15px;color:#777;">
+                        <strong>Belum ada sarana yang ditambahkan</strong>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
 
-                </td>
-            </tr>
-            <?php endwhile; ?>
-
-            <?php if (!$hasData): ?>
-            <tr>
-                <td colspan="6" style="text-align:center;padding:15px;color:#777;">
-                    <strong>Belum ada sarana yang ditambahkan</strong>
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
-
-    </table>
+        </table>
+    </div>
 </div>
 
 <!-- ======================================================
@@ -168,7 +173,7 @@ $qSarana = pg_query($conn, "
             <input type="hidden" name="id_sarana" id="edit_id">
 
             <div class="form-group">
-                <label>Nama Sarana</label>
+                <label>Nama Sarana *</label>
                 <input type="text" name="nama_sarana" id="edit_nama" required>
             </div>
 

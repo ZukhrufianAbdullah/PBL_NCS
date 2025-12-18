@@ -22,6 +22,15 @@ $total_penelitian = pg_fetch_assoc($qTotalPenelitian)['total'];
 $qTotalPesan = pg_query($conn, "SELECT COUNT(*) AS total FROM konsultatif;");
 $total_pesan = pg_fetch_assoc($qTotalPesan)['total'];
 
+// Total Pengabdian
+$qTotalPengabdian = pg_query($conn, "SELECT COUNT(*) AS total FROM pengabdian;");
+$total_pengabdian = pg_fetch_assoc($qTotalPengabdian)['total'];
+
+// Total Sarana
+$qTotalSarana = pg_query($conn, "SELECT COUNT(*) AS total FROM sarana;");
+$total_sarana = pg_fetch_assoc($qTotalSarana)['total'];
+
+
 ?>
 
 <div class="admin-header">
@@ -31,7 +40,7 @@ $total_pesan = pg_fetch_assoc($qTotalPesan)['total'];
 
 <div class="card">
     <div class="card-header">
-        <h3>📌 Informasi Sistem</h3>
+        <h3>Informasi Sistem</h3>
     </div>
     <p>
         Gunakan menu sidebar untuk mengelola konten website. Semua perubahan yang Anda lakukan akan langsung tersimpan
@@ -55,21 +64,41 @@ $total_pesan = pg_fetch_assoc($qTotalPesan)['total'];
         <p class="stat-number"><?php echo $total_penelitian; ?></p>
         <small>Dokumen Penelitian</small>
     </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Pengabdian</h3>
+        <p class="stat-number"><?php echo $total_pengabdian; ?></p>
+        <small>Pengabdian yang sudah dilakukan</small>
+    </div>
+    <div class="stat-card">
+        <h3>Total Sarana Prasarana</h3>
+        <p class="stat-number"><?php echo $total_sarana; ?></p>
+        <small>Sarana & prasarana yang ada</small>
+    </div>
     <div class="stat-card">
         <h3>Pesan Masuk</h3>
         <p class="stat-number"><?php echo $total_pesan; ?></p>
         <small>Pesan Konsultatif</small>
     </div>
+
 </div>
 
 <div class="card" style="margin-top: 30px;">
     <div class="card-header" >
-        <h3>🚀 Aksi Cepat</h3>
+        <h3>Aksi Cepat</h3>
     </div>
     <div class="action-grid">
         <a href="<?php echo $adminBasePath; ?>galeri/edit_galeri.php" class="btn-primary">+ Tambah Galeri</a>
         <a href="<?php echo $adminBasePath; ?>galeri/edit_agenda.php" class="btn-primary">+ Tambah Agenda</a>
         <a href="<?php echo $adminBasePath; ?>arsip/edit_penelitian.php" class="btn-primary">+ Tambah Penelitian</a>
+        <a href="<?php echo $adminBasePath; ?>profil/edit_struktur.php" class="btn-primary">+ Tambah Anggota</a>
+    </div>
+    <div class="action-grid">
+        <a href="<?php echo $adminBasePath; ?>arsip/edit_pengabdian.php" class="btn-primary">+ Tambah Pengabdian</a>
+        <a href="<?php echo $adminBasePath; ?>layanan/edit_sarana_prasarana.php" class="btn-primary">+ Tambah Sarana Prasarana</a>
+        <a href="<?php echo $adminBasePath; ?>profil/edit_logo.php" class="btn-primary">+ Tambah Logo</a>
         <a href="<?php echo $adminBasePath; ?>layanan/lihat_pesan.php" class="btn-success">📧 Lihat Pesan</a>
     </div>
 </div>

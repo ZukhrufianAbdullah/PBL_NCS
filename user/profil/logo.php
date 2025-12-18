@@ -30,7 +30,7 @@ $qLogo1 = pg_query($conn, "
 $hasilLogo1 = pg_fetch_assoc($qLogo1);
 $logo1 = (!empty($hasilLogo1['media_path']))
     ? BASE_URL . '/uploads/logo/' . $hasilLogo1['media_path']
-    : BASE_URL . '/assets/site/img/logo/logo-jti.svg';
+    : null;
 
 // Ambil data Logo 2
 $qLogo2 = pg_query($conn, "
@@ -41,7 +41,7 @@ $qLogo2 = pg_query($conn, "
 $hasilLogo2 = pg_fetch_assoc($qLogo2);
 $logo2 = (!empty($hasilLogo2['media_path']))
     ? BASE_URL . '/uploads/logo/' . $hasilLogo2['media_path']
-    : BASE_URL . '/assets/site/img/logo/logo-polinema.svg';
+    : null;
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
@@ -59,21 +59,28 @@ $logos = get_logos($conn);
         <div class="card-grid sm">
 
             <!-- Logo Utama -->
-                <div class="card-basic logo-card text-center">
-                    <img src="<?= htmlspecialchars($logo1); ?>" 
-                        alt="Logo Utama">
-                    <h5>Logo Utama</h5>
-                    <p class="text-muted mb-0">Logo utama laboratorium.</p>
-                </div>
+            <div class="card-basic logo-card text-center">
+                <?php if ($logo1): ?>
+                    <img src="<?= htmlspecialchars($logo1); ?>" alt="Logo Utama">
+                <?php else: ?>
+                    <p class="text-center text-muted animate-on-scroll">Belum ada logo yang Ditambahkan</p>
+                <?php endif; ?>
+
+                <h5>Logo Utama</h5>
+                <p class="text-muted mb-0">Logo utama laboratorium.</p>
+            </div>
 
             <!-- Logo Deskripsi -->
-                <div class="card-basic logo-card text-center">
-                    <img src="<?= htmlspecialchars($logo2); ?>" 
-                        alt="Logo Deskripsi">
-                    <h5>Logo Deskripsi</h5>
-                    <p class="text-muted mb-0">Logo pendukung deskripsi laboratorium.</p>
-                </div>
+            <div class="card-basic logo-card text-center">
+                <?php if ($logo2): ?>
+                    <img src="<?= htmlspecialchars($logo2); ?>" alt="Logo Deskripsi">
+                <?php else: ?>
+                   <p class="text-center text-muted animate-on-scroll">Belum ada Deskripsi Logo yang Ditambahkan</p>
+                <?php endif; ?>
 
+                <h5>Logo Deskripsi</h5>
+                <p class="text-muted mb-0">Deskripsi Logo laboratorium.</p>
+            </div>
         </div>
 
 
@@ -81,4 +88,3 @@ $logos = get_logos($conn);
 </main>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

@@ -27,12 +27,12 @@ if (isset($_POST['submit_section_content'])) {
     $resultDeskripsi = upsert_page_content($conn, $id_page, 'section_description', $section_description, $id_user);
 
     if ($resultJudul && $resultDeskripsi) {
-        $_SESSION['success'] = 'Konten halaman Konsultatif berhasil diperbarui!';
+        echo "<script>alert('Konten halaman Konsultatif berhasil diperbarui!'); 
+              window.location.href='../layanan/lihat_pesan.php';</script>";
     } else {
-        $_SESSION['error'] = 'Gagal memperbarui konten halaman Konsultatif!';
+        echo "<script>alert('Gagal memperbarui konten halaman!'); 
+              window.location.href='../layanan/lihat_pesan.php';</script>";
     }
-    
-    header("Location: ../layanan/lihat_pesan.php");
     exit();
 }
 
