@@ -267,3 +267,55 @@ RESPONSIVE DESIGN
         margin-bottom: 2rem;
     }
 }
+/* ===========================
+STRUKTUR ORGANISASI LAYOUT
+=========================== */
+.struktur-section {
+    margin-bottom: 3rem;
+}
+
+/* Ketua Lab - Center Aligned */
+.ketua-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.profile-card-ketua {
+    max-width: 320px;
+    width: 100%;
+}
+
+.profile-card-ketua img {
+    width: 120px;
+    height: 120px;
+    border-width: 5px;
+}
+
+.profile-card-ketua h5 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+/* Peneliti Section */
+.peneliti-section {
+    margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ketua-section {
+        margin-bottom: 2.5rem;
+    }
+    
+    .profile-card-ketua {
+        max-width: 280px;
+    }
+    
+    .profile-card-ketua img {
+        width: 100px;
+        height: 100px;
+    }
+}
