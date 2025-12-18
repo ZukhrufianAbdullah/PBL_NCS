@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../config/koneksi.php';
+include '../../config/koneksi.php'; // dihubungkan dengan database
 
 // Ambil id_user admin yang login
 $id_user = $_SESSION['id_user'] ?? 1;
@@ -8,7 +8,7 @@ $id_user = $_SESSION['id_user'] ?? 1;
 // Folder penyimpanan banner
 $uploadDir = '../../uploads/banner/';
 
-// Pastikan folder upload ada
+// Pastikan folder upload ada, jika tidak ada membuat folder baru
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
@@ -72,12 +72,12 @@ if (isset($_POST['submit'])) {
             'image/svg+xml'
         ];
 
-        $fileName = $_FILES['image_banner']['name'];
-        $tmpFile  = $_FILES['image_banner']['tmp_name'];
-        $fileType = mime_content_type($tmpFile);
-        $fileSize = $_FILES['image_banner']['size'];
+        $fileName = $_FILES['image_banner']['name']; // Mengambil nama file asli
+        $tmpFile  = $_FILES['image_banner']['tmp_name']; //mengambil lokasi sementara file yang di-upload oleh user di server
+        $fileType = mime_content_type($tmpFile); // Mengetahui jenis asli file berdasarkan isinya
+        $fileSize = $_FILES['image_banner']['size']; // untuk mengetahui ukuran file
 
-        // Ambil ekstensi
+        //mengambil ekstensi file dari nama file dan mengubahnya menjadi huruf kecil agar memudahkan proses validasi jenis file yang di-upload
         $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         // Validasi ekstensi
@@ -87,7 +87,7 @@ if (isset($_POST['submit'])) {
             exit();
         }
 
-        // Validasi MIME type (lebih kuat)
+        // Validasi MIME type
         if (!in_array($fileType, $allowedMime)) {
             echo "<script>alert('Gagal: File bukan gambar valid!'); 
                 window.history.back();</script>";
@@ -105,20 +105,20 @@ if (isset($_POST['submit'])) {
         $checkBackgroundBanner = pg_query($conn, 
         "SELECT * FROM settings WHERE setting_name = 'image_banner'");
 
-        
+        //membuat nama file baru yang unik sebelum file disimpan ke server.
         $newName  = time() . "_" . $fileName;
 
-        // Upload file baru
+       // memindahkan file yang di-upload dari folder sementara tmp ke folder tujuan yang sebenarnya dengan nama file baru.
         move_uploaded_file($tmpFile, $uploadDir . $newName);
 
-        // Jika ada data lama → hapus file lama
+        // mengecek apakah data lama sudah ada, jika sudah ada maka data lama dihapus
         if ($row = pg_fetch_assoc($checkBackgroundBanner)) {
             $oldFile = $row['setting_value'];
             if (!empty($oldFile) && file_exists($uploadDir . $oldFile)) {
                 unlink($uploadDir . $oldFile);
             }
         }
-
+        
         // Simpan nama file baru ke database
         if (pg_num_rows($checkBackgroundBanner) > 0) {
             // Update jika sudah ada

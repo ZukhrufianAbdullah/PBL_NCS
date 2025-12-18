@@ -1,8 +1,9 @@
 <?php
 // File: admin/proses/proses_agenda.php
 session_start();
-include '../../config/koneksi.php';
-// Include helper
+include '../../config/koneksi.php';// dihubungkan dengan database
+
+// dihubungkan dengan helper
 include __DIR__ . "/../../app/helpers/page_helper.php";
 
 $id_user = $_SESSION['id_user'] ?? 1;

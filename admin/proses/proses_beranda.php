@@ -1,10 +1,8 @@
 <?php
-// File: admin/proses/proses_beranda.php
 session_start();
-include '../../config/koneksi.php';
+include '../../config/koneksi.php'; // dihubungkan dengan database
 
-// Include helper functions
-require_once __DIR__ . '/../../app/helpers/page_helper.php';
+require_once __DIR__ . '/../../app/helpers/page_helper.php'; // Menghubungkan dengan page helper
 
 // Inisialisasi halaman home jika belum ada
 $homePageId = init_home_page_and_sections($conn, $_SESSION['id_user'] ?? 1);
@@ -21,6 +19,7 @@ $id_user = $_SESSION['id_user'] ?? 1;
 // 1. UPDATE DESKRIPSI BERANDA
 // ===========================================================================
 if (isset($_POST['update_deskripsi'])) {
+
     $deskripsi = trim($_POST['deskripsi'] ?? '');
     
     if (empty($deskripsi)) {
@@ -28,7 +27,7 @@ if (isset($_POST['update_deskripsi'])) {
         exit();
     }
     
-    // Gunakan helper function untuk upsert
+    // Gunakan helper function untuk upsert konten deskripsi beranda 
     $result = upsert_page_content($conn, $homePageId, 'deskripsi', $deskripsi, $id_user);
     
     if ($result) {
@@ -40,10 +39,11 @@ if (isset($_POST['update_deskripsi'])) {
     exit();
 }
 
-// ===========================================================================
+
 // 2. UPDATE VISIBILITY SETTINGS
-// ===========================================================================
+//digunakan untuk mengatur tampilan section-section di halaman beranda. Admin bisa memilih mau menampilkan atau menyembunyikan bagian tertentu.
 if (isset($_POST['update_visibility'])) {
+    //umembuat array (daftar) nama-nama section pada halaman beranda yang bisa Ditampilkan (true) Disembunyikan (false)
     $sections = [
         'show_visi_misi',
         'show_logo',
@@ -55,11 +55,11 @@ if (isset($_POST['update_visibility'])) {
         'show_sarana'
     ];
     
-    $allSuccess = true;
-    $errors = [];
+    $allSuccess = true; // asumsi awal semuan akan berhasil
+    $errors = []; //Menyimpan daftar pesan error jika terjadi kegagalan
     
     foreach ($sections as $section) {
-        // Jika checkbox dicentang, value = 'true', jika tidak = 'false'
+        // Jika checkbox dicentang, value = 'true', jika tidak = 'false'. Checkbox yang tidak dicentang tidak dikirim oleh form
         $value = isset($_POST[$section]) ? 'true' : 'false';
         
         // Gunakan helper function untuk upsert
@@ -82,9 +82,8 @@ if (isset($_POST['update_visibility'])) {
     exit();
 }
 
-// ===========================================================================
-// 3. RESET KE DEFAULT SETTINGS (opsional tambahan)
-// ===========================================================================
+
+// 3. RESET KE DEFAULT SETTINGS 
 if (isset($_POST['reset_to_default'])) {
     // Reset semua section ke true
     $sections = [
@@ -98,8 +97,9 @@ if (isset($_POST['reset_to_default'])) {
         'show_sarana' => 'true'
     ];
     
-    $allSuccess = true;
+    $allSuccess = true; //Asumsi awal proses reset akan berhasil semua
     
+    //Reset Setiap Section Satu per Satu
     foreach ($sections as $key => $value) {
         $result = upsert_page_content($conn, $homePageId, $key, $value, $id_user);
         if (!$result) {

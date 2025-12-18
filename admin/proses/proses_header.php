@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../config/koneksi.php';
+include '../../config/koneksi.php'; // dihubungkan dengan database
 
 // Ambil id_user dari session
 $id_user = $_SESSION['id_user'] ?? 1;
@@ -8,7 +8,7 @@ $id_user = $_SESSION['id_user'] ?? 1;
 // Folder penyimpanan logo
 $uploadDir = '../../uploads/header/';
 
-// Pastikan folder ada
+// Pastikan folder ada, jika tidak aa maka akan otomatis membua folder
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
@@ -45,12 +45,10 @@ if (isset($_POST['submit'])) {
     }
 
     //Update Logo Header
-
     if (!empty($_FILES['logo_header']['name'])) {
 
-        
-        //VALIDASI FILE GAMBAR
-     
+
+        //menentuka tipe file yang diperbolehkan
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'svg'];
         $allowedMime = [
             'image/png',
@@ -58,14 +56,15 @@ if (isset($_POST['submit'])) {
             'image/svg+xml'
         ];
 
-        $fileName = $_FILES['logo_header']['name'];
-        $tmpFile  = $_FILES['logo_header']['tmp_name'];
-        $fileType = mime_content_type($tmpFile);
-        $fileSize = $_FILES['logo_header']['size'];
+        $fileName = $_FILES['logo_header']['name']; // Mengambil nama file asli
+        $tmpFile  = $_FILES['logo_header']['tmp_name']; //mengambil lokasi sementara file yang di-upload oleh user di server
+        $fileType = mime_content_type($tmpFile); // Mengetahui jenis asli file berdasarkan isinya
+        $fileSize = $_FILES['logo_header']['size']; // untuk mengetahui ukuran file
 
+        //mengambil ekstensi file dari nama file dan mengubahnya menjadi huruf kecil agar memudahkan proses validasi jenis file yang di-upload
         $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        // Validasi ekstensi file
+        // Validasi tipe file
         if (!in_array($fileExt, $allowedExtensions)) {
             echo "<script>alert('Gagal: Format harus PNG/JPG/JPEG/SVG!'); window.history.back();</script>";
             exit();
@@ -77,21 +76,22 @@ if (isset($_POST['submit'])) {
             exit();
         }
 
-        // Validasi ukuran maksimal 3MB (opsional)
+        // Validasi ukuran maksimal 3MB 
         if ($fileSize > 3 * 1024 * 1024) {
             echo "<script>alert('Gagal: Ukuran file maksimal 3MB!'); window.history.back();</script>";
             exit();
         }
 
-        // Cek logo lama
+        // Cek logo lama apakah di tabel settings sudah ada data dengan nama logo_header
         $checkLogo = pg_query($conn, "SELECT * FROM settings WHERE setting_name = 'logo_header'");
 
+        //membuat nama file baru yang unik sebelum file disimpan ke server.
         $newName = time() . "_" . $fileName;
 
-        // Upload file baru
+        // memindahkan file yang di-upload dari folder sementara tmp ke folder tujuan yang sebenarnya dengan nama file baru.
         move_uploaded_file($tmpFile, $uploadDir . $newName);
 
-        // Jika ada data lama → hapus file lama
+        // mengecek apakah data lama sudah ada, jika sudah ada maka data lama dihapus
         if ($row = pg_fetch_assoc($checkLogo)) {
             $oldFile = $row['setting_value'];
             if (!empty($oldFile) && file_exists($uploadDir . $oldFile)) {
@@ -115,9 +115,15 @@ if (isset($_POST['submit'])) {
     }
     /* ============================================================ */
 
-    echo "<script> alert('Header berhasil diperbarui!'); window.location.href = '../setting/edit_header.php'; </script>";
+    echo "<script> 
+            alert('Header berhasil diperbarui!'); 
+            window.location.href = '../setting/edit_header.php'; 
+        </script>";
     exit();
 } else {
-    echo "<script> alert('Akses tidak valid!'); window.location.href = '../setting/edit_header.php'; </script>";
+    echo "<script>
+            alert('Akses tidak valid!'); 
+             window.location.href = '../setting/edit_header.php';
+        </script>";
     exit();
 }
