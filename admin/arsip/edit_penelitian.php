@@ -86,7 +86,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <legend>Tambah Penelitian Baru</legend>
             
             <div class="form-group">
-                <label for="judul_penelitian">Judul Penelitian</label>
+                <label for="judul_penelitian">Judul Penelitian *</label>
                 <input type="text" id="judul_penelitian" name="judul_penelitian" required placeholder="Masukkan judul penelitian">
             </div>
             
@@ -96,13 +96,13 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             </div>
             
             <div class="form-group">
-                <label for="tahun">Tahun Publikasi</label>
+                <label for="tahun">Tahun Publikasi *</label>
                 <input type="number" id="tahun" name="tahun" value="<?php echo date('Y'); ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="id_author">Penulis</label>
-                <select id="id_author" name="id_author">
+                <label for="id_author">Penulis *</label>
+                <select id="id_author" name="id_author" required>
                     <option value="">Pilih Penulis</option>
                     <?php foreach ($dosenOptions as $dosen): ?>
                         <option value="<?php echo $dosen['id_dosen']; ?>">
@@ -113,10 +113,11 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             </div>
             
             <div class="form-group">
-                <label for="pdf">Upload File PDF</label>
-                <input type="file" id="pdf" name="pdf" accept=".pdf">
+                <label for="pdf">Upload File PDF *</label>
+                <input type="file" id="pdf" name="pdf" accept=".pdf" required>
                 <span class="form-help-text">Unggah file PDF hasil penelitian.</span>
             </div>
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -213,7 +214,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <input type="hidden" name="id_penelitian" id="edit_id">
 
             <div class="form-group">
-                <label>Judul Penelitian</label>
+                <label>Judul Penelitian *</label>
                 <input type="text" name="judul_penelitian" id="edit_judul" required>
             </div>
 
@@ -223,12 +224,12 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             </div>
 
             <div class="form-group">
-                <label>Tahun</label>
+                <label>Tahun *</label>
                 <input type="number" name="tahun" id="edit_tahun" required>
             </div>
 
             <div class="form-group">
-                <label>Penulis</label>
+                <label>Penulis *</label>
                 <select name="id_author" id="edit_author">
                     <option value="">Pilih Penulis</option>
                     <?php foreach ($dosenOptions as $dosen): ?>

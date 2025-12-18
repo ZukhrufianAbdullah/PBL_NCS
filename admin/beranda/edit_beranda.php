@@ -140,148 +140,8 @@ foreach ($sections as $key => $label) {
     </form>
 </div>
 
-    <!-- Tambahkan CSS responsif di bagian style -->
 <style>
-    /* =======================================================
-       CHECKBOX GRID RESPONSIVE FIX
-    ======================================================== */
 
-    /* Checkbox Grid Layout - PERBAIKAN UTAMA */
-    .checkbox-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1rem;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Untuk mobile kecil: 1 kolom */
-    @media (max-width: 480px) {
-        .checkbox-grid {
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-    }
-
-    /* Untuk tablet: 2 kolom */
-    @media (min-width: 481px) and (max-width: 768px) {
-        .checkbox-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    /* Untuk desktop: 3 kolom */
-    @media (min-width: 769px) and (max-width: 1024px) {
-        .checkbox-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    /* Untuk desktop besar: 4 kolom */
-    @media (min-width: 1025px) {
-        .checkbox-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-
-    /* Card container - PERBAIKAN PENTING */
-    .card {
-        background: var(--white);
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        padding: 24px;
-        margin-bottom: 24px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        overflow: hidden; /* Mencegah overflow */
-    }
-
-    /* Form container fix */
-    form {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Fieldset fix */
-    fieldset {
-        border: none;
-        background-color: var(--white);
-        padding: 24px;
-        margin-bottom: 0;
-        border-radius: 10px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Legend fix untuk responsif */
-    legend {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        border-bottom: 3px solid var(--accent-yellow);
-        padding: 10px 15px;
-        /* margin-bottom: 20px; */
-        width: 100%;
-        max-width: calc(100% + 48px);
-        margin-left: -24px;
-        margin-right: -24px;
-        margin-top: -24px;
-        display: block;
-        background-color: #ffffff;
-        border-radius: 10px 10px 0 0;
-        box-sizing: border-box;
-        position: relative;
-        left: 0;
-        right: 0;
-    }
-
-    /* Checkbox label yang lebih responsif */
-    .checkbox-label {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        font-weight: 500;
-        padding: 0.75rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
-        width: 100%;
-        box-sizing: border-box;
-        word-break: break-word; /* Untuk text panjang */
-        hyphens: auto; /* Tambah hyphen jika perlu */
-    }
-
-    .checkbox-label:hover {
-        background: #e9ecef;
-        border-color: #153b91;
-    }
-
-    .checkbox-label input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        flex-shrink: 0; /* Mencegah checkbox menyusut */
-    }
-
-    .checkbox-label input[type="checkbox"]:checked + span {
-        color: #153b91;
-        font-weight: 600;
-    }
-
-    .checkbox-label span {
-        user-select: none;
-        flex: 1;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        line-height: 1.4;
-    }
 
     /* Alert Styling */
     .alert {
@@ -357,8 +217,12 @@ foreach ($sections as $key => $label) {
         line-height: 1.6;
     }
 
-    /* Button fix */
     .btn-primary {
+        margin-top: 1rem;
+    }
+
+    /* Button fix */
+    /* .btn-primary {
         background-color: var(--primary-color);
         color: white;
         border: none;
@@ -369,11 +233,11 @@ foreach ($sections as $key => $label) {
         transition: background-color 0.3s ease;
         width: auto;
         min-width: 150px;
-    }
+    } */
 
-    .btn-primary:hover {
+    /* .btn-primary:hover {
         background-color: #0a2666;
-    }
+    } */
 
     /* Mobile-specific fixes */
     @media (max-width: 768px) {

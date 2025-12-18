@@ -79,17 +79,18 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
         <fieldset>
             <legend>Tambah Anggota Tim Baru</legend>
             <div class="form-group">
-                <label for="nama_dosen_new">Nama Lengkap &amp; Gelar</label>
+                <label for="nama_dosen_new">Nama Lengkap &amp; Gelar *</label>
                 <input type="text" id="nama_dosen_new" name="nama_dosen"  placeholder="Masukkan nama lengkap & gelar"required>
             </div>
             <div class="form-group">
-                <label for="jabatan_new">Jabatan</label>
+                <label for="jabatan_new">Jabatan *</label>
                 <input type="text" id="jabatan_new" name="jabatan"  placeholder="Masukkan jabatan"required>
             </div>
             <div class="form-group">
                 <label for="media_path_dosen_new">Foto Profil</label>
                 <input type="file" id="media_path_dosen_new" name="foto" accept="image/*">
             </div>
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
         <div class="form-group">
             <button type="submit" class="btn-primary">Tambahkan Anggota Baru</button>
@@ -100,9 +101,6 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
 <div class="card">
     <div class="card-header">
         <h3>Daftar Anggota Organisasi</h3>
-        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
-            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
-        </small>
     </div>
 
     <!-- ADD THIS WRAPPER -->
@@ -182,12 +180,12 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
             <input type="hidden" name="id_dosen" id="modal_id_dosen">
             
             <div class="form-group">
-                <label for="modal_nama_dosen">Nama Lengkap</label>
+                <label for="modal_nama_dosen">Nama Lengkap *</label>
                 <input type="text" id="modal_nama_dosen" name="nama_dosen" required>
             </div>
             
             <div class="form-group">
-                <label for="modal_jabatan">Jabatan</label>
+                <label for="modal_jabatan">Jabatan *</label>
                 <input type="text" id="modal_jabatan" name="jabatan" required>
             </div>
             

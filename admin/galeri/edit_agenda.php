@@ -77,7 +77,7 @@ $qAgenda = pg_query($conn, "
             <legend>Tambah Agenda Baru</legend>
 
             <div class="form-group">
-                <label for="judul_agenda_baru">Judul Agenda</label>
+                <label for="judul_agenda_baru">Judul Agenda *</label>
                 <input type="text" id="judul_agenda_baru" name="judul" required placeholder="Masukkan judul agenda">
             </div>
 
@@ -87,7 +87,7 @@ $qAgenda = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label for="tanggal_baru">Tanggal Agenda</label>
+                <label for="tanggal_baru">Tanggal Agenda *</label>
                 <input type="date" id="tanggal_baru" name="tanggal" required
                        value="<?php echo date('Y-m-d'); ?>">
             </div>
@@ -99,7 +99,7 @@ $qAgenda = pg_query($conn, "
                     <option value="0">Arsip</option>
                 </select>
             </div>
-
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -119,9 +119,6 @@ $qAgenda = pg_query($conn, "
 <div class="card">
     <div class="card-header">
         <h3>Daftar Agenda</h3>
-        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
-            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
-        </small>
     </div>
 
     <div class="table-responsive">
@@ -203,7 +200,7 @@ $qAgenda = pg_query($conn, "
             <input type="hidden" name="id_agenda" id="edit_id">
 
             <div class="form-group">
-                <label>Judul</label>
+                <label>Judul *</label>
                 <input type="text" name="judul" id="edit_judul" required>
             </div>
 
@@ -213,7 +210,7 @@ $qAgenda = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label>Tanggal</label>
+                <label>Tanggal *</label>
                 <input type="date" name="tanggal" id="edit_tanggal" required>
             </div>
 

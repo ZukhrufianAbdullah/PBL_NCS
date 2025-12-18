@@ -75,7 +75,7 @@ $qGaleri = pg_query($conn, "
             <legend>Tambah Galeri Baru</legend>
 
             <div class="form-group">
-                <label>Judul</label>
+                <label>Judul *</label>
                 <input type="text" name="judul" required placeholder="Masukkan judul galeri">
             </div>
 
@@ -85,15 +85,15 @@ $qGaleri = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label>Tanggal</label>
+                <label>Tanggal *</label>
                 <input type="date" name="tanggal" required value="<?php echo date('Y-m-d'); ?>">
             </div>
 
             <div class="form-group">
-                <label>Upload Gambar</label>
+                <label>Upload Gambar *</label>
                 <input type="file" name="gambar" accept=".png,.jpg,.jpeg,.svg" required>
             </div>
-
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -111,9 +111,6 @@ $qGaleri = pg_query($conn, "
 <div class="card">
     <div class="card-header">
         <h3>Daftar Galeri</h3>
-        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
-            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
-        </small>
     </div>
 
     <div class="table-responsive">
@@ -203,7 +200,7 @@ $qGaleri = pg_query($conn, "
             <input type="hidden" name="id_galeri" id="edit_id">
 
             <div class="form-group">
-                <label>Judul</label>
+                <label>Judul *</label>
                 <input type="text" name="judul" id="edit_judul" required>
             </div>
 
@@ -213,7 +210,7 @@ $qGaleri = pg_query($conn, "
             </div>
 
             <div class="form-group">
-                <label>Tanggal</label>
+                <label> *</label>
                 <input type="date" name="tanggal" id="edit_tanggal" required>
             </div>
 

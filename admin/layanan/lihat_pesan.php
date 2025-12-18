@@ -3,7 +3,7 @@
 session_start();
 $pageTitle = 'Kelola Konsultatif';
 $currentPage = 'lihat_pesan';
-$adminPageStyles = ['forms', 'tables', 'modal'];
+$adminPageStyles = ['forms', 'tables'];
 include '../../config/koneksi.php';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
@@ -159,12 +159,16 @@ if ($result && pg_num_rows($result) > 0) {
 <div class="card">
     <div class="card-header">
         <h3>Pesan Masuk Konsultatif</h3>
+    </div>
+    
+    <div class="card-filter">
         <div class="status-filter">
             <button class="btn-secondary btn-sm" onclick="filterMessages('all')">Semua</button>
             <button class="btn-warning btn-sm" onclick="filterMessages('pending')">Pending</button>
             <button class="btn-success btn-sm" onclick="filterMessages('replied')">Sudah Dibalas</button>
             <button class="btn-danger btn-sm" onclick="filterMessages('archived')">Diarsipkan</button>
         </div>
+
     </div>
 
     <div class="table-responsive">
@@ -176,8 +180,8 @@ if ($result && pg_num_rows($result) > 0) {
                 <th>Nama Pengirim</th>
                 <th>Email</th>
                 <th>Status</th>
-                <th>Isi Pesan Singkat</th>
-                <th style="width:350px;text-align:center;">Aksi</th>
+                <th style="width: 25%;text-align:center;">Isi Pesan Singkat</th>
+                <th style="width: 100;text-align:center;">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -273,14 +277,6 @@ if ($result && pg_num_rows($result) > 0) {
                             <i class="fas fa-eye"></i> Detail
                         </button>
 
-                        <?php if (!empty($email_display)): ?>
-                        <button type="button" class="btn-primary btn-sm" 
-                                onclick="balasEmail('<?php echo $email_js; ?>', '<?php echo $nama_clean; ?>')"
-                                title="Balas via Email">
-                            <i class="fas fa-reply"></i> Balas
-                        </button>
-                        <?php endif; ?>
-
                         <form method="POST" action="lihat_pesan.php" style="display:inline;">
                             <input type="hidden" name="hapus_pesan" value="1">
                             <input type="hidden" name="hapus_id" value="<?php echo $pesan['id_konsultatif']; ?>">
@@ -295,11 +291,11 @@ if ($result && pg_num_rows($result) > 0) {
         </tbody>
     </table>
     
-    <p class="mt-20 text-gray">
-        * Klik "Detail" untuk membaca pesan lengkap. <br>
-        * Klik "Balas" untuk membuka email client dan membalas pesan.
-    </p>
-    </div>
+</div>
+<p class="mt-20 text-gray">
+    * Klik "Detail" untuk membaca pesan lengkap. <br>
+    * Klik "Balas" untuk membuka email client dan membalas pesan.
+</p>
 </div>
 
 <!-- ============================
@@ -317,7 +313,7 @@ if ($result && pg_num_rows($result) > 0) {
                 <button type="button" id="btnBalas" class="btn-primary" onclick="balasFromModal()">
                     <i class="fas fa-reply"></i> Balas via Email
                 </button>
-                <form method="POST" action="lihat_pesan.php" style="display:inline;">
+                <form method="POST" action="lihat_pesan.php" style="display:inline; margin-right: 20px;">
                     <input type="hidden" name="update_status" value="1">
                     <input type="hidden" name="pesan_id" id="pesanId" value="">
                     <select name="status" id="statusSelect" onchange="this.form.submit()" style="margin: 0 10px; padding: 8px 12px; border-radius: 4px;">
@@ -528,92 +524,6 @@ window.onclick = function(event) {
     margin: 15px 0;
     flex-wrap: wrap;
     align-items: center;
-}
-
-/* Button default */
-.status-filter button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 8px 18px;
-    min-height: 38px;
-
-    border-radius: 8px;
-    border: 2px solid #ced4da;
-
-    background-color: #ffffff;
-    color: #495057;
-
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-/* Hover umum */
-.status-filter button:hover {
-    background-color: #f1f3f5;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-}
-
-/* ===============================
-   WARNA KHUSUS TIAP STATUS
-================================ */
-
-/* Semua */
-.status-filter .btn-all {
-    border-color: #6c757d;
-    color: #6c757d;
-}
-.status-filter .btn-all:hover {
-    background-color: #6c757d;
-    color: #ffffff;
-}
-
-/* Pending */
-.status-filter .btn-pending {
-    border-color: #ffc107;
-    color: #856404;
-}
-.status-filter .btn-pending:hover {
-    background-color: #ffc107;
-    color: #212529;
-}
-
-/* Sudah Dibalas */
-.status-filter .btn-replied {
-    border-color: #28a745;
-    color: #155724;
-}
-.status-filter .btn-replied:hover {
-    background-color: #28a745;
-    color: #ffffff;
-}
-
-/* Diarsipkan */
-.status-filter .btn-archived {
-    border-color: #6c757d;
-    color: #343a40;
-}
-.status-filter .btn-archived:hover {
-    background-color: #6c757d;
-    color: #ffffff;
-}
-
-/* ===============================
-   STATUS AKTIF (DIPILIH)
-================================ */
-
-.status-filter button.active {
-    background-color: currentColor;
-    color: #ffffff !important;
-    border-color: currentColor;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transform: translateY(0);
 }
 </style>
 

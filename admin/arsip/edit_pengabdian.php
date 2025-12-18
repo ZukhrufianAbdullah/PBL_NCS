@@ -86,22 +86,22 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <legend>Tambah Pengabdian Baru</legend>
             
             <div class="form-group">
-                <label for="judul_pengabdian">Judul Pengabdian</label>
+                <label for="judul_pengabdian">Judul Pengabdian *</label>
                 <input type="text" id="judul_pengabdian" name="judul_pengabdian" placeholder="Masukkan judul pengabdian" required>
             </div>
             
             <div class="form-group">
-                <label for="skema">Skema</label>
+                <label for="skema">Skema *</label>
                 <input type="text" id="skema" name="skema" placeholder="Masukkan skema pengabdian" required>
             </div>
             
             <div class="form-group">
-                <label for="tahun">Tahun Pelaksanaan</label>
+                <label for="tahun">Tahun Pelaksanaan *</label>
                 <input type="number" id="tahun" name="tahun" value="<?php echo date('Y'); ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="id_ketua">Ketua Tim</label>
+                <label for="id_ketua">Ketua Tim *</label>
                 <select id="id_ketua" name="id_ketua" required>
                     <option value="">Pilih Ketua</option>
                     <?php foreach ($dosenOptions as $dosen): ?>
@@ -111,7 +111,7 @@ if ($qPage && pg_num_rows($qPage) > 0) {
                     <?php endforeach; ?>
                 </select>
             </div>
-
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
 
         <div class="form-group">
@@ -128,9 +128,6 @@ if ($qPage && pg_num_rows($qPage) > 0) {
 <div class="card">
     <div class="card-header">
         <h3>Daftar Pengabdian Masyarakat</h3>
-        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
-            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
-        </small>
     </div>
 
     <div class="table-responsive">
@@ -211,22 +208,22 @@ if ($qPage && pg_num_rows($qPage) > 0) {
             <input type="hidden" name="id_pengabdian" id="edit_id">
 
             <div class="form-group">
-                <label>Judul Pengabdian</label>
+                <label>Judul Pengabdian *</label>
                 <input type="text" name="judul_pengabdian" id="edit_judul" required>
             </div>
 
             <div class="form-group">
-                <label>Skema</label>
+                <label>Skema *</label>
                 <input type="text" name="skema" id="edit_skema" required>
             </div>
 
             <div class="form-group">
-                <label>Tahun</label>
+                <label>Tahun *</label>
                 <input type="number" name="tahun" id="edit_tahun" required>
             </div>
 
             <div class="form-group">
-                <label>Ketua Tim</label>
+                <label>Ketua Tim *</label>
                 <select name="id_ketua" id="edit_ketua" required>
                     <option value="">Pilih Ketua</option>
                     <?php foreach ($dosenOptions as $dosen): ?>

@@ -71,14 +71,15 @@ $qSarana = pg_query($conn, "
             <legend>Tambah Sarana dan Prasarana Baru</legend>
             
             <div class="form-group">
-                <label>Nama</label>
+                <label>Nama *</label>
                 <input type="text" name="nama_sarana" placeholder="Masukkan nama sarana atau prasarana" required>
             </div>
 
             <div class="form-group">
-                <label>Upload Gambar</label>
+                <label>Upload Gambar *</label>
                 <input type="file" name="gambar" accept=".png,.jpg,.jpeg,.svg" required>
             </div>
+            <span class="form-help-text">* harus diisi</span>
         </fieldset>
         <div class="form-group">
             <button type="submit" class="btn-primary">Tambah Sarana dan Prasarana</button>
@@ -92,9 +93,6 @@ $qSarana = pg_query($conn, "
 <div class="card">
     <div class="card-header">
         <h3>Daftar Sarana dan Prasarana</h3>
-        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 0.9rem;">
-            <i class="fas fa-mobile-alt"></i> Geser tabel ke kanan/kiri untuk melihat semua kolom di perangkat mobile
-        </small>
     </div>
 
     <div class="table-responsive">
@@ -175,7 +173,7 @@ $qSarana = pg_query($conn, "
             <input type="hidden" name="id_sarana" id="edit_id">
 
             <div class="form-group">
-                <label>Nama Sarana</label>
+                <label>Nama Sarana *</label>
                 <input type="text" name="nama_sarana" id="edit_nama" required>
             </div>
 
