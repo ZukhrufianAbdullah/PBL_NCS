@@ -82,9 +82,13 @@
     pointer-events: none;
 }
 
-/* Header sidebar (untuk mobile) - SEMBUNYIKAN DI DESKTOP */
 .sidebar-header {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px 16px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid rgba(252, 217, 23, 0.3);
 }
 
 .sidebar-header h2 {
@@ -294,16 +298,7 @@
         transform: translateX(0);
         box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
     }
-    
-    /* Tampilkan header di mobile */
-    .sidebar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 24px 16px;
-        margin-bottom: 10px;
-        border-bottom: 2px solid rgba(252, 217, 23, 0.3);
-    }
+
     
     /* CSS untuk menyembunyikan toggle button ketika sidebar terbuka */
     .sidebar.is-open ~ .sidebar-toggle {

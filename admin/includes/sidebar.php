@@ -21,9 +21,6 @@ $matchesPage = function ($keys) use ($currentPage) {
         <h2>ADMIN NCS LAB</h2>
     </div>
 
-    <!-- JUDUL UNTUK DESKTOP -->
-    <h2 class="sidebar-title-desktop">ADMIN NCS LAB</h2>
-
     <!-- =============== MENU UTAMA =============== -->
     <a href="<?php echo $adminBasePath; ?>index.php"
        class="sidebar-link<?php echo $matchesPage('dashboard') ? ' is-active' : ''; ?>"
