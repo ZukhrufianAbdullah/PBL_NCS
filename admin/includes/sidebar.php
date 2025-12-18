@@ -35,22 +35,22 @@ $matchesPage = function ($keys) use ($currentPage) {
     <a href="<?php echo $adminBasePath; ?>setting/edit_header.php"
        class="sidebar-link<?php echo $matchesPage('edit_header') ? ' is-active' : ''; ?>"
        data-page="edit_header">
-        Edit Header
+        Header
     </a>
     <a href="<?php echo $adminBasePath; ?>setting/edit_footer.php"
        class="sidebar-link<?php echo $matchesPage('edit_footer') ? ' is-active' : ''; ?>"
        data-page="edit_footer">
-        Edit Footer
+        Footer
     </a>
     <a href="<?php echo $adminBasePath; ?>beranda/edit_beranda.php"
        class="sidebar-link<?php echo $matchesPage('edit_beranda') ? ' is-active' : ''; ?>"
        data-page="edit_beranda">
-        Edit Beranda
+        Beranda
     </a>
     <a href="<?php echo $adminBasePath; ?>beranda/edit_banner.php"
        class="sidebar-link<?php echo $matchesPage('edit_banner') ? ' is-active' : ''; ?>"
        data-page="edit_banner">
-        Edit Banner
+        Banner
     </a>
 
     <div class="menu-header">Manajemen Konten</div>
