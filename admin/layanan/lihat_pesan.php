@@ -520,18 +520,25 @@ window.onclick = function(event) {
     display: flex;
     gap: 10px;
     margin-top: 15px;
+    margin-bottom: 15px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .status-filter button {
-    padding: 6px 12px;
+    padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
-.btn-sm {
-    padding: 5px 10px;
-    font-size: 0.85rem;
+.status-filter button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 .action-buttons {

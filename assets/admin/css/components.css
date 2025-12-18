@@ -336,19 +336,18 @@
 
 /* Filter buttons */
 .status-filter {
-    display: flex;
-    gap: 8px;
-    margin: 15px 0;
-    flex-wrap: wrap;
+    display: flex !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    flex-wrap: wrap !important;
+    visibility: visible !important;
 }
 
 .status-filter button {
-    padding: 6px 12px;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    display: inline-block !important;
+    padding: 8px 16px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .status-filter button:hover {
