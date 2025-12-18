@@ -204,7 +204,7 @@ require_once __DIR__ . '/../includes/page-hero.php';
             SELECT a.jabatan, d.nama_dosen, d.media_path
             FROM anggota_lab a
             JOIN dosen d ON a.id_dosen = d.id_dosen
-            WHERE LOWER(a.jabatan) LIKE '%ketua%'
+            WHERE LOWER(a.jabatan) LIKE '%ketua%' or LOWER(a.jabatan) LIKE '%kepala%'
             ORDER BY d.nama_dosen ASC
             LIMIT 1");
 

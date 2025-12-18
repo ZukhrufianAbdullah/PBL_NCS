@@ -24,7 +24,7 @@ $qDeskripsiSarana = pg_query($conn, "
 $deskripsiSarana = pg_fetch_assoc($qDeskripsiSarana)['content_value'] ?? 'Deskripsi sarana & prasarana belum ditambahkan.';
 
 // PAGINATION SETUP - sama seperti galeri
-$items_per_page = 6; // 8 item per halaman
+$items_per_page = 6; // 6 item per halaman
 $current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($current_page - 1) * $items_per_page;
 

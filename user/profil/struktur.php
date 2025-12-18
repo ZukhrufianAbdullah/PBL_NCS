@@ -40,6 +40,8 @@ if ($rs && pg_num_rows($rs) > 0) {
     while ($r = pg_fetch_assoc($rs)) {
         if (stripos($r['jabatan'], 'ketua') !== false) {
             $ketuaLab[] = $r;
+        } else if (stripos($r['jabatan'], 'kepala') !== false) {
+            $ketuaLab[] = $r;
         } else {
             $peneliti[] = $r;
         }

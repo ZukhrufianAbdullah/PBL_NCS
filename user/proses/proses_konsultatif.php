@@ -33,11 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result) {
             // Set session untuk notifikasi sukses
             $_SESSION['alert_type'] = 'success';
-            $_SESSION['alert_message'] = "Pesan berhasil dikirim. Kami akan menghubungi Anda melalui email.";
-            
-            // Kirim notifikasi email ke admin (opsional)
-            sendAdminNotification($nama_pengirim, $email, $isi_pesan);
-            
+            $_SESSION['alert_message'] = "Pesan berhasil dikirim. Kami akan menghubungi Anda melalui email.";            
         } else {
             $_SESSION['alert_type'] = 'error';
             $_SESSION['alert_message'] = "Terjadi kesalahan saat mengirim pesan: " . pg_last_error($conn);
@@ -54,24 +50,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Jika bukan POST, redirect ke halaman konsultatif
     header("Location: " . BASE_URL . "/user/layanan/konsultatif.php");
     exit();
-}
-
-// Fungsi untuk notifikasi admin via email (opsional)
-function sendAdminNotification($nama, $email, $pesan) {
-    // Ganti dengan email admin yang sebenarnya
-    $admin_email = "admin@laboratory.com"; 
-    $subject = "Pesan Konsultatif Baru dari $nama";
-    $message = "Halo Admin,\n\n";
-    $message .= "Ada pesan konsultatif baru:\n\n";
-    $message .= "Nama: $nama\n";
-    $message .= "Email: $email\n";
-    $message .= "Pesan:\n$pesan\n\n";
-    $message .= "Silakan balas melalui dashboard admin.\n";
-    $message .= "Waktu: " . date('Y-m-d H:i:s') . "\n";
-    
-    // Uncomment jika ingin mengirim email
-    // mail($admin_email, $subject, $message, "From: no-reply@laboratory.com");
-    
-    error_log("Notifikasi admin: Pesan baru dari $nama ($email)");
 }
 ?>

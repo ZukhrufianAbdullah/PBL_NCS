@@ -13,7 +13,7 @@ $qJudulVisiMisi = pg_query($conn, "
     JOIN pages p ON pc.id_page = p.id_page
     WHERE p.nama = 'profil_visi_misi' AND pc.content_key = 'section_title'
     LIMIT 1");
-$judulVisiMisi = pg_fetch_assoc($qJudulVisiMisi)['content_value'] ?? 'VISI & MISI';
+$judulVisiMisi = pg_fetch_assoc($qJudulVisiMisi)['content_value'] ?? 'Visi & Misi';
 
 // Ambil data deskripsi
 $qDeskripsiVisiMisi = pg_query($conn, "
