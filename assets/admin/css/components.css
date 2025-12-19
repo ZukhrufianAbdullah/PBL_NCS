@@ -311,6 +311,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
+.badge-secondary { background-color: var(--danger-red); color: var(--white); }
 
 .badge-success { background-color: var(--success-green); color: var(--white); }
 .badge-danger { background-color: var(--danger-red); color: var(--white); }
